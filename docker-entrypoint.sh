@@ -64,7 +64,7 @@ sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" /worki
 cd /working/terraform && \
     terraform init && \
     terraform plan && \
-    terraform apply
+    terraform apply --auto-approve
 
 if [ $? -ne "0" ]; then
     echo "[ERROR] Fatal error encountered in Terraform run"
