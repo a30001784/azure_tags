@@ -1,0 +1,12 @@
+---
+- name: Format K:\ drive
+  script: scripts/Format-Volume.ps1 >
+    -DiskNumber 3
+    -DriveLetter K
+    -FileSystemLabel Data
+
+- name: Stripe data disks and format I:\ drive
+  script: scripts/Storage-Spaces.ps1 >
+    -DriveLetter I
+    -Interleave 65536
+    -FileSystemLabel Data

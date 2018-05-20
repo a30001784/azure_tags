@@ -1,0 +1,28 @@
+---
+- name: Set timezone to AUS Eastern Standard Time (AEST)
+  win_timezone:
+    timezone: AUS Eastern Standard Time
+
+- name: Format F:\ - Windows Server 2012
+  script: scripts/Format-Volume.ps1 >
+    -DiskNumber 2
+    -DriveLetter F
+    -FileSystemLabel Data
+  when: ansible_distribution == "Microsoft Windows Server 2012 R2 Datacenter"
+
+- name: Format F:\ - Windows Server 2008
+  script: scripts/Format-WS2008R2Volume.ps1
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
+
+- name: Join to Active Directory domain
+  win_domain_membership:
+    dns_domain_name: "{{ dns_domain_name }}"
+    domain_admin_user: "{{ domain_join_username }}"
+    domain_admin_password: "{{ domain_join_password }}"
+    domain_ou_path: "{{ domain_ou_path }}"
+    state: domain
+  register: domain_state
+
+- name: Reboot if AD join requires
+  win_reboot:
+  when: domain_state.reboot_required

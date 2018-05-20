@@ -18,6 +18,8 @@ RUN curl https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_
 
 # Set up working directory
 COPY ./terraform /working/terraform
+COPY ./ansible /working/ansible
+COPY ./scripts /working/scripts
 WORKDIR /working
 
 # Configure entrypoint
