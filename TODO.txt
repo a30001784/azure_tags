@@ -1,0 +1,6 @@
+* make tags variables
+* advanced networking nics
+* load balancer config
+* merge app - availability set to be create conditionally
+* ascs managed disks one block
+* remove TF_VAR from ansible variables
