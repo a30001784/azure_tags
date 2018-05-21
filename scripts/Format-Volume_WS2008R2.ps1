@@ -1,6 +1,6 @@
 $Disks = Get-WmiObject Win32_DiskDrive -Filter "Partitions = 0"
 
-If ( ($Disks | Measure-Object).Count -eq 0) {
+If ( ($Disks | Measure-Object).Count -eq 0 ) {
     [Environment]::Exit(0)
 }
 
