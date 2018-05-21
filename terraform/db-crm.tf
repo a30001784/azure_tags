@@ -14,9 +14,9 @@ resource "azurerm_network_interface" "db-crm" {
     }
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }
 
@@ -29,9 +29,9 @@ resource "azurerm_managed_disk" "db-crm1" {
     disk_size_gb                      = "127"
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }
 
@@ -45,9 +45,9 @@ resource "azurerm_managed_disk" "db-crm2" {
     disk_size_gb                      = "${var.data_disk_size_db}"
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }
 
@@ -145,8 +145,8 @@ resource "azurerm_virtual_machine" "db-crm" {
     }
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }

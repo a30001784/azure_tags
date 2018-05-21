@@ -15,9 +15,9 @@ resource "azurerm_network_interface" "app-isu" {
     }
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }
 
@@ -31,9 +31,9 @@ resource "azurerm_managed_disk" "app-isu" {
     disk_size_gb                      = "128"
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }
 
@@ -83,8 +83,8 @@ resource "azurerm_virtual_machine" "app-isu" {
     }
 
     tags {
-        CostCode                      = "RE-DT01-C03-FN"
-        TechnicalOwner                = "Ruschal Alphonso"
-        BusinessOwner                 = "Nirusha Dissanayake"
+        CostCode                      = "${var.tag_cost_code}"
+        TechnicalOwner                = "${var.tag_technical_owner}"
+        BusinessOwner                 = "${var.tag_business_owner}"
     }
 }

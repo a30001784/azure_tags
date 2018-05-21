@@ -1,11 +1,11 @@
 # nsg-app.tf
 
-# TODO: confirm if NSG should be created in NetworkWatcherRG
+# TODO:                              confirm if NSG should be created in NetworkWatcherRG
 resource "azurerm_network_security_group" "nsg-app" {
     name                           = "${var.network_security_group_app}"
     location                       = "${var.location}"
     resource_group_name            = "${var.resource_group_name}"
-    //depends_on                     = ["azurerm_resource_group.rg"]
+    //depends_on                   = ["azurerm_resource_group.rg"]
 
     security_rule {
         name                       = "RDP"
@@ -32,8 +32,8 @@ resource "azurerm_network_security_group" "nsg-app" {
     }
 
     tags {
-        CostCode = "RE-DT01-C03-FN"
-        TechnicalOwner = "Ruschal Alphonso"
-        BusinessOwner = "Nirusha Dissanayake"
+        CostCode                   = "${var.tag_cost_code}"
+        TechnicalOwner             = "${var.tag_technical_owner}"
+        BusinessOwner              = "${var.tag_business_owner}"
     }
 }

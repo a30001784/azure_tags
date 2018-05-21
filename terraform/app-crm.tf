@@ -8,9 +8,9 @@ resource "azurerm_availability_set" "app-crm" {
     platform_fault_domain_count                   = 2
 
     tags {
-        CostCode                                  = "RE-DT01-C03-FN"
-        TechnicalOwner                            = "Ruschal Alphonso"
-        BusinessOwner                             = "Nirusha Dissanayake"
+        CostCode                                  = "${var.tag_cost_code}"
+        TechnicalOwner                            = "${var.tag_technical_owner}"
+        BusinessOwner                             = "${var.tag_business_owner}"
     }
 }
 
@@ -31,9 +31,9 @@ resource "azurerm_network_interface" "app-crm" {
     }
 
     tags {
-        CostCode                                  = "RE-DT01-C03-FN"
-        TechnicalOwner                            = "Ruschal Alphonso"
-        BusinessOwner                             = "Nirusha Dissanayake"
+        CostCode                                  = "${var.tag_cost_code}"
+        TechnicalOwner                            = "${var.tag_technical_owner}"
+        BusinessOwner                             = "${var.tag_business_owner}"
     }
 }
 
@@ -47,9 +47,9 @@ resource "azurerm_managed_disk" "app-crm" {
     disk_size_gb                                  = "127"
 
     tags {
-        CostCode                                  = "RE-DT01-C03-FN"
-        TechnicalOwner                            = "Ruschal Alphonso"
-        BusinessOwner                             = "Nirusha Dissanayake"
+        CostCode                                  = "${var.tag_cost_code}"
+        TechnicalOwner                            = "${var.tag_technical_owner}"
+        BusinessOwner                             = "${var.tag_business_owner}"
     }
 }
 
@@ -100,8 +100,8 @@ resource "azurerm_virtual_machine" "app-crm" {
     }
 
     tags {
-        CostCode                                  = "RE-DT01-C03-FN"
-        TechnicalOwner                            = "Ruschal Alphonso"
-        BusinessOwner                             = "Nirusha Dissanayake"
+        CostCode                                  = "${var.tag_cost_code}"
+        TechnicalOwner                            = "${var.tag_technical_owner}"
+        BusinessOwner                             = "${var.tag_business_owner}"
     }
 }
