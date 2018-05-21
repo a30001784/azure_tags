@@ -17,7 +17,7 @@
 - name: Join to Active Directory domain
   win_domain_membership:
     dns_domain_name: "{{ dns_domain_name }}"
-    domain_admin_user: "{{ domain_join_username }}"
+    domain_admin_user: "{{ dns_domain_name }}\\{{ domain_join_username }}"
     domain_admin_password: "{{ domain_join_password }}"
     domain_ou_path: "{{ domain_ou_path }}"
     state: domain
@@ -26,3 +26,10 @@
 - name: Reboot if AD join requires
   win_reboot:
   when: domain_state.reboot_required
+
+- name: Add group to local admins
+  win_group_membership:
+    name: Administrators
+    members:
+      - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
+    state: present
