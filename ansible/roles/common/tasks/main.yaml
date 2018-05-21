@@ -33,3 +33,12 @@
     members:
       - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
     state: present
+
+# Clean up 
+- name: Remove working directories
+  win_file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+      - C:\install
+      - C:\scripts
