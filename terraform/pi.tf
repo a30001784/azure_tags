@@ -112,7 +112,15 @@ resource "azurerm_virtual_machine" "pi" {
         lun                           = 3
         disk_size_gb                  = "${var.data_disk_size_pi}"
         caching                       = "ReadOnly"
+    }
 
+    storage_data_disk {
+        name                          = "${azurerm_managed_disk.pi2.*.name[3]}"
+        managed_disk_id               = "${azurerm_managed_disk.pi2.*.id[3]}"
+        create_option                 = "Attach"
+        lun                           = 4
+        disk_size_gb                  = "${var.data_disk_size_pi}"
+        caching                       = "ReadOnly"
     }
 
     os_profile {

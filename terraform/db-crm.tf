@@ -134,6 +134,15 @@ resource "azurerm_virtual_machine" "db-crm" {
         caching                       = "ReadOnly"
     }
 
+    storage_data_disk {
+        name                          = "${azurerm_managed_disk.db-crm2.*.name[5]}"
+        managed_disk_id               = "${azurerm_managed_disk.db-crm2.*.id[5]}"
+        create_option                 = "Attach"
+        lun                           = 6
+        disk_size_gb                  = "${var.data_disk_size_db}"
+        caching                       = "ReadOnly"
+    }
+
     os_profile {
         computer_name                 = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_crm}"
         admin_username                = "${var.host_username}"
