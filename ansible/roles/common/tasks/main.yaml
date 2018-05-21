@@ -42,3 +42,4 @@
   with_items:
       - C:\install
       - C:\scripts
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
