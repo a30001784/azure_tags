@@ -21,13 +21,13 @@ resource "azurerm_network_interface" "app-crm" {
     resource_group_name                           = "${var.resource_group_name}"
     network_security_group_id                     = "${azurerm_network_security_group.nsg-app.id}"
     enable_accelerated_networking                 = true
-    //depends_on                                  = ["azurerm_lb.ilb-app-crm"]
+    depends_on                                  = ["azurerm_lb.ilb-app-crm"]
 
     ip_configuration {
         name                                      = "${var.hostname_prefix}${var.hostname_suffix_start_range_app_crm + count.index}-nic01-ipconfig"
         subnet_id                                 = "${var.subnet_id_app}"
         private_ip_address_allocation             = "dynamic"
-        //load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.ilb-crm-be-pool.id}"]
+        load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.ilb-crm-be-pool.id}"]
     }
 
     tags {
