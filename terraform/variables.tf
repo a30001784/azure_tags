@@ -33,12 +33,12 @@ variable "hostname_suffix_start_range_app_crm" {}
 
 ## ==== Load balancer ====================================================== ##
 
-variable "load_balancer_name_app_crm" {}
-variable "load_balancer_ip_address_app_crm" {}
-variable "load_balancer_backend_pool_name_app_crm" {}
-variable "load_balancer_frontend_config_name_app_crm" {}
-variable "load_balancer_probe_prefix_app_crm" {}
-variable "load_balancer_rule_name_app_crm" {}
+// variable "load_balancer_name_app_crm" {}
+// variable "load_balancer_ip_address_app_crm" {}
+// variable "load_balancer_backend_pool_name_app_crm" {}
+// variable "load_balancer_frontend_config_name_app_crm" {}
+// variable "load_balancer_probe_prefix_app_crm" {}
+// variable "load_balancer_rule_name_app_crm" {}
 
 ## ==== App ISU ============================================================ ##
 
