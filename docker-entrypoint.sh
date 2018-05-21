@@ -4,41 +4,41 @@ echo "[INFO] Beginning Terraform section..."
 
 # Validate all Terraform variables have been set.
 declare -A TF_VARS=( \
-    ["TF_VAR_subscription_id"]="${TF_VAR_subscription_id}" \
-    ["TF_VAR_tenant_id"]="${TF_VAR_tenant_id}" \
+    ["ARM_ACCESS_KEY"]="${ARM_ACCESS_KEY}" \
+    ["ARM_ACCESS_SA"]="${ARM_ACCESS_SA}" \
+    ["TF_VAR_availability_set_name"]="${TF_VAR_availability_set_name}" \
     ["TF_VAR_client_id"]="${TF_VAR_client_id}" \
     ["TF_VAR_client_secret"]="${TF_VAR_client_secret}" \
-    ["TF_VAR_resource_group_name"]="${TF_VAR_resource_group_name}" \
-    ["TF_VAR_location"]="${TF_VAR_location}" \
-    ["TF_VAR_host_username"]="${TF_VAR_host_username}" \
+    ["TF_VAR_data_disk_count_db_crm"]="${TF_VAR_data_disk_count_db_crm}" \
+    ["TF_VAR_data_disk_count_db_isu"]="${TF_VAR_data_disk_count_db_isu}" \
+    ["TF_VAR_data_disk_count_pi"]="${TF_VAR_data_disk_count_pi}" \
+    ["TF_VAR_data_disk_size_ascs"]="${TF_VAR_data_disk_size_ascs}" \
+    ["TF_VAR_data_disk_size_db"]="${TF_VAR_data_disk_size_db}" \
+    ["TF_VAR_data_disk_size_pi"]="${TF_VAR_data_disk_size_pi}" \
     ["TF_VAR_host_password"]="${TF_VAR_host_password}" \
-    ["TF_VAR_vm_size_app"]="${TF_VAR_vm_size_app}" \
-    ["TF_VAR_network_security_group_app"]="${TF_VAR_network_security_group_app}" \
-    ["TF_VAR_subnet_id_app"]="${TF_VAR_subnet_id_app}" \
-    ["TF_VAR_availability_set_name"]="${TF_VAR_availability_set_name}" \
-    ["TF_VAR_node_count_app_crm"]="${TF_VAR_node_count_app_crm}" \
+    ["TF_VAR_host_username"]="${TF_VAR_host_username}" \
     ["TF_VAR_hostname_prefix"]="${TF_VAR_hostname_prefix}" \
     ["TF_VAR_hostname_suffix_start_range_app_crm"]="${TF_VAR_hostname_suffix_start_range_app_crm}" \
-    ["TF_VAR_node_count_app_isu"]="${TF_VAR_node_count_app_isu}" \
     ["TF_VAR_hostname_suffix_start_range_app_isu"]="${TF_VAR_hostname_suffix_start_range_app_isu}" \
-    ["TF_VAR_vm_size_db"]="${TF_VAR_vm_size_db}" \
-    ["TF_VAR_network_security_group_data"]="${TF_VAR_network_security_group_data}" \
-    ["TF_VAR_subnet_id_data"]="${TF_VAR_subnet_id_data}" \
-    ["TF_VAR_data_disk_size_db"]="${TF_VAR_data_disk_size_db}" \
-    ["TF_VAR_hostname_suffix_start_range_db_isu"]="${TF_VAR_hostname_suffix_start_range_db_isu}" \
-    ["TF_VAR_data_disk_count_db_isu"]="${TF_VAR_data_disk_count_db_isu}" \
-    ["TF_VAR_hostname_suffix_start_range_db_crm"]="${TF_VAR_hostname_suffix_start_range_db_crm}" \
-    ["TF_VAR_data_disk_count_db_crm"]="${TF_VAR_data_disk_count_db_crm}" \
-    ["TF_VAR_node_count_ascs"]="${TF_VAR_node_count_ascs}" \
-    ["TF_VAR_vm_size_ascs"]="${TF_VAR_vm_size_ascs}" \
     ["TF_VAR_hostname_suffix_start_range_ascs"]="${TF_VAR_hostname_suffix_start_range_ascs}" \
-    ["TF_VAR_data_disk_size_ascs"]="${TF_VAR_data_disk_size_ascs}" \
-    ["TF_VAR_vm_size_pi"]="${TF_VAR_vm_size_pi}" \
+    ["TF_VAR_hostname_suffix_start_range_db_crm"]="${TF_VAR_hostname_suffix_start_range_db_crm}" \
+    ["TF_VAR_hostname_suffix_start_range_db_isu"]="${TF_VAR_hostname_suffix_start_range_db_isu}" \
     ["TF_VAR_hostname_suffix_start_range_pi"]="${TF_VAR_hostname_suffix_start_range_pi}" \
-    ["TF_VAR_data_disk_count_pi"]="${TF_VAR_data_disk_count_pi}" \
-    ["TF_VAR_data_disk_size_pi"]="${TF_VAR_data_disk_size_pi}" \
-    ["ARM_ACCESS_SA"]="${ARM_ACCESS_SA}" \
-    ["ARM_ACCESS_KEY"]="${ARM_ACCESS_KEY}" \
+    ["TF_VAR_location"]="${TF_VAR_location}" \
+    ["TF_VAR_network_security_group_app"]="${TF_VAR_network_security_group_app}" \
+    ["TF_VAR_network_security_group_data"]="${TF_VAR_network_security_group_data}" \
+    ["TF_VAR_node_count_app_crm"]="${TF_VAR_node_count_app_crm}" \
+    ["TF_VAR_node_count_app_isu"]="${TF_VAR_node_count_app_isu}" \
+    ["TF_VAR_node_count_ascs"]="${TF_VAR_node_count_ascs}" \
+    ["TF_VAR_resource_group_name"]="${TF_VAR_resource_group_name}" \
+    ["TF_VAR_subnet_id_app"]="${TF_VAR_subnet_id_app}" \
+    ["TF_VAR_subnet_id_data"]="${TF_VAR_subnet_id_data}" \
+    ["TF_VAR_subscription_id"]="${TF_VAR_subscription_id}" \
+    ["TF_VAR_tenant_id"]="${TF_VAR_tenant_id}" \
+    ["TF_VAR_vm_size_app"]="${TF_VAR_vm_size_app}" \
+    ["TF_VAR_vm_size_ascs"]="${TF_VAR_vm_size_ascs}" \
+    ["TF_VAR_vm_size_db"]="${TF_VAR_vm_size_db}" \
+    ["TF_VAR_vm_size_pi"]="${TF_VAR_vm_size_pi}" \
 )
 
 for var in "${!TF_VARS[@]}"; do
@@ -75,10 +75,10 @@ echo "[INFO] Beginning Ansible section..."
 # Validate all Ansible variables have been set.
 declare -A ANSIBLE_VARS=( \
     ["dns_domain_name"]="${dns_domain_name}" \
+    ["domain_admin_group"]="${domain_admin_group}" \
     ["domain_join_username"]="${domain_join_username}" \
     ["domain_join_password"]="${domain_join_password}" \
     ["domain_ou_path"]="${domain_ou_path}" \
-    ["domain_admin_group"]="${domain_admin_group}" \
 )
 
 for var in "${!ANSIBLE_VARS[@]}"; do
