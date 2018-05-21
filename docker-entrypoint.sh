@@ -114,7 +114,7 @@ for role in "${roles[@]}"; do
             --extra-vars "domain_join_username=${domain_join_username}" \
             --extra-vars "domain_join_password=${domain_join_password}" \
             --extra-vars "domain_ou_path=${domain_ou_path}" \
-            --extra-vars "domain_admin_group=${domain_admin_group}" -vvv
+            --extra-vars "domain_admin_group=${domain_admin_group}" -v
 
     if [ $? -ne "0" ]; then
         echo "[ERROR] Fatal error encountered in Ansible playbook: ${playbook_name}"
