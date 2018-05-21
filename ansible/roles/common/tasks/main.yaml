@@ -4,14 +4,14 @@
     timezone: AUS Eastern Standard Time
 
 - name: Format F:\ - Windows Server 2012
-  script: scripts/Format-Volume.ps1 >
+  script: scripts/Format-Volume_WS2012R2.ps1 >
     -DiskNumber 2
     -DriveLetter F
     -FileSystemLabel Data
   when: ansible_distribution == "Microsoft Windows Server 2012 R2 Datacenter"
 
 - name: Format F:\ - Windows Server 2008
-  script: scripts/Format-WS2008R2Volume.ps1
+  script: scripts/Format-Volume_WS2008R2.ps1
   when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
 
 - name: Join to Active Directory domain
