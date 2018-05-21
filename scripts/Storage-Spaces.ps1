@@ -15,6 +15,12 @@ $ErrorActionPreference = "Stop"
 
 $PhysicalDisks = Get-PhysicalDisk -CanPool $true
 
+If ($PhysicalDisks.Count -eq 0) {
+    Write-Host "[INFO] No disks available for pooling"
+    Write-Host "Exiting..."
+    [Environment]::Exit(0)
+}
+
 Try {
     New-StoragePool -FriendlyName $FileSystemLabel -StorageSubsystemFriendlyName "Storage Spaces*" -PhysicalDisks $PhysicalDisks | `
         New-VirtualDisk -FriendlyName $FileSystemLabel -Interleave $Interleave -NumberOfColumns $PhysicalDisks.Count -ResiliencySettingName simple -UseMaximumSize | `

@@ -1,4 +1,4 @@
-# .\Format-Volume -DriveLetter F -FileSystemLabel Data
+# .\Format-Volume -DiskNumber 2 -DriveLetter F -FileSystemLabel Data
 [CmdletBinding()]
 Param
 (
@@ -14,6 +14,12 @@ Param
 
 $ErrorActionPreference = "Stop"
 
+If ( (Get-Disk -Number $DiskNumber).PartitionStyle -eq "GPT" ) {
+    Write-Host "[INFO] Disk number `"$DiskNumber`" is already formatted."
+    Write-Host "Exiting..."
+    [Environment]::Exit(0)
+}
+
 Try {
     Get-Disk -Number $DiskNumber | `
         Initialize-Disk -PartitionStyle GPT -PassThru | `
@@ -22,5 +28,6 @@ Try {
     Format-Volume -FileSystem NTFS -NewFileSystemLabel $FileSystemLabel -DriveLetter $DriveLetter -Confirm:$false
 }
 Catch {
+    Write-Error "$($_.Exception.Message)"
     [Environment]::Exit(1)
 }
