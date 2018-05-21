@@ -1,16 +1,16 @@
 # db-isu
 
 resource "azurerm_network_interface" "db-isu" {
-    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu + count.index}-nic1"
+    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu + count.index}-nic01"
     location                          = "${var.location}"
     resource_group_name               = "${var.resource_group_name}"
     network_security_group_id         = "${azurerm_network_security_group.nsg-data.id}"
+    enable_accelerated_networking     = true
 
     ip_configuration {
-        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu + count.index}-nic1-ipconfig"
+        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu + count.index}-nic01-ipconfig"
         subnet_id                     = "${var.subnet_id_data}"
-        private_ip_address_allocation = "static"
-        private_ip_address            = "${cidrhost(var.ip_range_data, var.ip_start_range_db_isu)}"
+        private_ip_address_allocation = "dynamic"
     }
 
     tags {

@@ -11,8 +11,8 @@ resource "azurerm_virtual_machine_extension" "prepare_winrm_2008" {
 
     settings              = <<SETTINGS
     {
-        "commandToExecute": "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -File Prep-WS2008R2.ps1",
-        "fileUris":         ["https://saptestsatf01.blob.core.windows.net/scripts/Prep-WS2008R2.ps1"]
+        "commandToExecute": "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -File Prepare-WS2008R2.ps1",
+        "fileUris":         ["https://saptestsatf01.blob.core.windows.net/scripts/Prepare-WS2008R2.ps1"]
     }
 SETTINGS
 }

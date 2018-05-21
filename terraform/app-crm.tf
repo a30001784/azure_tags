@@ -16,17 +16,17 @@ resource "azurerm_availability_set" "app-crm" {
 
 resource "azurerm_network_interface" "app-crm" {
     count                                         = "${var.node_count_app_crm}"
-    name                                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_app_crm + count.index}-nic1"
+    name                                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_app_crm + count.index}-nic01"
     location                                      = "${var.location}"
     resource_group_name                           = "${var.resource_group_name}"
     network_security_group_id                     = "${azurerm_network_security_group.nsg-app.id}"
+    enable_accelerated_networking                 = true
     //depends_on                                  = ["azurerm_lb.ilb-app-crm"]
 
     ip_configuration {
-        name                                      = "${var.hostname_prefix}${var.hostname_suffix_start_range_app_crm + count.index}-nic1-ipconfig"
+        name                                      = "${var.hostname_prefix}${var.hostname_suffix_start_range_app_crm + count.index}-nic01-ipconfig"
         subnet_id                                 = "${var.subnet_id_app}"
-        private_ip_address_allocation             = "static"
-        private_ip_address                        = "${cidrhost(var.ip_range_app, var.ip_start_range_app_crm + count.index)}"
+        private_ip_address_allocation             = "dynamic"
         //load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.ilb-crm-be-pool.id}"]
     }
 
