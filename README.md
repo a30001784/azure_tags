@@ -1,6 +1,4 @@
-<snippet>
-  <content><![CDATA[
-# ${1:Project Name}
+# AGL.AAA.SAP.Infra
 This project contains the code used to deploy the infrastructure for the AGL SAP Performance Testing environment, and potentially others, in future.
 ## Usage
 There is a deployment pipeline in VSTS with the same name as this repository.
@@ -35,6 +33,3 @@ This is annoying and broken. HashiCorp is aware of this issue which is tracked [
 * **Lukas Bartsch** - *Initial work* - [GitHub](https://github.com/a142619)
 ## License
 TODO: Write license
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
