@@ -15,7 +15,7 @@ resource_group=$2
 location=$3
 sku=$4
 
-storage_account_name=$(az storage account show --name "${1}" --resource-group ${2})
+storage_account_name=$(az storage account show --name "${account_name}" --resource-group "${resource_group}")
 
 if [ -z "${storage_account_name}" ]; then
     az storage account create \
