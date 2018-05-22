@@ -17,14 +17,11 @@ RUN curl https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_
     unzip terraform.zip -d /usr/bin
 
 # Set up working directory
-COPY ./terraform /working/terraform
-COPY ./ansible /working/ansible
-COPY ./scripts /working/scripts
+COPY . /working/.
 WORKDIR /working
 
 # Configure entrypoint
-COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN chmod +x /working/docker-entrypoint.sh
 
 # Begin!
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "/working/docker-entrypoint.sh" ]
