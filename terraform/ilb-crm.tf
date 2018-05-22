@@ -24,6 +24,7 @@ resource "azurerm_lb_probe" "ilb-crm-probe" {
     resource_group_name               = "${var.resource_group_name}"
     loadbalancer_id                   = "${azurerm_lb.ilb-crm.id}"
     name                              = "${var.load_balancer_probe_prefix_app_crm}80${count.index + 1}0"
+    protocol                          = "Http"
     port                              = "80${count.index + 1}0"
     interval_in_seconds               = 5
     number_of_probes                  = 2
