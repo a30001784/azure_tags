@@ -1,0 +1,6 @@
+---
+- name: Format K:\ drive
+  script: scripts/Format-Volume_WS2012R2.ps1 >
+    -DiskNumber 3
+    -DriveLetter K
+    -FileSystemLabel Data
