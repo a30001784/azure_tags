@@ -60,11 +60,13 @@ for var in "${!TF_VARS[@]}"; do
     fi
 done
 
-# Update backend file with relevant values. These values cannot be passed via environment variables. 
-sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" /working/terraform/backend.tf
-sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" /working/terraform/backend.tf
+terraform_dir="/working/terraform"
 
-cd /working/terraform && \
+# Update backend file with relevant values. These values cannot be passed via environment variables. 
+sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
+sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
+
+cd ${terraform_dir} && \
     terraform init && \
     terraform plan && \
     terraform apply --auto-approve
@@ -108,7 +110,7 @@ for role in "${roles[@]}"; do
     playbook_name="configure-${role}"
 
     # Generate inventory file for each role by stripping spaces then putting each IP address on a new line.
-    for ip in $(cd /working/terraform; terraform output ip_addresses_${role} | tr -d " " | tr "," "\n"); do
+    for ip in $(cd "${terraform_dir}"; terraform output ip_addresses_${role} | tr -d " " | tr "," "\n"); do
         echo $ip >> $inventory_file
     done
 
