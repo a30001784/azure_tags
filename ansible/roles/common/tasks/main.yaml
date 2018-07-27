@@ -45,6 +45,7 @@
 - name: Install ODBC driver
   win_package: 
     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
+    product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
     state: present
 # when: host is not a db server
 
