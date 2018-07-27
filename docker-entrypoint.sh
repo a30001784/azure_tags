@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
+set -e
+
+## Global variables ##
+terraform_dir="/working/terraform" # Terraform directory.
+ansible_dir="/working/ansible" # Ansble directory.
+extra_vars="" # Extra variables for Ansible playbook runs.
+roles=( "app" ) #"ascs" "data" "pi" ) # Ansible roles.
+
 echo "[INFO] Beginning Terraform section..."
 
 # Validate all Terraform variables have been set.
 declare -A TF_VARS=( \
     ["ARM_ACCESS_KEY"]="${ARM_ACCESS_KEY}" \
     ["ARM_ACCESS_SA"]="${ARM_ACCESS_SA}" \
-    ["TF_VAR_availability_set_name"]="${TF_VAR_availability_set_name}" \
+    ["TF_VAR_availability_set_name_app_crm"]="${TF_VAR_availability_set_name_app_crm}" \
+    ["TF_VAR_availability_set_name_app_isu"]="${TF_VAR_availability_set_name_app_isu}" \
     ["TF_VAR_client_id"]="${TF_VAR_client_id}" \
     ["TF_VAR_client_secret"]="${TF_VAR_client_secret}" \
     ["TF_VAR_data_disk_count_db_crm"]="${TF_VAR_data_disk_count_db_crm}" \
@@ -60,13 +69,11 @@ for var in "${!TF_VARS[@]}"; do
     fi
 done
 
-terraform_dir="/working/terraform"
-
 # Update backend file with relevant values. These values cannot be passed via environment variables. 
 sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
 sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
 
-cd ${terraform_dir} && \
+cd "${terraform_dir}" && \
     terraform init && \
     terraform plan && \
     terraform apply --auto-approve
@@ -77,7 +84,7 @@ if [ $? -ne "0" ]; then
     exit 1002
 fi
 
-# The Windows 2008 servers may not yet be ready for Ansible. So we wait. 
+# The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
 sleep 300
 echo "[INFO] Finished sleeping."
@@ -92,19 +99,21 @@ declare -A ANSIBLE_VARS=( \
     ["domain_ou_path"]="${domain_ou_path}" \
 )
 
+# Check if all required Ansible variables are set.
 for var in "${!ANSIBLE_VARS[@]}"; do
     if [[ -z "${ANSIBLE_VARS[$var]}" ]]; then
         echo "[ERROR] Environment variable not set: ${var}"
         echo "Exiting..."
-        exit 1001
+        exit 1003
     else
         echo "[INFO] Environment variable set: ${var}"
+
+        # When variable is set, append to extra vars.
+        extra_vars="${extra_vars} ${var}='${ANSIBLE_VARS[$var]}'"
     fi
 done
 
 # Run the Ansible playbook for each role.
-roles=( "app" "ascs" "data" "pi" )
-
 for role in "${roles[@]}"; do
     inventory_file="/tmp/inventory_${role}"
     playbook_name="configure-${role}"
@@ -114,19 +123,14 @@ for role in "${roles[@]}"; do
         echo $ip >> $inventory_file
     done
 
-    cd /working/ansible && \
+    cd "${ansible_dir}" && \
         ansible-playbook "${playbook_name}.yaml" \
             --inventory-file "${inventory_file}" \
-            --extra-vars "ansible_password=${TF_VAR_host_password}" \
-            --extra-vars "dns_domain_name=${dns_domain_name}" \
-            --extra-vars "domain_join_username=${domain_join_username}" \
-            --extra-vars "domain_join_password=${domain_join_password}" \
-            --extra-vars "domain_ou_path=${domain_ou_path}" \
-            --extra-vars "domain_admin_group=${domain_admin_group}" -v
+            --extra-vars "${extra_vars}" -v
 
     if [ $? -ne "0" ]; then
         echo "[ERROR] Fatal error encountered in Ansible playbook: ${playbook_name}"
         echo "Exiting..."
-        exit 1003
+        exit 1004
     fi
 done

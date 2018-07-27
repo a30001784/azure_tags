@@ -1,19 +1,47 @@
 ---
+# Set timezone
 - name: Set timezone to AUS Eastern Standard Time (AEST)
   win_timezone:
     timezone: AUS Eastern Standard Time
 
-- name: Format F:\ - Windows Server 2012
-  script: scripts/Format-Volume_WS2012R2.ps1 >
-    -DiskNumber 2
-    -DriveLetter F
-    -FileSystemLabel Data
-  when: ansible_distribution == "Microsoft Windows Server 2012 R2 Datacenter"
+# # Format disks
+# - name: Format F:\ - Windows Server 2012
+#   script: scripts/Format-Volume_WS2012R2.ps1 >
+#     -DiskNumber 2
+#     -DriveLetter F
+#     -FileSystemLabel Data
+#   when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
-- name: Format F:\ - Windows Server 2008
-  script: scripts/Format-Volume_WS2008R2.ps1
-  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
+# - name: Format F:\ - Windows Server 2008
+#   script: scripts/Format-Volume_WS2008R2.ps1
+#   when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
 
+# Disable Windows Firewall
+- name: Disable Windows firewall
+  win_firewall:
+    state: disabled
+    profiles:
+    - Domain
+    - Private
+    - Public
+
+# Disable Internet Explorer ESC
+- name: Disable IE Enhanced Security Configuration
+  script: scripts/Disable-InternetExplorerESC.ps1
+
+# Install .NET Framework 3.5
+- name: Install NET-Framework
+  win_feature:
+    name: NET-Framework-Features
+    include_sub_features: true
+    state: present
+  register: dotnet_install
+
+- name: Reboot if required for .NET Framework install
+  win_reboot:
+  when: dotnet_install.reboot_required
+
+# Join computer to AGL on-premises Active Directory
 - name: Join to Active Directory domain
   win_domain_membership:
     dns_domain_name: "{{ dns_domain_name }}"
@@ -27,6 +55,7 @@
   win_reboot:
   when: domain_state.reboot_required
 
+# Add group to local admins
 - name: Add group to local admins
   win_group_membership:
     name: Administrators

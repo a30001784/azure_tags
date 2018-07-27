@@ -1,0 +1,1 @@
+../../../../scripts/Disable-InternetExplorerESC.ps1

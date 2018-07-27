@@ -17,6 +17,9 @@ It is worth noting that if the number of data disks for either DB server or PI s
     }
 ```
 This is annoying and broken. HashiCorp is aware of this issue which is tracked [here](https://github.com/hashicorp/terraform/issues/7034).
+
+**Update** - this will be fixed and functionality will be included in [Terraform 0.12](https://www.hashicorp.com/blog/terraform-0-1-2-preview).
+
 ## To do
 * The file `scripts/Prepare-WS2008R2.ps1` is hosted on blob storage of the Terraform State storage account and is globally readable. It is required to be globally readable so the Azure VM extensions can access it during deployment. This should be reworked somehow, however, can be removed if the requirement for Windows Server 2008 R2 machines is descoped.
 * The templates `app-crm.tf` and `app-isu.tf` are nearly identical aside from the Availability Set configuration. If the AS can be created conditionally, the templates can be merged into one generic `app` template (e.g. `server_type == "crm" ? add to AS : don't add to AS`).

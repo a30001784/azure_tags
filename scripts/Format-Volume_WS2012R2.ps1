@@ -9,7 +9,7 @@ Param
     [char]$DriveLetter,
 
     [Parameter(Mandatory=$true)]
-    [string]$FileSystemLabel   
+    [string]$FileSystemLabel
 )
 
 $ErrorActionPreference = "Stop"

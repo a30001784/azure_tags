@@ -27,9 +27,9 @@ variable "subnet_id_app" {}
 
 ## ==== App CRM ============================================================ ##
 
-variable "availability_set_name" {}
-variable "node_count_app_crm" {}
+variable "availability_set_name_app_crm" {}
 variable "hostname_suffix_start_range_app_crm" {}
+variable "node_count_app_crm" {}
 
 ## ==== Load balancer ====================================================== ##
 
@@ -42,8 +42,9 @@ variable "hostname_suffix_start_range_app_crm" {}
 
 ## ==== App ISU ============================================================ ##
 
-variable "node_count_app_isu" {}
+variable "availability_set_name_app_isu" {}
 variable "hostname_suffix_start_range_app_isu" {}
+variable "node_count_app_isu" {}
 
 ## ==== DB ================================================================= ##
 
