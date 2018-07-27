@@ -85,13 +85,15 @@ if [ $? -ne "0" ]; then
 fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
-echo "[INFO] Sleeping for 5 minutes..."
-sleep 300
-echo "[INFO] Finished sleeping."
-echo "[INFO] Beginning Ansible section..."
+# echo "[INFO] Sleeping for 5 minutes..."
+# sleep 300
+# echo "[INFO] Finished sleeping."
+# echo "[INFO] Beginning Ansible section..."
 
 # Validate all Ansible variables have been set.
 declare -A ANSIBLE_VARS=( \
+    ["ansible_user"]="${TF_VAR_host_username}" \
+    ["ansible_password"]="${TF_VAR_host_password}" \
     ["dns_domain_name"]="${dns_domain_name}" \
     ["domain_admin_group"]="${domain_admin_group}" \
     ["domain_join_username"]="${domain_join_username}" \
