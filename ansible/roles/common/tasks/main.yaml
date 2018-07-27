@@ -41,6 +41,13 @@
   win_reboot:
   when: dotnet_install.reboot_required
 
+# Install Microsoft ODBC Driver 11 for SQL Server
+- name: Install ODBC driver
+  win_package: 
+    path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
+    state: present
+# when: host is not a db server
+
 # Join computer to AGL on-premises Active Directory
 - name: Join to Active Directory domain
   win_domain_membership:
