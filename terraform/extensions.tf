@@ -17,21 +17,21 @@ resource "azurerm_virtual_machine_extension" "prepare_winrm_2008" {
 SETTINGS
 }
 
-resource "azurerm_virtual_machine_extension" "prepare_winrm_2012" {
-    count                 = 2
-    name                  = "${element(concat(azurerm_virtual_machine.db-isu.*.name, azurerm_virtual_machine.db-crm.*.name),count.index)}-prepare_winrm_2012"
-    location              = "${var.location}"
-    resource_group_name   = "${var.resource_group_name}"
-    virtual_machine_name  = "${element(concat(azurerm_virtual_machine.db-isu.*.name, azurerm_virtual_machine.db-crm.*.name),count.index)}"
-    publisher             = "Microsoft.Compute"
-    type                  = "CustomScriptExtension"
-    type_handler_version  = "1.8"
-    depends_on            = ["azurerm_virtual_machine.db-crm", "azurerm_virtual_machine.db-isu"]
+// resource "azurerm_virtual_machine_extension" "prepare_winrm_2012" {
+//     count                 = 2
+//     name                  = "${element(concat(azurerm_virtual_machine.db-isu.*.name, azurerm_virtual_machine.db-crm.*.name),count.index)}-prepare_winrm_2012"
+//     location              = "${var.location}"
+//     resource_group_name   = "${var.resource_group_name}"
+//     virtual_machine_name  = "${element(concat(azurerm_virtual_machine.db-isu.*.name, azurerm_virtual_machine.db-crm.*.name),count.index)}"
+//     publisher             = "Microsoft.Compute"
+//     type                  = "CustomScriptExtension"
+//     type_handler_version  = "1.8"
+//     depends_on            = ["azurerm_virtual_machine.db-crm", "azurerm_virtual_machine.db-isu"]
 
-    settings              = <<SETTINGS
-    {
-        "commandToExecute": "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -File ConfigureRemotingForAnsible.ps1",
-        "fileUris":         ["https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"]
-    }
-SETTINGS
-}
+//     settings              = <<SETTINGS
+//     {
+//         "commandToExecute": "C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -File ConfigureRemotingForAnsible.ps1",
+//         "fileUris":         ["https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"]
+//     }
+// SETTINGS
+// }
