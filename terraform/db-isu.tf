@@ -22,7 +22,7 @@
 
 // resource "azurerm_managed_disk" "db-isu" {
 //     count                             = "${var.data_disk_count_db_isu}"
-//     name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu}-datadisk${count.index + 2 < 10 ? "0" : ""}${count.index + 2}"
+//     name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_isu}-datadisk${count.index + 1 < 10 ? "0" : ""}${count.index + 1}"
 //     location                          = "${var.location}"
 //     resource_group_name               = "${var.resource_group_name}"
 //     storage_account_type              = "Premium_LRS"
