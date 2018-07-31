@@ -1,13 +1,13 @@
 resource "azurerm_virtual_machine_extension" "prepare_winrm_2016" {
     count                 = "${var.node_count_app_isu + var.node_count_app_crm}"
-    name                  = "${element(concat(azurerm_virtual_machine.app-isu.*.name, azurerm_virtual_machine.app-crm.*.name),count.index)}-prepare_winrm_2016"
+    name                  = "${element(concat(concat(azurerm_virtual_machine.app-isu.*.name, azurerm_virtual_machine.app-crm.*.name), azurerm_virtual_machine.db-crm),count.index)}-prepare_winrm_2016"
     location              = "${var.location}"
     resource_group_name   = "${var.resource_group_name}"
-    virtual_machine_name  = "${element(concat(azurerm_virtual_machine.app-isu.*.name, azurerm_virtual_machine.app-crm.*.name),count.index)}"
+    virtual_machine_name  = "${element(concat(concat(azurerm_virtual_machine.app-isu.*.name, azurerm_virtual_machine.app-crm.*.name), azurerm_virtual_machine.db-crm),count.index)}"
     publisher             = "Microsoft.Compute"
     type                  = "CustomScriptExtension"
     type_handler_version  = "1.8"
-    depends_on            = ["azurerm_virtual_machine.app-isu","azurerm_virtual_machine.app-crm"]
+    depends_on            = ["azurerm_virtual_machine.app-isu","azurerm_virtual_machine.app-crm","azurerm.virtual_machine.db-crm"]
 
     settings              = <<SETTINGS
     {
