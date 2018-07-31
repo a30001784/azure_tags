@@ -6,7 +6,7 @@ set -e
 terraform_dir="/working/terraform" # Terraform directory.
 ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
-roles=( "app" "db-isu" "db-crm" ) #"ascs" "data" "pi" ) # Ansible roles.
+roles=( "app" "db-crm" ) #"db-isu" "ascs" "data" "pi" ) # Ansible roles.
 
 echo "[INFO] Beginning Terraform section..."
 
