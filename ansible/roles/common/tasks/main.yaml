@@ -1,8 +1,4 @@
 ---
-
-- debug: 
-    msg: "{{ hostvars[inventory_hostname].group_names[0] }}"
-
 # Set timezone
 - name: Set timezone to AUS Eastern Standard Time (AEST)
   win_timezone:
@@ -53,10 +49,7 @@
   register: dotnet_install
   when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
-- debug:
-    msg: "Install ODBC driver: {{ install_odbc_driver }}"
-
-# Install Microsoft ODBC Driver 11 for SQL Server
+# Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
 - name: Install ODBC driver
   win_package: 
     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
