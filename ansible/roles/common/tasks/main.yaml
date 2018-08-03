@@ -1,22 +1,31 @@
 ---
+
+- debug: 
+    msg: "{{ hostvars[inventory_hostname].group_names[0] }}"
+
 # Set timezone
 - name: Set timezone to AUS Eastern Standard Time (AEST)
   win_timezone:
     timezone: AUS Eastern Standard Time
 
-# # Format disks
-# - name: Format F:\ - Windows Server 2012
-#   script: scripts/Format-Volume_WS2012R2.ps1 >
-#     -DiskNumber 2
-#     -DriveLetter F
-#     -FileSystemLabel Data
-#   when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
+# Extend C drive - 2008
+- name: Extend C drive - 2008
+  win_shell: '"select volume c`r extend" | diskpart'
+  args:
+    executable: powershell
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
 
-# - name: Format F:\ - Windows Server 2008
-#   script: scripts/Format-Volume_WS2008R2.ps1
-#   when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
+# Extend C drive - 2012/2016
+- name: Extend C drive - 2012/2016
+  script: scripts/Extend-Volume.ps1
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter "
 
-# Disable Windows Firewall
+## Disable Windows Firewall - 2008/2012
+- name: Disable Windows firewall
+  win_shell: netsh advfirewall set allprofiles state off
+  when: ansible_distribution != "Microsoft Windows Server 2016 Datacenter"
+
+# Disable Windows Firewall - 2016
 - name: Disable Windows firewall
   win_firewall:
     state: disabled
@@ -24,30 +33,37 @@
     - Domain
     - Private
     - Public
+  when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
 # Disable Internet Explorer ESC
 - name: Disable IE Enhanced Security Configuration
   script: scripts/Disable-InternetExplorerESC.ps1
 
-# Install .NET Framework 3.5
-- name: Install NET-Framework
+# Install .NET Framework - 2008/2012
+- name: Install .NET Framework 
+  script: scripts/Install-DotNetFramework.ps1
+  when: ansible_distribution != "Microsoft Windows Server 2016 Datacenter"
+
+# Install .NET Framework - 2016
+- name: Install .NET Framework
   win_feature:
     name: NET-Framework-Features
     include_sub_features: true
     state: present
   register: dotnet_install
+  when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
-- name: Reboot if required for .NET Framework install
-  win_reboot:
-  when: dotnet_install.reboot_required
+- debug:
+    msg: "Install ODBC driver: {{ install_odbc_driver }}"
 
 # Install Microsoft ODBC Driver 11 for SQL Server
-# - name: Install ODBC driver
-#   win_package: 
-#     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
-#     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
-#     state: present
-# when: host is not a db server
+- name: Install ODBC driver
+  win_package: 
+    path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
+    arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
+    product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
+    state: present
+when: hostvars[inventory_hostname].group_names[0] != "data"
 
 # Join computer to AGL on-premises Active Directory
 - name: Join to Active Directory domain
