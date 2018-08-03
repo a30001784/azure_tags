@@ -9,6 +9,7 @@ extra_vars="" # Extra variables for Ansible playbook runs.
 roles=( "app" "data" "ascs" )
 sub_roles=( "crm" "isu" "nwgw" "pi" "xi" )
 playbooks=( "configure-all" )
+inventory_file="/tmp/inventory_master"
 
 echo "[INFO] Beginning Terraform section..."
 
@@ -108,7 +109,7 @@ fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
-#sleep 300
+sleep 300
 echo "[INFO] Finished sleeping."
 echo "[INFO] Beginning Ansible section..."
 
@@ -147,7 +148,7 @@ for var in "${!ANSIBLE_VARS[@]}"; do
     fi
 done
 
-inventory_file="/tmp/inventory_master"
+echo "[INFO] Generating Ansible inventory file..."
 
 ## Construct inventory file
 for role in "${roles[@]}"; do
@@ -188,7 +189,7 @@ for role in "${roles[@]}"; do
     fi
 done
 
-cat "${inventory_file}"
+echo "[INFO] Beginning Ansible playbooks..."
 
 cd "${ansible_dir}"
 for playbook in "${playbooks[@]}"; do
