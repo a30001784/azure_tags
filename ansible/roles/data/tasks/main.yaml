@@ -1,0 +1,18 @@
+- name: Stripe Data disks
+  script: scripts/Storage-Spaces.ps1 >
+    -DriveLetter I
+    -Interleave 65536
+    -FileSystemLabel Data
+    -NumDisks {{ num_pooled_disks }}
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks > 0
+
+- name: Format I:\ drive - Windows Server 2008
+  script: scripts/Format-Volume_WS2008R2.ps1 -DriveLetter I
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks == 0
+
+- name: Stripe Backup disks
+  script: scripts/Storage-Spaces.ps1 >
+    -DriveLetter G
+    -Interleave 65536
+    -FileSystemLabel Backup
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"

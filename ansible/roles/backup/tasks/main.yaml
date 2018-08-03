@@ -1,5 +1,0 @@
-- name: Stripe disks
-  script: scripts/Storage-Spaces.ps1 >
-    -DriveLetter G
-    -Interleave 65536
-    -FileSystemLabel Backup
