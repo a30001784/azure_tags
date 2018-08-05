@@ -16,7 +16,7 @@
   script: scripts/Extend-Volume.ps1
   when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter "
 
-## Disable Windows Firewall - 2008/2012
+# Disable Windows Firewall - 2008/2012
 - name: Disable Windows firewall
   win_shell: netsh advfirewall set allprofiles state off
   when: ansible_distribution != "Microsoft Windows Server 2016 Datacenter"
@@ -56,7 +56,7 @@
     arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
     state: present
-when: hostvars[inventory_hostname].group_names[0] != "data"
+  when: hostvars[inventory_hostname].group_names[0] != "data"
 
 # Join computer to AGL on-premises Active Directory
 - name: Join to Active Directory domain
