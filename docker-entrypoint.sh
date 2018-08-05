@@ -134,6 +134,8 @@ declare -A ANSIBLE_VARS=( \
     ["num_pooled_disks_data_xi"]="${num_pooled_disks_data_xi}" \
 )
 
+echo "[INFO] Checking Ansible variables..."
+
 # Check if all required Ansible variables are set.
 for var in "${!ANSIBLE_VARS[@]}"; do
     if [[ -z "${ANSIBLE_VARS[$var]}" ]]; then
