@@ -13,7 +13,7 @@ locals {
 
 locals {
     ws2016_virtual_machines_count = "${var.node_count_app_crm + var.node_count_app_isu + var.node_count_db_crm + var.node_count_db_isu + var.node_count_ascs}"
-    ws2016_virtual_machines_names = "${concat(concat(concat(concat(azurerm_virtual_machine.app-crm.*.name, azurerm_virtual_machine.app-isu.*.name), azurerm_virtual_machine.db-crm.*.name), azurerm_virtual_machine.db-isu.*.name), azurerm_virtual_machine.ascs.*.name)}"
+    ws2016_virtual_machines_names = "${concat(concat(concat(azurerm_virtual_machine.app.*.name, azurerm_virtual_machine.db-crm.*.name), azurerm_virtual_machine.db-isu.*.name), azurerm_virtual_machine.ascs.*.name)}"
     #app-crm, app-isu, db-crm, db-isu, ascs, app-swd
 }
 
@@ -64,7 +64,7 @@ resource "azurerm_virtual_machine_extension" "prepare_winrm_2016" {
     publisher             = "Microsoft.Compute"
     type                  = "CustomScriptExtension"
     type_handler_version  = "1.8"
-    depends_on            = ["azurerm_virtual_machine.app-crm","azurerm_virtual_machine.app-isu","azurerm_virtual_machine.ascs","azurerm_virtual_machine.db-isu","azurerm_virtual_machine.db-isu"]
+    depends_on            = ["azurerm_virtual_machine.app","azurerm_virtual_machine.ascs","azurerm_virtual_machine.db-crm","azurerm_virtual_machine.db-isu"]
 
     settings              = <<SETTINGS
     {

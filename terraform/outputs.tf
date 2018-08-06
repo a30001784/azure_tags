@@ -1,9 +1,9 @@
 output "ip_addresses_app-crm" { 
-    value = "${azurerm_network_interface.app-crm.*.private_ip_address}"
+    value = "${slice(azurerm_network_interface.app.*.private_ip_address, 0, var.node_count_app_crm)}"
 }
 
 output "ip_addresses_app-isu" { 
-    value = "${azurerm_network_interface.app-isu.*.private_ip_address}"
+    value = "${slice(azurerm_network_interface.app.*.private_ip_address, var.node_count_app_crm, length(azurerm_network_interface.app.*.private_ip_address))}"
 }
 
 output "ip_addresses_app-nwgw" { 
@@ -32,10 +32,6 @@ output "ip_addresses_ascs-xi" {
 
 output "ip_addresses_data-crm" { 
     value = ["${azurerm_network_interface.db-crm.private_ip_address}"]
-}
-
-output "ip_addresses_data-isu" { 
-    value = ["${azurerm_network_interface.db-isu.private_ip_address}"]
 }
 
 output "ip_addresses_data-nwgw" { 
