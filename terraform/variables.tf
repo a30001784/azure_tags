@@ -44,6 +44,12 @@ variable "hostname_suffix_start_range_app_nwgw" {}
 variable "node_count_app_nwgw" {}
 variable "vm_size_app_nwgw" {} 
 
+## ==== APP SWD ============================================================= ##
+
+variable "hostname_suffix_start_range_app_swd" {}
+variable "node_count_app_swd" {}
+variable "vm_size_app_swd" {}
+
 ## ==== APP XI ============================================================== ##
 
 variable "availability_set_name_app_xi" {}

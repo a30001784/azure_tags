@@ -10,6 +10,10 @@ output "ip_addresses_app-nwgw" {
     value = "${azurerm_network_interface.app-nwgw.*.private_ip_address}"
 }
 
+output "ip_addresses_app-swd" { 
+    value = "${azurerm_network_interface.app-swd.*.private_ip_address}"
+}
+
 output "ip_addresses_app-xi" { 
     value = "${azurerm_network_interface.app-xi.*.private_ip_address}"
 }
