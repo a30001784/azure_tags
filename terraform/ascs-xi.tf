@@ -23,7 +23,7 @@ resource "azurerm_network_interface" "ascs-xi" {
 
 resource "azurerm_managed_disk" "ascs-xi" {
     count                             = "${var.node_count_ascs_xi}"
-    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs_xi + count.index}-datadisk${count.index + 1 < 10 ? "0" : ""}${count.index + 1}"
+    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs_xi + count.index}-datadisk01"
     location                          = "${var.location}"
     resource_group_name               = "${var.resource_group_name}"
     storage_account_type              = "Premium_LRS"
