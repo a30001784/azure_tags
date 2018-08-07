@@ -112,7 +112,7 @@ fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
-#sleep 300
+sleep 300
 echo "[INFO] Finished sleeping."
 echo "[INFO] Beginning Ansible section..."
 
