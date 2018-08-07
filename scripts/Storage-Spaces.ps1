@@ -4,8 +4,8 @@ Param
     [Parameter(Mandatory = $true)]
     [char]$DriveLetter,
 
-    [Parameter(Mandatory = $true)]
-    [int]$Interleave,
+    [Parameter(Mandatory = $false)]
+    [int]$Interleave = 65536,
 
     [Parameter(Mandatory = $true)]
     [string]$FileSystemLabel,
