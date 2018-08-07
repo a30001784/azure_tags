@@ -28,7 +28,6 @@ resource "azurerm_virtual_machine" "app-swd" {
     resource_group_name               = "${var.resource_group_name}"
     network_interface_ids             = ["${azurerm_network_interface.app-swd.*.id[count.index]}"]
     vm_size                           = "${var.vm_size_app_swd}"
-    availability_set_id               = "${azurerm_availability_set.app-swd.id}"
     depends_on                        = ["azurerm_network_interface.app-swd"]
 
     delete_os_disk_on_termination     = true
