@@ -104,6 +104,8 @@ cd "${terraform_dir}" && \
     terraform plan #&& \
     #terraform apply --auto-approve
 
+exit
+
 if [ $? -ne "0" ]; then
     echo "[ERROR] Fatal error encountered in Terraform run"
     echo "Exiting..."
