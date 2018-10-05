@@ -1,6 +1,10 @@
----
-- name: Format K:\ drive
+- name: Format K:\ - Windows Server 2008
+  script: scripts/Format-Volume_WS2008R2.ps1 -DriveLetter K
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
+  
+- name: Format K:\ - Windows Server 2012/2016
   script: scripts/Format-Volume_WS2012R2.ps1 >
-    -DiskNumber 3
+    -DiskNumber 2
     -DriveLetter K
     -FileSystemLabel Data
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter "

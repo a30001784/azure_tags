@@ -1,16 +1,16 @@
-# ascs
+# db-nwgw
 
-resource "azurerm_network_interface" "ascs" {
-    count                             = "${var.node_count_ascs}"
-    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}-nic01"
+resource "azurerm_network_interface" "db-nwgw" {
+    count                             = "${var.node_count_db_nwgw}"
+    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}-nic01"
     location                          = "${var.location}"
     resource_group_name               = "${var.resource_group_name}"
-    network_security_group_id         = "${azurerm_network_security_group.nsg-app.id}"
+    network_security_group_id         = "${azurerm_network_security_group.nsg-data.id}"
     enable_accelerated_networking     = true
 
     ip_configuration {
-        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}-nic01-ipconfig"
-        subnet_id                     = "${var.subnet_id_app}"
+        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}-nic01-ipconfig"
+        subnet_id                     = "${var.subnet_id_data}"
         private_ip_address_allocation = "dynamic"
     }
 
@@ -21,14 +21,14 @@ resource "azurerm_network_interface" "ascs" {
     }
 }
 
-resource "azurerm_managed_disk" "ascs" {
-    count                             = "${var.node_count_ascs}"
-    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}-datadisk01"
+resource "azurerm_managed_disk" "db-nwgw" {
+    count                             = "${var.node_count_db_nwgw}"
+    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}-datadisk01"
     location                          = "${var.location}"
     resource_group_name               = "${var.resource_group_name}"
     storage_account_type              = "Premium_LRS"
     create_option                     = "Empty"
-    disk_size_gb                      = "${var.data_disk_size_ascs}"
+    disk_size_gb                      = "${var.data_disk_size_db}"
 
     tags {
         CostCode                      = "${var.tag_cost_code}"
@@ -37,14 +37,14 @@ resource "azurerm_managed_disk" "ascs" {
     }
 }
 
-resource "azurerm_virtual_machine" "ascs" {
-    count                             = "${var.node_count_ascs}"
-    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}"
+resource "azurerm_virtual_machine" "db-nwgw" {
+    count                             = "${var.node_count_db_nwgw}"
+    name                              = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}"
     location                          = "${var.location}"
     resource_group_name               = "${var.resource_group_name}"
-    network_interface_ids             = ["${azurerm_network_interface.ascs.*.id[count.index]}"]
-    vm_size                           = "${var.vm_size_ascs}"
-    depends_on                        = ["azurerm_network_interface.ascs","azurerm_managed_disk.ascs"]
+    network_interface_ids             = ["${azurerm_network_interface.db-nwgw.*.id[count.index]}"]
+    vm_size                           = "${var.vm_size_db_nwgw}"
+    depends_on                        = ["azurerm_network_interface.db-nwgw","azurerm_managed_disk.db-nwgw"]
 
     delete_os_disk_on_termination     = true
     delete_data_disks_on_termination  = true
@@ -52,28 +52,28 @@ resource "azurerm_virtual_machine" "ascs" {
     storage_image_reference {
         publisher                     = "MicrosoftWindowsServer"
         offer                         = "WindowsServer"
-        sku                           = "2016-Datacenter"
+        sku                           = "2008-R2-SP1"
         version                       = "latest"
     }
 
     storage_os_disk {
-        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}-osdisk"
+        name                          = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}-osdisk"
         caching                       = "ReadWrite"
         create_option                 = "FromImage"
         managed_disk_type             = "Premium_LRS"
-        disk_size_gb                  = 256
+        disk_size_gb                  = "256"
     }
-    
+
     storage_data_disk {
-        name                          = "${azurerm_managed_disk.ascs.*.name[count.index]}"
-        managed_disk_id               = "${azurerm_managed_disk.ascs.*.id[count.index]}"
+        name                          = "${azurerm_managed_disk.db-nwgw.*.name[count.index]}"
+        managed_disk_id               = "${azurerm_managed_disk.db-nwgw.*.id[count.index]}"
         create_option                 = "Attach"
         lun                           = 0
-        disk_size_gb                  = "${azurerm_managed_disk.ascs.*.disk_size_gb[count.index]}"
+        disk_size_gb                  = "${azurerm_managed_disk.db-nwgw.*.disk_size_gb[count.index]}"
     }
 
     os_profile {
-        computer_name                 = "${var.hostname_prefix}${var.hostname_suffix_start_range_ascs + count.index}"
+        computer_name                 = "${var.hostname_prefix}${var.hostname_suffix_start_range_db_nwgw + count.index}"
         admin_username                = "${var.host_username}"
         admin_password                = "${var.host_password}"
     }

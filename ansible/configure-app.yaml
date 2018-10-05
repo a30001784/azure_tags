@@ -1,12 +1,12 @@
----
-- hosts: all
-  gather_facts: true
-  any_errors_fatal: true
+# ---
+# - hosts: all
+#   gather_facts: true
+#   any_errors_fatal: true
 
-  vars_files:
-    - "vars/windows.yaml"
+#   vars_files:
+#     - "vars/windows.yaml"
 
-  tasks: 
+#   tasks: 
 
-  - include_role:
-      name: common
+#   - include_role:
+#       name: common

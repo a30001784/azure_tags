@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: data
   gather_facts: true
   any_errors_fatal: true
 
@@ -7,9 +7,6 @@
     - "vars/windows.yaml"
 
   tasks: 
-
-  - include_role:
-      name: common
 
   - include_role:
       name: data
