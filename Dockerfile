@@ -14,7 +14,7 @@ RUN pip2.7 install --upgrade pip && \
     pip2.7 install "pywinrm>=0.3.0" "ansible==2.4.6"
 
 # Download and install Terraform
-RUN curl https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_amd64.zip -o terraform.zip && \
+RUN curl https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip -o terraform.zip && \
     unzip terraform.zip -d /usr/bin
 
 # Set up working directory
