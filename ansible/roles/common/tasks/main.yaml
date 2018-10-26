@@ -35,6 +35,9 @@
 - name: Disable IE Enhanced Security Configuration
   script: scripts/Disable-InternetExplorerESC.ps1
 
+- name: Disable auto-detect proxy
+  script: scripts/Disable-AutoDetectProxySettings.ps1
+
 # Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
 - name: Install ODBC driver
   win_package: 
