@@ -256,11 +256,9 @@ echo "[INFO] Beginning Ansible playbooks..."
 
 cat "${inventory_file}"
 
-exit
-
 cd "${ansible_dir}"
 for playbook in "${playbooks[@]}"; do
     ansible-playbook "${playbook}.yaml" \
         --inventory-file "${inventory_file}" \
-        --extra-vars "${extra_vars}" -vvv
+        --extra-vars "${extra_vars}" -vvv --check
 done
