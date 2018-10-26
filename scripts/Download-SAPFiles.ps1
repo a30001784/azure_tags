@@ -27,5 +27,3 @@ foreach ($folder in ("DownloadStack","SAPCAR","SWPM10-SP23") ) {
 }
 
 Move-Item -Path "C:\Install\DownloadStack\IGS749-05\*" -Destination "C:\Install\DownloadStack\." -Force
-
-# .\Download-SAPFiles.ps1 -StorageAccountName aaasapautomationsa -StorageAccountKey "f3yDp+8WsmA4oezvWtzzvGRwE3QJGrLPJeuslbcoaw3AKD4J3hCFcm5tt/bqY1wWtcUJ0FEBEEiglBc8/8mf1w==" -FileShareUri "\\aaasapautomationsa.file.core.windows.net\sapptia"
