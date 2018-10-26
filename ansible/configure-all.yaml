@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: isu
   gather_facts: true
   any_errors_fatal: true
 
