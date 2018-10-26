@@ -72,36 +72,36 @@
   win_reboot:
   when: domain_state.reboot_required
 
-  # Add group to local admins
-  - name: Add group to local admins
-    win_group_membership:
-      name: Administrators
-      members:
-        - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
-      state: present
+# Add group to local admins
+- name: Add group to local admins
+  win_group_membership:
+    name: Administrators
+    members:
+      - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
+    state: present
 
-  # Ensure this group is removed from local administrators
-  - name: Remove Func-SAP-Testing group
-    win_group_membership:
-      name: Administrators
-      members:
-        - "Func-SAP-Testing-MSDN-Testing"
-      state: absent
+# Ensure this group is removed from local administrators
+- name: Remove Func-SAP-Testing group
+  win_group_membership:
+    name: Administrators
+    members:
+      - "Func-SAP-Testing-MSDN-Testing"
+    state: absent
 
-  # Friendly names of privileges granted in this section:
-  #   * Act as part of the operating system
-  #   * Adjust memory quotas for a process
-  #   * Replace a process level token
-  - name: Grant privileges to install user
-    win_user_right:
-      name: "{{ item }}"
-      users:
-        - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
-      action: add
-    with_items:
-      - SeTcbPrivilege
-      - SeIncreaseQuotaPrivilege
-      - SeAssignPrimaryTokenPrivilege
+# Friendly names of privileges granted in this section:
+#   * Act as part of the operating system
+#   * Adjust memory quotas for a process
+#   * Replace a process level token
+- name: Grant privileges to install user
+  win_user_right:
+    name: "{{ item }}"
+    users:
+      - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
+    action: add
+  with_items:
+    - SeTcbPrivilege
+    - SeIncreaseQuotaPrivilege
+    - SeAssignPrimaryTokenPrivilege
 
 # Clean up 
 # - name: Remove working directories
