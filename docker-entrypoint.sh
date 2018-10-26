@@ -260,5 +260,5 @@ cd "${ansible_dir}"
 for playbook in "${playbooks[@]}"; do
     ansible-playbook "${playbook}.yaml" \
         --inventory-file "${inventory_file}" \
-        --extra-vars "${extra_vars}" -vvv --check
+        --extra-vars "${extra_vars}" -vvv
 done
