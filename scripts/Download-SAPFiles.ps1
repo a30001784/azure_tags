@@ -1,4 +1,4 @@
-A[CmdletBinding()]
+[CmdletBinding()]
 Param
 (
     [Parameter(Mandatory=$true)]
