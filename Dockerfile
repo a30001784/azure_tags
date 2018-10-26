@@ -3,7 +3,7 @@ FROM centos:7
 # Update packages and install the needful
 RUN yum -y install epel-release
 RUN yum -y update && yum -y install \
-        #ansible \
+        ansible \
         python-pip \
         unzip
 RUN yum clean all && \
