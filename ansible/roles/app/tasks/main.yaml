@@ -11,28 +11,28 @@
     - C:\Install\SWPM10-SP23
 
 # Download install files
-- name: Download SAP install files
-  script: scripts/Download-SAPFiles.ps1 >
-    -StorageAccountName "{{ storage_account_name }}"
-    -StorageAccountKey "{{ storage_account_key }}"
-    -FileShareUri "{{ file_share_uri }}"
+# - name: Download SAP install files
+#   script: scripts/Download-SAPFiles.ps1 >
+#     -StorageAccountName "{{ storage_account_name }}"
+#     -StorageAccountKey "{{ storage_account_key }}"
+#     -FileShareUri "{{ file_share_uri }}"
 
 # Stop any running sap processes
-- name: Stop running processes
-  win_shell: Get-Process sapinst* | Stop-Process
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: Stop running processes
+#   win_shell: Get-Process sapinst* | Stop-Process
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
 # Extract SWPM
-- name: Extract SWPM
-  win_shell: |
-    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP23\SWPM10SP23_6-20009707.SAR -R C:\SWPM
-  args:
-    executable: cmd
-  register: SWPM
+# - name: Extract SWPM
+#   win_shell: |
+#     C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP23\SWPM10SP23_6-20009707.SAR -R C:\SWPM
+#   args:
+#     executable: cmd
+#   register: SWPM
 
 # - name: Copy ASCS parameters files
 #   template:
