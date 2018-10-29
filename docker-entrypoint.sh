@@ -122,6 +122,7 @@ declare -A ANSIBLE_VARS=( \
     ["ansible_password"]="${TF_VAR_host_password}" \
     ["datacentre"]="${datacentre}" \
     ["dns_domain_name"]="${dns_domain_name}" \
+    ["domain_name"]="${domain_name}" \
     ["domain_admin_group"]="${domain_admin_group}" \
     ["domain_join_username"]="${domain_join_username}" \
     ["domain_join_password"]="${domain_join_password}" \
