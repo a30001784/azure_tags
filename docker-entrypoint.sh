@@ -6,8 +6,8 @@ set -e
 terraform_dir="/working/terraform" # Terraform directory.
 ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
-roles=( "app" "data" "ascs" )
-sub_roles=( "crm" "isu" "nwgw" "swd" "pi" "xi" )
+roles=( "data" "ascs" "app" )
+sub_roles=( "crm" "isu" ) #"nwgw" "swd" "pi" "xi" )
 playbooks=( "configure-all" )
 inventory_file="/tmp/inventory_master"
 
@@ -101,8 +101,8 @@ sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${ter
 
 cd "${terraform_dir}" && \
     terraform init && \
-    terraform plan && \
-    terraform apply --auto-approve
+    terraform plan #&& \
+#     terraform apply --auto-approve
 
 if [ $? -ne "0" ]; then
     echo "[ERROR] Fatal error encountered in Terraform run"
@@ -112,7 +112,7 @@ fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
-sleep 300
+#sleep 300
 echo "[INFO] Finished sleeping."
 echo "[INFO] Beginning Ansible section..."
 
@@ -120,11 +120,15 @@ echo "[INFO] Beginning Ansible section..."
 declare -A ANSIBLE_VARS=( \
     ["ansible_user"]="${TF_VAR_host_username}" \
     ["ansible_password"]="${TF_VAR_host_password}" \
+    ["datacentre"]="${datacentre}" \
     ["dns_domain_name"]="${dns_domain_name}" \
+    ["domain_name"]="${domain_name}" \
     ["domain_admin_group"]="${domain_admin_group}" \
     ["domain_join_username"]="${domain_join_username}" \
     ["domain_join_password"]="${domain_join_password}" \
     ["domain_ou_path"]="${domain_ou_path}" \
+    ["environment_instance_count"]="${environment_instance_count}" \
+    ["file_share_uri"]="${install_files_file_share_uri}" \
     ["has_backup_disk_crm"]="${has_backup_disk_crm}" \
     ["has_backup_disk_isu"]="${has_backup_disk_isu}" \
     ["has_backup_disk_nwgw"]="${has_backup_disk_nwgw}" \
@@ -135,6 +139,12 @@ declare -A ANSIBLE_VARS=( \
     ["num_pooled_disks_data_nwgw"]="${num_pooled_disks_data_nwgw}" \
     ["num_pooled_disks_data_pi"]="${num_pooled_disks_data_pi}" \
     ["num_pooled_disks_data_xi"]="${num_pooled_disks_data_xi}" \
+    ["pas_ddic_password"]="${pas_ddic_password}" \
+    ["sap_install_username"]="${sap_install_username}" \
+    ["sap_install_password"]="${sap_install_password}" \
+    ["sap_master_password_base"]="${sap_master_password_base}" \
+    ["storage_account_name"]="${install_files_storage_account_name}" \
+    ["storage_account_key"]="${install_files_storage_account_key}" \
 )
 
 echo "[INFO] Checking Ansible variables..."
@@ -162,18 +172,29 @@ for role in "${roles[@]}"; do
     for sub_role in "${sub_roles[@]}"; do
         echo "[${role}-${sub_role}]" >> "${inventory_file}"
         children+=( "${role}-${sub_role}" )
+        count=0
 
         for ip in $(terraform output "ip_addresses_${role}-${sub_role}" | tr "," "\n"); do
             vars=""
-            if [[ "${role}" = "data" ]]; then
-                npd="num_pooled_disks_data_${sub_role}"
-                bkp="has_backup_disk_${sub_role}"
-                vars="num_pooled_disks=${!npd} has_backup_disk=${!bkp} install_odbc_driver=false"
-            else
-                vars="install_odbc_driver=true"
-            fi
+            case "${role}" in
+                data)
+                    npd="num_pooled_disks_data_${sub_role}"
+                    bkp="has_backup_disk_${sub_role}"
+                    vars="num_pooled_disks=${!npd} has_backup_disk=${!bkp}"
+                    ;;
+                app)
+                    if [[ $count -eq 0 ]]; then
+                        vars="pas=true"
+                    else
+                        vars="pas=false"
+                    fi
+                    ;;
+                *)
+                    echo "Nothing to do for role: ${role}"
+            esac
 
             echo "${ip} ${vars}" >> "${inventory_file}"
+            count=$((count+1))
         done
 
         echo >> "${inventory_file}"
@@ -189,9 +210,47 @@ for role in "${roles[@]}"; do
 
     echo >> "${inventory_file}"
 
-    if [[ "${role}" != "app" ]]; then
-        playbooks+=( "configure-${role}" )
-    fi
+    playbooks+=( "configure-${role}" )
+done
+
+## This section writes the `group_vars` and `sub role children` to the inventory file.
+## For example:
+
+## [crm:children]
+## app-crm
+## data-crm
+## ascs-crm
+
+## [crm:vars]
+## ascs_host=10.230.97.45
+## db_host=10.230.97.137
+## instance_type=C
+
+## [isu:children]
+## app-isu
+## data-isu
+## ascs-isu
+
+## [isu:vars]
+## ascs_host=10.230.97.30
+## db_host=10.230.97.136
+## instance_type=I
+
+for sr in ${sub_roles[@]}; do
+    echo "[${sr}:children]" >> "${inventory_file}"
+
+    for r in ${roles[@]}; do
+        echo "${r}-${sr}" >> "${inventory_file}"
+    done
+
+    echo >> "${inventory_file}"
+
+    echo "[${sr}:vars]" >> "${inventory_file}"
+    echo "ascs_host=$(terraform output ip_addresses_ascs-${sr})" >> "${inventory_file}"
+    echo "db_host=$(terraform output ip_addresses_data-${sr})" >> "${inventory_file}"
+    # Get first character of sub role - e.g. crm = C
+    echo "instance_type=$(echo ${sr} | head -c1 | awk '{print toupper($0)}')" >> "${inventory_file}"
+    echo >> "${inventory_file}"
 done
 
 echo "[INFO] Beginning Ansible playbooks..."

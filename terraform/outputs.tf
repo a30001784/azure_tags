@@ -35,11 +35,11 @@ output "ip_addresses_ascs-xi" {
 }
 
 output "ip_addresses_data-crm" { 
-    value = ["${azurerm_network_interface.db-crm.private_ip_address}"]
+    value = "${azurerm_network_interface.db-crm.private_ip_address}"
 }
 
 output "ip_addresses_data-isu" { 
-    value = ["${azurerm_network_interface.db-isu.private_ip_address}"]
+    value = "${azurerm_network_interface.db-isu.private_ip_address}"
 }
 
 output "ip_addresses_data-nwgw" { 
