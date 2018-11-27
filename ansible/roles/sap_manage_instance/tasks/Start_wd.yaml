@@ -1,0 +1,14 @@
+---
+# Check Status of SAP Instance
+- name: Check_Status_Of_SAP_Instance
+  script: scripts/sap_start_instance.ps1 >
+    -saphost "{{ groups['Web_Dispatcher'][0]|regex_replace('(.agl.int)','')}}"
+    -sapadmuser "{{ wd_sid | lower }}adm"
+    -sapadmpwd "{{ sap_master_password_base }}{{ wd_sid | title }}"
+    -instance "66"
+    -system "Web Dispatcher"
+  register: test
+
+- name: debug
+  debug: 
+      msg: "std_out: {{ test.stdout }}"

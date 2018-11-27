@@ -1,0 +1,17 @@
+---
+- hosts: ISU_Database
+  gather_facts: true
+  any_errors_fatal: true
+
+  vars_files:
+    - "vars/windows.yaml"
+  
+  tasks: 
+
+  - include_role:
+      name: isu_db_bootstrap
+      tasks_from: isu_db_bootstrap_01
+
+  - include_role:
+      name: sql_sql4sap_install
+      tasks_from: main
