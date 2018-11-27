@@ -2,6 +2,23 @@
 - win_reboot:
     reboot_timeout: 120
 
+# Create directory structure for SAP database
+- name: Create directory structure for SAP database
+  win_file:
+    path: "I:\\{{ crm_sid }}\\{{ crm_sid }}{{ item }}"
+    state: present
+  with_items:
+    - LOG
+    - DATA1
+    - DATA2
+    - DATA3
+    - DATA4
+    - DATA5
+    - DATA6
+    - DATA7
+    - DATA8
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
 - name: sap_sql_install
   script: scripts/install_sql_sql4sap_ansible.ps1 >
     -SID "{{ sap_sid }}"
