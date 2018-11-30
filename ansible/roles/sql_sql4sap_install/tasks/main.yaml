@@ -5,8 +5,8 @@
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
   win_file:
-    path: "I:\\{{ crm_sid }}\\{{ crm_sid }}{{ item }}"
-    state: present
+    path: "I:\\{{ environment_sid }}\\{{ environment_sid }}{{ item }}"
+    state: directory
   with_items:
     - LOG
     - DATA1
@@ -17,11 +17,12 @@
     - DATA6
     - DATA7
     - DATA8
-  when: '"ascs" in hostvars[inventory_hostname].group_names'
+  when: ('"data-crm" in hostvars[inventory_hostname].group_names') or
+        ('"data-isu" in hostvars[inventory_hostname].group_names')
 
 - name: sap_sql_install
   script: scripts/install_sql_sql4sap_ansible.ps1 >
-    -SID "{{ sap_sid }}"
+    -SID "{{ environment_sid }}"
     -storName "{{ automation_storage_account }}"
     -storKey "{{ automation_storage_key }}"
   register: sap_sql_install
