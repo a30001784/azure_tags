@@ -5,7 +5,7 @@
     -storKey "{{ aaaSapAutomationSaKey }}"
 
 - name: SQL Script to change database logical file names in SQL
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\sap_crm_post_config_01.sql" -v database="{{ sap_sid }}"
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\SQLPostConfig\sap_post_config_01.sql" -v database="{{ sap_sid }}"
 
 - name: Stop service MSSQLSERVICE
   win_service:
@@ -24,7 +24,7 @@
     force_dependent_services: yes
     
 - name:  SQL Script to move temp db files and create additional temp db files
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\sap_crm_post_config_04.sql" -v database="{{ sap_sid }}"
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\SQLPostConfig\sap_post_config_02.sql" -v database="{{ sap_sid }}"
   
 - name: Start service MSSQLSERVICE
   win_service:
@@ -90,7 +90,7 @@
     force_dependent_services: yes
 
 - name: SQL Server Configuration Options
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\sap_crm_post_config_05.sql" -v database="{{ sap_sid }}"
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\SQLPostConfig\sap_post_config_03.sql" -v database="{{ sap_sid }}"
 
 - name: delete any mapped drives under Z
   win_mapped_drive:

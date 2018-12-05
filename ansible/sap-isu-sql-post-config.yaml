@@ -1,10 +1,12 @@
 ---
-- hosts: ISU_Database
+- hosts: data-isu
   gather_facts: true
   any_errors_fatal: true
-
+  vars:
+        sap_sid: "{{ isu_sid }}"
   vars_files:
-    - "vars/windows.yaml"
+    - vars/windows.yaml
+    - vars/local_vars.yaml
   
   tasks: 
 

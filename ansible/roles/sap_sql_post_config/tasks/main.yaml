@@ -1,6 +1,8 @@
 ---
-#- name: sap_crm_db_bootstrap
-#  script: scripts/sap_crm_db_ansible_bootstrap.ps1 >
-#    -SID "{{ sap_sid }}"
-#    -storName "{{ automation_storage_account }}"
-#    -storKey "{{ automation_storage_key }}"
+- name: Check Variables
+  win_shell: echo "{{ sap_sid }}"
+
+- debug: 
+    msg: "{{ crm_sid }}"
+- debug: 
+    msg: "{{ isu_sid }}"

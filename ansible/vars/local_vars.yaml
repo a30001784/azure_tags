@@ -1,0 +1,14 @@
+aaaSapAutomationSaKey: f3yDp+8WsmA4oezvWtzzvGRwE3QJGrLPJeuslbcoaw3AKD4J3hCFcm5tt/bqY1wWtcUJ0FEBEEiglBc8/8mf1w==
+aaaSapAutomationStorageName: aaasapautomationsa
+ansible_password: 123edsAQ!890
+dns_domain_name: agl.int
+domain_join_username: agl\svc_aaad
+domain_join_password: 123edsAQ!!QAZ
+domain_ou_path: OU=sap_pt_hosts,OU=sap_pt,OU=AAAD,OU=AAA,OU=Apps,OU=Servers,OU=Resources,DC=agl,DC=int
+sap_ou_path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+sap_install_username: adm_a144395
+sap_install_password: '@gl12345'
+sap_master_password_base: Ptia@gl
+ddic_000_crm__password: Rush2b4r33
+datacentre: A
+environment_instance_count: 3

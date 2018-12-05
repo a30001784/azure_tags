@@ -46,7 +46,7 @@ app-xi
 10.230.97.146 num_pooled_disks=6 has_backup_disk=true
 
 [data-isu]
-#10.230.97.143 num_pooled_disks=16 has_backup_disk=true
+10.230.97.143 num_pooled_disks=16 has_backup_disk=true
 
 [data-nwgw]
 10.230.97.144 num_pooled_disks=0 has_backup_disk=false

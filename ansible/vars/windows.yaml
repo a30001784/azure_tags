@@ -2,7 +2,6 @@ ansible_connection: winrm
 ansible_port: 5986
 ansible_user: azureadmin
 ansible_winrm_server_cert_validation: ignore
-sap_sid: WA3
 isu_sid: "I{{ datacentre }}{{ environment_instance_count }}"
 wd_sid: "W{{ datacentre }}{{ environment_instance_count }}"
 crm_sid: "C{{ datacentre }}{{ environment_instance_count }}"
