@@ -4,7 +4,7 @@
   any_errors_fatal: true
 
   vars:
-        sap_sid: "{{ isu_sid }}"
+        sap_sid: "{{ crm_sid }}"
   vars_files:
     - vars/windows.yaml
     - vars/local_vars.yaml
