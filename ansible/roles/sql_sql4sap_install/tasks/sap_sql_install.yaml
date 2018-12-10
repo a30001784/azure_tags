@@ -7,8 +7,15 @@
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
 
-- name: Run SAP installer for ASCS
-  win_shell: C:\Packages\SAP\SQL4SAP\SQL4SAP.bat -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563\x86-x64\Patches\X64"
+- name: Run SQL4SAP
+  win_shell: |
+    $value = Test-Path “HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL”
+    if (-Not $value) {
+    Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563\x86-x64\Patches\X64"
+    }
+    Else {
+    write-host “Skipping SQL Installation as there is an existing SQL instance”
+    }
 
 - name: sleep for 900 seconds and continue with play
   wait_for: timeout=900
@@ -20,14 +27,16 @@
     state: Stopped
     force_dependent_services: yes
 
-- name: Set root user password
-  mysql_user: name=root
-              host="{{ item }}"
-              password="{{ mysql_root_password }}"
-              check_implicit_admin=yes
-              login_user="{{ mysql_user }}"
-              login_password="{{ mysql_old_root_password }}"
-              state=present
+- name: Set SQL service account credentials
+- mssql_db:
+    login_user="NT Service\SQLSERVERAGENT"
+    login_password=""
+
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: MSSQLSERVER
+    state: Started
+    force_dependent_services: yes
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
@@ -44,5 +53,3 @@
     - DATA6
     - DATA7
     - DATA8
-  when: ('"data-crm" in hostvars[inventory_hostname].group_names') or
-        ('"data-isu" in hostvars[inventory_hostname].group_names')
