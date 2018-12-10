@@ -3,15 +3,13 @@
   gather_facts: true
   any_errors_fatal: true
 
+  vars:
+        sap_sid: "{{ isu_sid }}"
   vars_files:
-    - "vars/windows.yaml"
-  
+    - vars/windows.yaml
+    - vars/local_vars.yaml
+
   tasks: 
-
-  - include_role:
-      name: crm_db_bootstrap
-      tasks_from: crm_db_bootstrap_01
-
   - include_role:
       name: sql_sql4sap_install
-      tasks_from: main
+      tasks_from: sap_sql_install
