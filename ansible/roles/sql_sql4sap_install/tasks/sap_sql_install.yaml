@@ -13,13 +13,15 @@
     if (-Not $value) {
     Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563\x86-x64\Patches\X64"
     }
-    Else {
-    write-host “Skipping SQL Installation as there is an existing SQL instance”
-    }
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
 
 - name: sleep for 900 seconds and continue with play
-  wait_for: timeout=900
-  delegate_to: localhost
+  pause:
+    minutes: 15
 
 - name: Stop service MSSQLSERVICE
   win_service:
@@ -27,14 +29,22 @@
     state: Stopped
     force_dependent_services: yes
 
-- name: Set SQL service account credentials
-- mssql_db:
-    login_user="NT Service\SQLSERVERAGENT"
-    login_password=""
-
-- name: Start service MSSQLSERVICE
+# Configure SQL server service
+- name: Change user for SQL server service
   win_service:
     name: MSSQLSERVER
+    username: "NT Service\\MSSQLSERVER"
+    password: ""
+
+- name: Change user for SQL server service
+  win_service:
+    name: SQLSERVERAGENT
+    username: "NT Service\\SQLSERVERAGENT"
+    password: ""
+    
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: SQLSERVERAGENT
     state: Started
     force_dependent_services: yes
 
