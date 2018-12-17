@@ -1,7 +1,7 @@
 storage_account_key: f3yDp+8WsmA4oezvWtzzvGRwE3QJGrLPJeuslbcoaw3AKD4J3hCFcm5tt/bqY1wWtcUJ0FEBEEiglBc8/8mf1w==
 storage_account_name: aaasapautomationsa
-#ansible_password: 123edsAQ!890
-ansible_password: "@gl@ut0mate123"
+ansible_password: 123edsAQ!890
+#ansible_password: "@gl@ut0mate123"
 dns_domain_name: agl.int
 domain_join_username: agl\svc_aaad
 domain_join_password: 123edsAQ!!QAZ

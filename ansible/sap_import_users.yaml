@@ -1,15 +1,15 @@
 ---
-- hosts: CRM_Database
+- hosts: app-crm
   gather_facts: true
   any_errors_fatal: true
 
   vars:
-        sap_sid: "{{ crm_sid }}"
+        
   vars_files:
     - vars/windows.yaml
     - vars/local_vars.yaml
 
   tasks: 
   - include_role:
-      name: sql_sql4sap_install
-      tasks_from: sap_sql_install
+      name: sap_import_users
+      tasks_from: sap_import_users

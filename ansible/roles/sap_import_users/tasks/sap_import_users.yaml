@@ -4,30 +4,38 @@
   win_file:
     path: "C:\\Install\\Refresh\\Scripts\\Extracts\\"
     state: directory
-  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+  when: 'pas == "true"'
 
 # Copy Files for Importing users into SAP
 - name: sap_copy_import_user_files
-  script: scripts/sap_copy_user_import_files >
+  script: scripts/sap_copy_user_import_files.ps1 >
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+  when: 'pas == "true"'
 
 # Check SAP is online
-- name: sap_copy_import_user_files
-  script: scripts/sap_start_instance >
-    -saphost [inventory_hostname]
+- name: Check SAP is online
+  script: scripts/sap_start_system.ps1 >
+    -saphost "{{inventory_hostname}}"
     -sapadmuser "{{ environment_sid | lower }}adm"
     -sapadmpwd "{{ sap_master_password }}"
-    -system="{{ environment_sid }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+    -system "{{ environment_sid }}"
+  when: 'pas == "true"'
 
 - name: Run User Import Command
-  win_shell: R3trans -w C:\Install\Refresh\Scripts\Log\UsersImp.log Users.imp
+  win_shell: R3trans -w C:\Install\Refresh\Scripts\Log\UsersImp.log C:\Install\Refresh\Scripts\CRM\Users.imp
   become: yes
   become_method: runas
   become_user: "{{ environment_sid | lower }}adm"
   vars:
     ansible_become_password: "{{ sap_master_password }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
-  
+  when: '"app-crm" in hostvars[inventory_hostname].group_names and pas == "true"'
+
+- name: Run User Import Command
+  win_shell: R3trans -w C:\Install\Refresh\Scripts\Log\UsersImp.log C:\Install\Refresh\Scripts\ISU\Users.imp
+  become: yes
+  become_method: runas
+  become_user: "{{ environment_sid | lower }}adm"
+  vars:
+    ansible_become_password: "{{ sap_master_password }}"
+  when: '"app-isu" in hostvars[inventory_hostname].group_names and pas == "true"'
