@@ -42,4 +42,4 @@ $credential = New-Object System.Management.Automation.PSCredential -ArgumentList
 New-PSDrive -Name X -PSProvider FileSystem -Root "\\aaasapautomationsa.file.core.windows.net\sapptia" -Credential $credential -Persist
 
 # Copy Azure FileStore to Local Packages Dir 
-Robocopy "X:\user_imports" "C:\Packages\user_imports" *.* /e
+Robocopy "X:\user_imports" "C:\Install\Refresh\Scripts\" *.* /e

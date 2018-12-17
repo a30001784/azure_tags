@@ -42,6 +42,13 @@ Param (
     $system
 ) 
 
+# Determine instance number based on host and SID
+$instnr = Get-Service -Name ("SAP"+$system+"*") -ComputerName $saphost
+ForEach($inst in $instnr){
+$in = $inst
+$instance = $in.DisplayName.Substring(($in.DisplayName.Length-2),2)
+}
+
 # Determine ASCS Server
 mkdir -path C:\Packages\SAP\Logs -Force
 $Path = "C:\Packages\SAP\Logs\temp.csv"
@@ -59,38 +66,22 @@ foreach($value in $values){
 }
 Write-Host "The ASCS Server for $system is $ascs with instance number $ascsinstance"
 
-# Start SAP ASCS Instance
-& "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $ascsinstance -host $ascs -user $sapadmuser $sapadmpwd -function Start
-Write-Host "Starting ASCS Host $ascs"
+# Stop SAP System
+& "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function StopSystem
 
-# Wait for SAP Command
-Start-Sleep 10
+Start-Sleep 30
 
-# Wait for ASCS Instances to Start
-Do {
-    & "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $ascsinstance -host $ascs -user $sapadmuser $sapadmpwd -function GetSystemInstanceList > $Path2
-    get-content $Path2 | select -Skip 4 | set-content "$Path2-temp"
-    move "$Path2-temp" $Path2 -Force
-    $check = import-csv $Path2 | where-object {($_.hostname -eq $ascs -and $_.dispstatus -match "GRAY") -or ($_.hostname -eq $ascs -and $_.dispstatus -match "YELLOW")} | Format-Table | Out-String
-    }
-While ($check -match "GRAY" -or $check -match "YELLOW")
-
-# Start SAP Instance
-& "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function Start
-Write-Host "Starting instance $instance on host $saphost"
-
-Start-Sleep 10
-
-# Wait for Instance to Start
+# Wait for all SAP Instances to Stop
 Do {
     & "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function GetSystemInstanceList > $Path
     get-content $Path | select -Skip 4 | set-content "$Path-temp"
     move "$Path-temp" $Path -Force
-    $check = import-csv $Path | where-object {($_.hostname -eq $saphost -and $_.instanceNr -eq $instance)} | Format-Table | Out-String
+    $check = import-csv $Path | where-object {($_.dispstatus -match "GREEN") -or ($_.dispstatus -match "YELLOW")} | Format-Table | Out-String
     }
-While ($check -match "GRAY" -or $check -match "YELLOW")
+While ($check -match "GREEN" -or $check -match "YELLOW")
 
-#Check SAP Instance has Started
+# check is all SAP Instances have Stopped
+
 & "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function GetSystemInstanceList > $Path
 get-content $Path | select -Skip 4 | set-content "$Path-temp"
 move "$Path-temp" $Path -Force
@@ -98,13 +89,13 @@ $values = import-csv $Path
 
 foreach ($value in $values)
 {
-     if ($value.dispstatus -like "*GREEN*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+     if ($value.dispstatus -like "*GREEN*") {
         Write-Output "$system $value.hostname is Up"
         }
-    if ($value.dispstatus -like "*GRAY*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+    if ($value.dispstatus -like "*GRAY*") {
         Write-Output "$system $value.hostname is Down"
         }
-    if ($value.dispstatus -like "*YELLOW*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+    if ($value.dispstatus -like "*YELLOW*") {
         Write-Output "$system $value.hostname is Starting"
         }
 }

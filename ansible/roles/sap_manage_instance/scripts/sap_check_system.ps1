@@ -1,9 +1,9 @@
 <#
  .SYNOPSIS
-  Script to Stop SAP system
+  Script to check the status of SAP system
  
  .DESCRIPTION
-  The script is used to stop SAP system or instance.
+  The script is used to check the status of SAP system or instance.
    
  .PARAMETER saphost
   Specifies the hostname of SAP system
@@ -36,11 +36,15 @@ Param (
     $sapadmpwd,
     [Parameter(Mandatory = $true)] 
     [string]
-    $instance,
-    [Parameter(Mandatory = $true)] 
-    [string]
     $system
 ) 
+
+# Determine instance number based on host and SID
+$instnr = Get-Service -Name ("SAP"+$system+"*") -ComputerName $saphost
+ForEach($inst in $instnr){
+$in = $inst
+$instance = $in.DisplayName.Substring(($in.DisplayName.Length-2),2)
+}
 
 # Determine ASCS Server
 mkdir -path C:\Packages\SAP\Logs -Force
@@ -59,42 +63,20 @@ foreach($value in $values){
 }
 Write-Host "The ASCS Server for $system is $ascs with instance number $ascsinstance"
 
-#check if host is ASCS
-If($saphost -eq $ascsinstance){
-    write-host "Please use the Stop System Script for bringing down a ASCS Host"
-    Exit(0)
-    }
-# Stop SAP Instance
-Write-Output "Stopping instance $instance on host $saphost"
-& "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function Stop
-Start-Sleep 10
-
-# Wait for SAP Instances to Stop
-Do {
-    & "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function GetSystemInstanceList > $Path
-    get-content $Path | select -Skip 4 | set-content "$Path-temp"
-    move "$Path-temp" $Path -Force
-    $check = import-csv $Path | where-object {($_.hostname -eq $saphost -and $_.dispstatus -match "GREEN") -or ($_.hostname -eq $saphost -and $_.dispstatus -match "YELLOW")} | Format-Table | Out-String
-    }
-While ($check -contains "GREEN" -or $check -contains "YELLOW")
-
-# check is all SAP Instances have Stopped
-
+$Path = "C:\Packages\SAP\Logs\temp.csv"
 & "C:\Program Files\SAP\hostctrl\exe\sapcontrol" -nr $instance -host $saphost -user $sapadmuser $sapadmpwd -function GetSystemInstanceList > $Path
 get-content $Path | select -Skip 4 | set-content "$Path-temp"
 move "$Path-temp" $Path -Force
 $values = import-csv $Path 
-
 foreach ($value in $values)
 {
-     if ($value.dispstatus -like "*GREEN*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+     if ($value.dispstatus -like "*GREEN*") {
         Write-Output "$system $value.hostname is Up"
         }
-    if ($value.dispstatus -like "*GRAY*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+    if ($value.dispstatus -like "*GRAY*") {
         Write-Output "$system $value.hostname is Down"
         }
-    if ($value.dispstatus -like "*YELLOW*" -and $value.hostname -eq $saphost -and $value.instanceNr -eq $instance ) {
+    if ($value.dispstatus -like "*YELLOW*") {
         Write-Output "$system $value.hostname is Starting"
         }
 }
-
