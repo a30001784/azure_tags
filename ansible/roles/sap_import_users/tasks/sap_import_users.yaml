@@ -30,6 +30,15 @@
   vars:
     ansible_become_password: "{{ sap_master_password }}"
   when: '"app-crm" in hostvars[inventory_hostname].group_names and pas == "true"'
+  register: import_users
+  ignore_errors: yes
+
+- name: Set flag
+  set_fact: flag = failed
+  when: "'FAILED' in import_users.stderr"
+
+- fail: msg="The SAP Import Users has failed because of errors."
+  when: flag == "failed"
 
 - name: Run User Import Command
   win_shell: R3trans -w C:\Install\Refresh\Scripts\Log\UsersImp.log C:\Install\Refresh\Scripts\ISU\Users.imp
