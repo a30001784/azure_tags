@@ -1,5 +1,5 @@
 ---
-- hosts: app-crm, app-isu
+- hosts: app-crm
   gather_facts: true
   any_errors_fatal: true
 

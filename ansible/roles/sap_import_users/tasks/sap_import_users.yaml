@@ -2,9 +2,12 @@
 # Create directory structure for SAP Import Users
 - name: Create directory structure for SAP Import Users
   win_file:
-    path: "C:\\Install\\Refresh\\Scripts\\Extracts\\"
+    path: "C:\\Install\\Refresh\\Scripts\\{{ item }}\\"
     state: directory
   when: 'pas == "true"'
+  with_items:
+    - Log
+    - Extracts
 
 # Copy Files for Importing users into SAP
 - name: sap_copy_import_user_files
