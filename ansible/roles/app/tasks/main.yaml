@@ -16,6 +16,7 @@
     -StorageAccountName "{{ storage_account_name }}"
     -StorageAccountKey "{{ storage_account_key }}"
     -FileShareUri "{{ file_share_uri }}"
+    -Folders "DownloadStack","SAPCAR","SWPM10-SP23"
 
 # Stop any running sap processes
 - name: Stop running processes
