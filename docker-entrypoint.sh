@@ -101,7 +101,7 @@ sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${ter
 
 cd "${terraform_dir}" && \
     terraform init && \
-    terraform plan #&& \
+    terraform plan && \
     terraform apply --auto-approve
 
 if [ $? -ne "0" ]; then
