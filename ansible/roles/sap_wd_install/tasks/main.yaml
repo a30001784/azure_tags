@@ -21,21 +21,21 @@
 # Extract SWPM
 - name: Extract SWPM
   win_shell: |
-    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\install\SWPM10-SP24\SWPM10SP24_4-20009707.SAR -R C:\SWPM
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\install\SWPM10-SP24-6\SWPM10SP24_6-20009707.SAR -R C:\SWPM
   args:
     executable: cmd
   register: SWPM
 
 # Create SAP AD Group
-- name: Ensure the SAP SERVICE Group exists 
-  win_domain_group:
-    name: SAP_{{ wd_sid }}_GlobalAdmin
-    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
-    description: SAP Global Administration Group
-    scope: global
-    state: present
-    domain_username: "{{ sap_install_user }}"
-    domain_password: "{{ sap_install_password }}"
+#- name: Ensure the SAP SERVICE Group exists 
+#  win_domain_group:
+#    name: SAP_{{ wd_sid }}_GlobalAdmin
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    description: SAP Global Administration Group
+#    scope: global
+#    state: present
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
 
 # Delete Existing SAP SID Adm User account
 #- name: Ensure user SAPService<SID> is absent
@@ -46,14 +46,14 @@
 #    domain_password: "{{ sap_install_password }}"
 
 # Create SAP SID Adm User account
-- name: Ensure user SAPService<SID> is created in OU
-  win_domain_user:
-    name: "{{ wd_sid | lower }}adm"
-    password: "{{ sap_master_password }}"
-    state: present
-    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
-    domain_username: "{{ sap_install_user }}"
-    domain_password: "{{ sap_install_password }}"
+#- name: Ensure user SAPService<SID> is created in OU
+#  win_domain_user:
+#    name: "{{ wd_sid | lower }}adm"
+#    password: "{{ sap_master_password }}"
+#    state: present
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
 
 # Delete Existing SAP SID Adm User account
 #- name: Ensure user SAPService<SID> is absent
@@ -64,15 +64,15 @@
 #    domain_password: "{{ sap_install_password }}"
 
 # Create SAP Service User Account    
-- name: Ensure user SAPService<SID> is created in OU
-  win_domain_user:
-    name: "SAPService{{ wd_sid }}"
-    password: "{{ sap_master_password }}"
-    state: present
-    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
-    description: SAP Service User for System WA2
-    domain_username: "{{ sap_install_user }}"
-    domain_password: "{{ sap_install_password }}"
+#- name: Ensure user SAPService<SID> is created in OU
+#  win_domain_user:
+#    name: "SAPService{{ wd_sid }}"
+#    password: "{{ sap_master_password }}"
+#    state: present
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    description: SAP Service User for System WA2
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
     
 # Copy Web Dispatcher Parameter Files
 - name: Copy web dispatcher parameters files
