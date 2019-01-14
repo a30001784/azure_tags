@@ -81,3 +81,11 @@
     - DATA6
     - DATA7
     - DATA8
+
+# Check for data restore
+- set_fact:
+    db_restore: false
+
+- name: End Play before data Restore
+  meta: end_play
+  when: db_restore == "false"
