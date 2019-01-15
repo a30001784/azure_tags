@@ -43,5 +43,5 @@ New-PSDrive -Name X -PSProvider FileSystem -Root "\\aaasapautomationsa.file.core
 
 # Copy SAP Install Files 
 Robocopy "X:\installFiles\SAPCAR" "C:\install\SAPCAR" *.* /e
-Robocopy "X:\installFiles\SWPM10-SP24" "C:\install\SWPM10-SP24" *.* /e
+Robocopy "X:\installFiles\SWPM10-SP24-6" "C:\install\SWPM10-SP24-6" *.* /e
 Robocopy "X:\installFiles\SAPWebDispatcher\WebDispatcherStack" "C:\install\WebDispatcherStack" *.* /e
