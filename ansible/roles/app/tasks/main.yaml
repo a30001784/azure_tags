@@ -1,4 +1,12 @@
 ---
+# Check for data restore
+- set_fact:
+    db_restore: false
+
+- name: End Play before data Restore
+  meta: end_play
+  when: db_restore == "false"
+
 - name: Ensure working directory is created
   win_file:
     path: "{{ item }}"
