@@ -47,6 +47,12 @@
 - name: Reboot
   win_reboot:
 
+# Create install directory
+- name: Ensure working directory is created
+  win_file:
+    path: C:\Install
+    state: directory
+
 # Download SQL Server 2014 CU12 (2016 non-database servers)
 - name: Download SQL Server 2014 CU12
   win_get_url: 

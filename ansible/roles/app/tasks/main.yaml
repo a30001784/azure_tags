@@ -12,7 +12,6 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - C:\Install
     - C:\Install\AutomationParameters
     - C:\Install\DownloadStack
     - C:\Install\SAPCAR
