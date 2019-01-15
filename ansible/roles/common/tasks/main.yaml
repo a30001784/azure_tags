@@ -56,8 +56,8 @@
 # Download SQL Server 2014 CU12 (2016 non-database servers)
 - name: Download SQL Server 2014 CU12
   win_get_url: 
-    url: https://download.microsoft.com/download/5/E/E/5EEAC4AB-1635-44B9-BFBD-4A1405EB5EC8/SQLServer2014-KB4459860-x64.exe
-    dest: C:\install\SQLServer2014-KB4459860-x64.exe
+    url: https://download.microsoft.com/download/5/E/E/5EEAC4AB-1635-44B9-BFBD-4A1405EB5EC8/SQLServer2014-KB4469137-x64.exe
+    dest: C:\install\SQLServer2014-KB4469137-x64.exe
     timeout: 60
     force: no
   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
@@ -71,8 +71,8 @@
   vars:
     ansible_become_password: "{{ ansible_password }}"
   with_items: 
-    - C:\install\SQLServer2014-KB4459860-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
-    - C:\install\SQLServer2014-KB4459860-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+    - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+    - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
 # Install SNAC (2008/2012 non-database servers)
