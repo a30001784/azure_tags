@@ -31,13 +31,14 @@
 
 - name: Run SQL4SAP
   win_shell: |
-    Test-Path “HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL”
-  become: yes
-  become_method: runas
-  become_user: "{{ ansible_user }}"
-  vars:
-    ansible_become_password: "{{ ansible_password }}"
+    Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
   register: checksql
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     ansible_become_password: "{{ ansible_password }}"
+    
 
 - set_fact:
     sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
