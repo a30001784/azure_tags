@@ -96,13 +96,21 @@ for var in "${!TF_VARS[@]}"; do
 done
 
 # Update backend file with relevant values. These values cannot be passed via environment variables. 
-sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
-sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
+# sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
+# sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
 
-cd "${terraform_dir}" && \
-    terraform init && \
-    terraform plan && \
-    terraform apply --auto-approve
+cd "${terraform_dir}"
+
+terraform init \
+    -backend-config="access_key=${TF_VARS['ARM_ACCESS_KEY']}" \
+    -backend-config="storage_account_name=${TF_VARS['ARM_ACCESS_SA']}" \
+    -backend-config="resource_group_name=${TF_VARS['TF_VAR_resource_group_name']}" \
+    -backend-config="container_name=tf-state" \
+    -backend-config="key=terraform.tfstate"
+
+terraform plan
+
+terraform apply --auto-approve
 
 if [ $? -ne "0" ]; then
     echo "[ERROR] Fatal error encountered in Terraform run"
