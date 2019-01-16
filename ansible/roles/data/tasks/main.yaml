@@ -54,7 +54,7 @@
   become_user: "{{ ansible_user }}"
   vars:
     ansible_become_password: "{{ ansible_password }}"
-  when: sql_install != true
+  when: sql_install = false
 
 
 # - name: RUN SQL4SAP
