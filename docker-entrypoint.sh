@@ -104,9 +104,7 @@ cd "${terraform_dir}"
 terraform init \
     -backend-config="access_key=${TF_VARS['ARM_ACCESS_KEY']}" \
     -backend-config="storage_account_name=${TF_VARS['ARM_ACCESS_SA']}" \
-    -backend-config="resource_group_name=${TF_VARS['TF_VAR_resource_group_name']}" \
-    -backend-config="container_name=tf-state" \
-    -backend-config="key=terraform.tfstate"
+    -backend-config="resource_group_name=${TF_VARS['TF_VAR_resource_group_name']}"
 
 terraform plan
 
