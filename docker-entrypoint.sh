@@ -95,10 +95,6 @@ for var in "${!TF_VARS[@]}"; do
     fi
 done
 
-# Update backend file with relevant values. These values cannot be passed via environment variables. 
-# sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
-# sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
-
 cd "${terraform_dir}"
 
 terraform init \

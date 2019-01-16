@@ -29,9 +29,9 @@ go
 
 use {{ environment_sid }} 
 go 
-truncate table {{ environment_sid | lower }}.TPFET 
-go 
-truncate table {{ environment_sid | lower }}.TPFHT 
-go 
+-- truncate table {{ environment_sid | lower }}.TPFET 
+-- go 
+-- truncate table {{ environment_sid | lower }}.TPFHT 
+-- go 
 truncate table {{ environment_sid | lower }}.TLOCK 
 go 
