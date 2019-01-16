@@ -8,7 +8,7 @@ ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
 roles=( "data" "ascs" "app" )
 sub_roles=( "crm" "isu" ) #"nwgw" "swd" "pi" "xi" )
-playbooks=( "configure-all" )
+playbooks=( ) #"configure-all" )
 inventory_file="/tmp/inventory_master"
 
 echo "[INFO] Beginning Terraform section..."
