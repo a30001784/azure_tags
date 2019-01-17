@@ -116,4 +116,4 @@
 
 - name: End Play before data Restore
   meta: end_play
-  when: db_restore == "false"
+  when: db_restore == false
