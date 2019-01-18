@@ -56,6 +56,11 @@
 #     ansible_become_password: "{{ ansible_password }}"
 #   when: sql_install == false
 
+# Create directory structure for SQL4SAP Logs
+- name: Create directory structure for SQL4SAP Logs
+  win_file:
+    path: "C:\\Logs"
+    state: directory
 
 - name: RUN SQL4SAP
   script: scripts/Install-SQL4SAP.ps1
