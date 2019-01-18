@@ -64,15 +64,11 @@
 
 - name: RUN SQL4SAP
   script: scripts/Install-SQL4SAP.ps1
-  become: yes
-  become_method: runas
-  become_user: "{{ ansible_user }}"
-  vars:
-    ansible_become_password: "{{ ansible_password }}"
-  when: sql_install == false
-# - name: sleep for 900 seconds and continue with play
-#   pause:
-#     minutes: 15
+  register: sap_sql_install
+
+- name: sleep for 900 seconds and continue with play
+  pause:
+    minutes: 15
 
 # - name: Stop service MSSQLSERVICE
 #   win_service:
