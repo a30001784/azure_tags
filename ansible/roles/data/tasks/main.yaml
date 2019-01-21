@@ -70,30 +70,30 @@
   pause:
     minutes: 15
 
-# - name: Stop service MSSQLSERVICE
-#   win_service:
-#     name: MSSQLSERVER
-#     state: Stopped
-#     force_dependent_services: yes
+- name: Stop service MSSQLSERVICE
+  win_service:
+    name: MSSQLSERVER
+    state: Stopped
+    force_dependent_services: yes
 
-# # Configure SQL server service
-# - name: Change user for SQL server service
-#   win_service:
-#     name: MSSQLSERVER
-#     username: "NT Service\\MSSQLSERVER"
-#     password: ""
+# Configure SQL server service
+- name: Change user for SQL server service
+  win_service:
+    name: MSSQLSERVER
+    username: "NT Service\\MSSQLSERVER"
+    password: ""
 
-# - name: Change user for SQL server service
-#   win_service:
-#     name: SQLSERVERAGENT
-#     username: "NT Service\\SQLSERVERAGENT"
-#     password: ""
+- name: Change user for SQL server service
+  win_service:
+    name: SQLSERVERAGENT
+    username: "NT Service\\SQLSERVERAGENT"
+    password: ""
     
-# - name: Start service MSSQLSERVICE
-#   win_service:
-#     name: SQLSERVERAGENT
-#     state: Started
-#     force_dependent_services: yes
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: SQLSERVERAGENT
+    state: Started
+    force_dependent_services: yes
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
