@@ -3,8 +3,8 @@ wd_sid: WA4
 crm_sid: CA4
 crm_ascs_host: azsaw06
 wd_host: azsaw06
-aaaSapAutomationSaKey: f3yDp+8WsmA4oezvWtzzvGRwE3QJGrLPJeuslbcoaw3AKD4J3hCFcm5tt/bqY1wWtcUJ0FEBEEiglBc8/8mf1w==
-aaaSapAutomationStorageName: aaasapautomationsa
+storage_account_key: f3yDp+8WsmA4oezvWtzzvGRwE3QJGrLPJeuslbcoaw3AKD4J3hCFcm5tt/bqY1wWtcUJ0FEBEEiglBc8/8mf1w==
+storage_account_name: aaasapautomationsa
 ansible_password: 123edsAQ!890
 dns_domain_name: agl.int
 domain_join_username: agl\svc_aaad

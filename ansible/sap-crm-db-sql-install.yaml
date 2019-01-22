@@ -11,5 +11,5 @@
 
   tasks: 
   - include_role:
-      name: data
-      tasks_from: main
+      name: sql_sql4sap_install
+      tasks_from: sql
