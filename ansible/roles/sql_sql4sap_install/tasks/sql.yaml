@@ -1,5 +1,6 @@
 ---
-- win_reboot:
+- name: Rebbot System
+  win_reboot:
     reboot_timeout: 120
 
 - name: sap_copy_sql4sap_files
@@ -8,7 +9,8 @@
     -storKey "{{ storage_account_key }}"
 
 # variable for SQL install
-- set_fact:
+- name: set var for sql install
+  set_fact:
     sql_install: true
 
 - name: test for SQL Instance
@@ -16,10 +18,12 @@
     Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
   register: checksql
 
-- set_fact:
+- name: set var for sql instal  
+  set_fact:
     sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
 
-- debug:
+- name: check var value for sql install
+  debug:
     var: sql_install
 
 # Create directory structure for SQL4SAP Logs
@@ -44,7 +48,9 @@
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
   register: sap_sql_install
+  when: sql_install == false
 - debug: var=sap_sql_install.stdout_lines
+
 
 
 # - name: RUN SQL4SAP
