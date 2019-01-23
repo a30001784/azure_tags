@@ -1,23 +1,6 @@
-- name: Stripe Data disks
-  script: scripts/Storage-Spaces.ps1 >
-    -DriveLetter I
-    -Interleave 65536
-    -FileSystemLabel Data
-    -NumDisks {{ num_pooled_disks }}
-  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks > 0
-
-- name: Format I:\ drive - Windows Server 2008
-  script: scripts/Format-Volume_WS2008R2.ps1 -DriveLetter I
-  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks == 0
-
-- name: Stripe Backup disks
-  script: scripts/Storage-Spaces.ps1 >
-    -DriveLetter G
-    -Interleave 65536
-    -FileSystemLabel Backup
-  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"
-
-- win_reboot:
+---
+- name: Rebbot System
+  win_reboot:
     reboot_timeout: 120
 
 - name: sap_copy_sql4sap_files
@@ -26,35 +9,22 @@
     -storKey "{{ storage_account_key }}"
 
 # variable for SQL install
-- set_fact:
+- name: set var for sql install
+  set_fact:
     sql_install: true
 
-- name: Run SQL4SAP
+- name: test for SQL Instance
   win_shell: |
     Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
   register: checksql
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ ansible_user }}"
-#   vars:
-#     ansible_become_password: "{{ ansible_password }}"
-    
 
-- set_fact:
+- name: set var for sql instal  
+  set_fact:
     sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
 
-- debug:
+- name: check var value for sql install
+  debug:
     var: sql_install
-
-# - name: Run SQL4SAP
-#   win_shell: |
-#     Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64"
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ ansible_user }}"
-#   vars:
-#     ansible_become_password: "{{ ansible_password }}"
-#   when: sql_install == false
 
 # Create directory structure for SQL4SAP Logs
 - name: Create directory structure for SQL4SAP Logs
@@ -62,17 +32,38 @@
     path: "C:\\Logs"
     state: directory
 
+# - name: RUN SQL4SAP
+#   script: scripts/Install-SQL4SAP.ps1
+#   register: sap_sql_install
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     ansible_become_password: "{{ ansible_password }}"
+#   when: sql_install == false
+
 - name: sap_sql_install
   script: scripts/install_sql_sql4sap_ansible.ps1 >
-    -SID "{{ environment_sid }}"
+    -SID "{{ sap_sid }}"
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
   register: sap_sql_install
   when: sql_install == false
 
-# - name: sleep for 900 seconds and continue with play
-#   pause:
-#     minutes: 15
+# - name: RUN SQL4SAP
+#   win_shell: |
+#     Start-Process  "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64"
+#   register: sap_sql_install
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     ansible_become_password: "{{ ansible_password }}"
+#   when: sql_install == false
+
+- name: sleep for 900 seconds and continue with play
+  pause:
+    minutes: 15
 
 - name: Stop service MSSQLSERVICE
   win_service:

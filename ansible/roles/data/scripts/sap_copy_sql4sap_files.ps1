@@ -43,3 +43,7 @@ New-PSDrive -Name X -PSProvider FileSystem -Root "\\aaasapautomationsa.file.core
 
 # Copy Azure FileStore to Local Packages Dir 
 Robocopy "X:\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563" "C:\Packages\SAP\SQL4SAP\" *.* /e
+Robocopy "X:\installFiles\MS-Visual-C-2005-SP1-Redistributable" "C:\Packages\SAP\"
+
+# Install Microsoft Visual C++ 2005 SP1
+Invoke-Command -ScriptBlock {&"C:\Packages\SAP\vcredist_x64.exe" /q}

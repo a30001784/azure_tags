@@ -12,4 +12,4 @@
   tasks: 
   - include_role:
       name: sql_sql4sap_install
-      tasks_from: sap_sql_install
+      tasks_from: sql
