@@ -1,6 +1,6 @@
 ---
-# - win_reboot:
-#     reboot_timeout: 120
+- win_reboot:
+    reboot_timeout: 120
 
 - name: sap_copy_sql4sap_files
   script: scripts/sap_copy_sql4sap_files.ps1 >
@@ -28,15 +28,23 @@
     path: "C:\\Logs"
     state: directory
 
-- name: RUN SQL4SAP
-  script: scripts/Install-SQL4SAP.ps1
+# - name: RUN SQL4SAP
+#   script: scripts/Install-SQL4SAP.ps1
+#   register: sap_sql_install
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     ansible_become_password: "{{ ansible_password }}"
+#   when: sql_install == false
+
+- name: sap_sql_install
+  script: scripts/install_sql_sql4sap_ansible.ps1 >
+    -SID "{{ sap_sid }}"
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
   register: sap_sql_install
-  become: yes
-  become_method: runas
-  become_user: "{{ ansible_user }}"
-  vars:
-    ansible_become_password: "{{ ansible_password }}"
-  when: sql_install == false
+- debug: var=sap_sql_install.stdout_lines
 
 
 # - name: RUN SQL4SAP

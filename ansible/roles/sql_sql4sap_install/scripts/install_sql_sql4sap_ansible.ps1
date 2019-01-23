@@ -49,12 +49,16 @@ If ($pathExists) {
     Remove-PSDrive -Name X
 }
 
+$acctKey = ConvertTo-SecureString -String $storKey -AsPlainText -Force 
+$credential = New-Object System.Management.Automation.PSCredential -ArgumentList "Azure\$storName", $acctKey 
+New-PSDrive -Name X -PSProvider FileSystem -Root "\\aaasapautomationsa.file.core.windows.net\sapptia" -Credential $credential -Persist
+
+# Copy Azure FileStore to Local Packages Dir 
+Robocopy "X:\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563" "C:\Packages\SAP\SQL4SAP\" *.* /e
 
 # Install SQL Server 2014 + SP2 + CU 11 using sql4SAP
-$value = Test-Path “HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL”
-if (-Not $value) {
 Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563\x86-x64\Patches\X64"
-}
+Start-Sleep -s 900
 
 # Load the assembly containing the objects used in this example
 [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")
