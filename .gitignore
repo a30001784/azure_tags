@@ -1,4 +1,4 @@
 *.secret
 run.sh
 .DS_Store
-local_vars.yaml
+/Volumes/Data/GIT/AGL/agl.aaa.sap.infra/ansible/vars/local_vars.yaml
