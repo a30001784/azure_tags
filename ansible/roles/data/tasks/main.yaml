@@ -64,7 +64,7 @@
 
 - name: sap_sql_install
   script: scripts/install_sql_sql4sap_ansible.ps1 >
-    -SID "{{ sap_sid }}"
+    -SID "{{ environment_sid }}"
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
   register: sap_sql_install
