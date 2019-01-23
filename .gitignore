@@ -1,3 +1,4 @@
 *.secret
 run.sh
 .DS_Store
+local_vars.yaml
