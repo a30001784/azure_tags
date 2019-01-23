@@ -62,9 +62,13 @@
     path: "C:\\Logs"
     state: directory
 
-- name: RUN SQL4SAP
-  script: scripts/Install-SQL4SAP.ps1
+- name: sap_sql_install
+  script: scripts/install_sql_sql4sap_ansible.ps1 >
+    -SID "{{ sap_sid }}"
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
   register: sap_sql_install
+  when: sql_install == false
 
 # - name: sleep for 900 seconds and continue with play
 #   pause:

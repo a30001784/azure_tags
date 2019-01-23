@@ -49,9 +49,6 @@
     -storKey "{{ storage_account_key }}"
   register: sap_sql_install
   when: sql_install == false
-- debug: var=sap_sql_install.stdout_lines
-
-
 
 # - name: RUN SQL4SAP
 #   win_shell: |
