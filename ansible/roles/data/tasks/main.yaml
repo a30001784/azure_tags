@@ -1,23 +1,5 @@
 ---
-- name: Stripe Data disks
-  script: scripts/Storage-Spaces.ps1 >
-    -DriveLetter I
-    -Interleave 65536
-    -FileSystemLabel Data
-    -NumDisks {{ num_pooled_disks }}
-  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks > 0
-
-- name: Format I:\ drive - Windows Server 2008
-  script: scripts/Format-Volume_WS2008R2.ps1 -DriveLetter I
-  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks == 0
-
-- name: Stripe Backup disks
-  script: scripts/Storage-Spaces.ps1 >
-    -DriveLetter G
-    -Interleave 65536
-    -FileSystemLabel Backup
-  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"
-  
+ 
 - name: Rebbot System
   win_reboot:
     reboot_timeout: 120
@@ -68,11 +50,11 @@
     name: "{{ item.name }}"
     start_mode: auto
     username: "{{ item.data }}"
-  force_dependent_services: yes
-  state: restarted
+    force_dependent_services: yes
+    state: restarted
   with_items:
-    - { name: MSSQLSERVER, data: NT SERVICE\\MSSQLSERVER }
-    - { name: SQLSERVERAGENT, data: NT SERVICE\\SQLSERVERAGENT }
+    - { name: MSSQLSERVER, data: NT SERVICE\MSSQLSERVER }
+    - { name: SQLSERVERAGENT, data: NT SERVICE\SQLSERVERAGENT }
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database

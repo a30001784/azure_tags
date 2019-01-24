@@ -50,11 +50,11 @@
     name: "{{ item.name }}"
     start_mode: auto
     username: "{{ item.data }}"
-  force_dependent_services: yes
-  state: restarted
+    force_dependent_services: yes
+    state: restarted
   with_items:
-    - { name: MSSQLSERVER, data: NT SERVICE\\MSSQLSERVER }
-    - { name: SQLSERVERAGENT, data: NT SERVICE\\SQLSERVERAGENT }
+    - { name: MSSQLSERVER, data: NT SERVICE\MSSQLSERVER }
+    - { name: SQLSERVERAGENT, data: NT SERVICE\SQLSERVERAGENT }
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
