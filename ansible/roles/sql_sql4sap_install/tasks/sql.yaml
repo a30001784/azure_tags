@@ -1,4 +1,5 @@
 ---
+  
 - name: Rebbot System
   win_reboot:
     reboot_timeout: 120
@@ -46,20 +47,14 @@
 # Configure MSSQLSERVICE server service
 - name: Change user for SQL server service
   win_service:
-    name: MSSQLSERVER
+    name: "{{ item.name }}"
     start_mode: auto
-    username: "NT SERVICE\\MSSQLSERVER"
-    force_dependent_services: yes
-    state: restarted
-
-    # Configure SQL server service
-- name: Change user for SQLSERVERAGENT service
-  win_service:
-    name: SQLSERVERAGENT
-    start_mode: auto
-    username: "NT SERVICE\\MSSQLSERVER"
-    force_dependent_services: yes
-    state: restarted
+    username: "{{ item.data }}"
+  force_dependent_services: yes
+  state: restarted
+  with_items:
+    - { name: MSSQLSERVER, data: NT SERVICE\\MSSQLSERVER }
+    - { name: SQLSERVERAGENT, data: NT SERVICE\\SQLSERVERAGENT }
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
@@ -76,12 +71,6 @@
     - DATA6
     - DATA7
     - DATA8
-
-# - name: Start service MSSQLSERVICE
-#   win_service:
-#     name: SQLSERVERAGENT
-#     state: Started
-#     force_dependent_services: yes
 
 - name: Start service MSSQL Browser
   win_service:
