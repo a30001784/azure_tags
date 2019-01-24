@@ -126,7 +126,14 @@
     name: SQLSERVERAGENT
     state: Started
     force_dependent_services: yes
-    
+
+- name: Start service MSSQL Browser
+  win_service:
+    name: SQLBrowser
+    start_mode: auto
+    force_dependent_services: yes
+    state: restarted
+
 # Check for data restore
 - set_fact:
     db_restore: false
