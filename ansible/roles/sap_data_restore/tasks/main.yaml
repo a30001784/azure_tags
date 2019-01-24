@@ -1,0 +1,99 @@
+---
+# Ensure Working Directories are ceated    
+- name: Ensure working directory is created
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - C:\Install
+    - C:\Install\AutomationParameters
+    - C:\Install\DownloadStack
+    - C:\Install\SAPCAR
+    - C:\Install\SWPM10-SP24
+    - C:\Install\WebDispatcherStack
+
+# Download install files
+- name: sap_wd_copy_install_files
+  script: scripts/sap_wd_copy_install_files.ps1 >
+    -storName "{{ aaaSapAutomationStorageName }}"
+    -storKey "{{ aaaSapAutomationSaKey }}"
+
+# Extract SWPM
+- name: Extract SWPM
+  win_shell: |
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\install\SWPM10-SP24-6\SWPM10SP24_6-20009707.SAR -R C:\SWPM
+  args:
+    executable: cmd
+  register: SWPM
+
+# Create SAP AD Group
+#- name: Ensure the SAP SERVICE Group exists 
+#  win_domain_group:
+#    name: SAP_{{ wd_sid }}_GlobalAdmin
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    description: SAP Global Administration Group
+#    scope: global
+#    state: present
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
+
+# Delete Existing SAP SID Adm User account
+#- name: Ensure user SAPService<SID> is absent
+#  win_domain_user:
+#    name: "{{ wd_sid | lower }}adm"
+#    state: absent
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
+
+# Create SAP SID Adm User account
+#- name: Ensure user SAPService<SID> is created in OU
+#  win_domain_user:
+#    name: "{{ wd_sid | lower }}adm"
+#    password: "{{ sap_master_password }}"
+#    state: present
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
+
+# Delete Existing SAP SID Adm User account
+#- name: Ensure user SAPService<SID> is absent
+#  win_domain_user:
+#    name: "SAPService{{ wd_sid }}"
+#    state: absent
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
+
+# Create SAP Service User Account    
+#- name: Ensure user SAPService<SID> is created in OU
+#  win_domain_user:
+#    name: "SAPService{{ wd_sid }}"
+#    password: "{{ sap_master_password }}"
+#    state: present
+#    path: OU=SAPAccounts,OU=Service Accounts,OU=Resources,DC=agl,DC=int
+#    description: SAP Service User for System WA2
+#    domain_username: "{{ sap_install_user }}"
+#    domain_password: "{{ sap_install_password }}"
+    
+# Copy Web Dispatcher Parameter Files
+- name: Copy web dispatcher parameters files
+  template:
+    src: templates/wd.j2
+    dest: C:\Install\AutomationParameters\wd.params
+    newline_sequence: '\r\n'
+
+# Install Web Dispatcher
+- name: Run SAP installer for Web Dispatcher
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\wd.params SAPINST_EXECUTE_PRODUCT_ID=NW_Webdispatcher:NW750.IND.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+# Update Web Dispatcher Profile
+- name: Update Web Dispatcher Profile
+  template:
+    src: templates/wd.profile.j2
+    dest: "C:\\usr\\sap\\{{ wd_sid }}\\SYS\\profile\\{{ wd_sid }}_W66_{{ groups['Web_Dispatcher'][0] }}"
+    newline_sequence: '\r\n'
+    backup: yes
