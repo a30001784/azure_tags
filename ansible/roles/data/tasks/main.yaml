@@ -33,28 +33,20 @@
   win_shell: |
     Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
   register: checksql
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ ansible_user }}"
-#   vars:
-#     ansible_become_password: "{{ ansible_password }}"
-    
 
 - set_fact:
     sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
 
-- debug:
-    var: sql_install
-
-# - name: Run SQL4SAP
-#   win_shell: |
-#     Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64"
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ ansible_user }}"
-#   vars:
-#     ansible_become_password: "{{ ansible_password }}"
-#   when: sql_install == false
+- name: Run SQL4SQP
+  win_shell: | 
+    C:\Packages\SAP\SQL4SAP\SQL4SAP.bat -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
+  ignore_errors: true
+  when: sql_install == false
 
 # Create directory structure for SQL4SAP Logs
 - name: Create directory structure for SQL4SAP Logs
@@ -62,17 +54,17 @@
     path: "C:\\Logs"
     state: directory
 
-- name: sap_sql_install
-  script: scripts/install_sql_sql4sap_ansible.ps1 >
-    -SID "{{ environment_sid }}"
-    -storName "{{ storage_account_name }}"
-    -storKey "{{ storage_account_key }}"
-  register: sap_sql_install
-  when: sql_install == false
+# - name: sap_sql_install
+#   script: scripts/install_sql_sql4sap_ansible.ps1 >
+#     -SID "{{ environment_sid }}"
+#     -storName "{{ storage_account_name }}"
+#     -storKey "{{ storage_account_key }}"
+#   register: sap_sql_install
+#   when: sql_install == false
 
-# - name: sleep for 900 seconds and continue with play
-#   pause:
-#     minutes: 15
+- name: sleep for 900 seconds and continue with play
+  pause:
+    minutes: 15
 
 - name: Stop service MSSQLSERVICE
   win_service:
