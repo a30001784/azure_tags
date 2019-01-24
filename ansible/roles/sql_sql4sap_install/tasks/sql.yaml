@@ -43,11 +43,23 @@
   ignore_errors: true
   when: sql_install == false
 
-- name: Set SQL Account User / Password
-  script: scripts/set_sql_service_account.ps1 >
-    -SID "{{ sap_sid }}"
-    -storName "{{ storage_account_name }}"
-    -storKey "{{ storage_account_key }}"
+# Configure MSSQLSERVICE server service
+- name: Change user for SQL server service
+  win_service:
+    name: MSSQLSERVER
+    start_mode: auto
+    username: "NT SERVICE\\MSSQLSERVER"
+    force_dependent_services: yes
+    state: restarted
+
+    # Configure SQL server service
+- name: Change user for SQLSERVERAGENT service
+  win_service:
+    name: SQLSERVERAGENT
+    start_mode: auto
+    username: "NT SERVICE\\MSSQLSERVER"
+    force_dependent_services: yes
+    state: restarted
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
@@ -65,11 +77,11 @@
     - DATA7
     - DATA8
 
-- name: Start service MSSQLSERVICE
-  win_service:
-    name: SQLSERVERAGENT
-    state: Started
-    force_dependent_services: yes
+# - name: Start service MSSQLSERVICE
+#   win_service:
+#     name: SQLSERVERAGENT
+#     state: Started
+#     force_dependent_services: yes
 
 - name: Start service MSSQL Browser
   win_service:

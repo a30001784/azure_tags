@@ -1,3 +1,4 @@
+---
 - name: Stripe Data disks
   script: scripts/Storage-Spaces.ps1 >
     -DriveLetter I
@@ -16,8 +17,8 @@
     -Interleave 65536
     -FileSystemLabel Backup
   when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"
-
-- win_reboot:
+- name: Rebbot System
+  win_reboot:
     reboot_timeout: 120
 
 - name: sap_copy_sql4sap_files
@@ -26,16 +27,28 @@
     -storKey "{{ storage_account_key }}"
 
 # variable for SQL install
-- set_fact:
+- name: set var for sql install
+  set_fact:
     sql_install: true
 
-- name: Run SQL4SAP
+- name: test for SQL Instance
   win_shell: |
     Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
   register: checksql
 
-- set_fact:
+- name: set var for sql instal  
+  set_fact:
     sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
+
+- name: check var value for sql install
+  debug:
+    var: sql_install
+
+# Create directory structure for SQL4SAP Logs
+- name: Create directory structure for SQL4SAP Logs
+  win_file:
+    path: "C:\\Logs"
+    state: directory
 
 - name: Run SQL4SQP
   win_shell: | 
@@ -48,48 +61,23 @@
   ignore_errors: true
   when: sql_install == false
 
-# Create directory structure for SQL4SAP Logs
-- name: Create directory structure for SQL4SAP Logs
-  win_file:
-    path: "C:\\Logs"
-    state: directory
-
-# - name: sap_sql_install
-#   script: scripts/install_sql_sql4sap_ansible.ps1 >
-#     -SID "{{ environment_sid }}"
-#     -storName "{{ storage_account_name }}"
-#     -storKey "{{ storage_account_key }}"
-#   register: sap_sql_install
-#   when: sql_install == false
-
-- name: sleep for 900 seconds and continue with play
-  pause:
-    minutes: 15
-
-- name: Stop service MSSQLSERVICE
-  win_service:
-    name: MSSQLSERVER
-    state: Stopped
-    force_dependent_services: yes
-
-# Configure SQL server service
+# Configure MSSQLSERVICE server service
 - name: Change user for SQL server service
   win_service:
     name: MSSQLSERVER
-    username: "NT Service\\MSSQLSERVER"
-    password: ""
-
-- name: Change user for SQL server service
-  win_service:
-    name: SQLSERVERAGENT
-    username: "NT Service\\SQLSERVERAGENT"
-    password: ""
-    
-- name: Start service MSSQLSERVICE
-  win_service:
-    name: SQLSERVERAGENT
-    state: Started
+    start_mode: auto
+    username: "NT SERVICE\\MSSQLSERVER"
     force_dependent_services: yes
+    state: restarted
+
+    # Configure SQL server service
+- name: Change user for SQLSERVERAGENT service
+  win_service:
+    name: SQLSERVERAGENT
+    start_mode: auto
+    username: "NT SERVICE\\MSSQLSERVER"
+    force_dependent_services: yes
+    state: restarted
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
@@ -106,6 +94,13 @@
     - DATA6
     - DATA7
     - DATA8
+
+- name: Start service MSSQL Browser
+  win_service:
+    name: SQLBrowser
+    start_mode: auto
+    force_dependent_services: yes
+    state: restarted
 
 # Check for data restore
 - set_fact:
