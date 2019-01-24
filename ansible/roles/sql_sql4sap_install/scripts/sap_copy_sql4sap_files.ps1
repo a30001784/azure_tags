@@ -46,4 +46,4 @@ Robocopy "X:\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\5105
 Robocopy "X:\installFiles\MS-Visual-C-2005-SP1-Redistributable" "C:\Packages\SAP\"
 
 # Install Microsoft Visual C++ 2005 SP1
-#Invoke-Command -ScriptBlock {&"C:\Packages\SAP\vcredist_x64.exe" /q}
+Invoke-Command -ScriptBlock {&"C:\Packages\SAP\vcredist_x64.exe" /q}

@@ -60,86 +60,86 @@ Robocopy "X:\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\5105
 Start-Process "C:\Packages\SAP\SQL4SAP\SQL4SAP.bat" -Verb runAs -WindowStyle Hidden -ArgumentList " -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\installFiles\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563\x86-x64\Patches\X64"
 Start-Sleep -s 900
 
-# Load the assembly containing the objects used in this example
-[reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")
+# # Load the assembly containing the objects used in this example
+# [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")
 
-# Declare Variables
-$SQLServiceAccount = 'NT Service\MSSQLSERVER'
-$SQLServiceAccountPassword = ''
+# # Declare Variables
+# $SQLServiceAccount = 'NT Service\MSSQLSERVER'
+# $SQLServiceAccountPassword = ''
 
-# Get a managed computer instance
-$mc = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer
+# # Get a managed computer instance
+# $mc = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer
 
-# List out all sql server instnces running on this mc
-foreach ($Item in $mc.Services) {$Item.Name}
+# # List out all sql server instnces running on this mc
+# foreach ($Item in $mc.Services) {$Item.Name}
 
-# Get the default sql server datbase engine service
-$svc = $mc.Services["MSSQLSERVER"]
+# # Get the default sql server datbase engine service
+# $svc = $mc.Services["MSSQLSERVER"]
 
-# Stop this service
-$svc.Stop()
-$svc.Refresh()
-while ($svc.ServiceState -ne "Stopped") {
-    $svc.Refresh()
-    $svc.ServiceState
-}
-"Service" + $svc.Name + " is now stopped"
+# # Stop this service
+# $svc.Stop()
+# $svc.Refresh()
+# while ($svc.ServiceState -ne "Stopped") {
+#     $svc.Refresh()
+#     $svc.ServiceState
+# }
+# "Service" + $svc.Name + " is now stopped"
 
-# Change service account credentials
-$svc.SetServiceAccount($SQLServiceAccount, $SQLServiceAccountPassword)
+# # Change service account credentials
+# $svc.SetServiceAccount($SQLServiceAccount, $SQLServiceAccountPassword)
 
-"Starting " + $svc.Name
-$svc.Start()
-$svc.Refresh()
-while ($svc.ServiceState -ne "Running") {
-    $svc.Refresh()
-    $svc.ServiceState
-}
-$svc.ServiceState
-"Service" + $svc.Name + "is now started"
+# "Starting " + $svc.Name
+# $svc.Start()
+# $svc.Refresh()
+# while ($svc.ServiceState -ne "Running") {
+#     $svc.Refresh()
+#     $svc.ServiceState
+# }
+# $svc.ServiceState
+# "Service" + $svc.Name + "is now started"
 
-# Load the assembly containing the objects used in this example
-[reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")
-#Add-Type -AssemblyName "Microsoft.SqlServer.Management.SMO"
+# # Load the assembly containing the objects used in this example
+# [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")
+# #Add-Type -AssemblyName "Microsoft.SqlServer.Management.SMO"
 
-# Declare Variables
-$SQLServiceAccount = 'NT Service\SQLSERVERAGENT'
-$SQLServiceAccountPassword = ''
+# # Declare Variables
+# $SQLServiceAccount = 'NT Service\SQLSERVERAGENT'
+# $SQLServiceAccountPassword = ''
 
-# Get a managed computer instance
-$mc = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer
+# # Get a managed computer instance
+# $mc = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer
 
-# List out all sql server instnces running on this mc
-foreach ($Item in $mc.Services) {
-    $Item.Name
-}
+# # List out all sql server instnces running on this mc
+# foreach ($Item in $mc.Services) {
+#     $Item.Name
+# }
 
-# Get the default sql server datbase engine service
-$svc2 = $mc.Services["SQLSERVERAGENT"]
+# # Get the default sql server datbase engine service
+# $svc2 = $mc.Services["SQLSERVERAGENT"]
 
-# Stop this service
-$svc2.Stop()
-$svc2.Refresh()
-while ($svc2.ServiceState -ne "Stopped") {
-    $svc2.Refresh()
-    $svc2.ServiceState
-}
-"Service" + $svc2.Name + " is now stopped"
+# # Stop this service
+# $svc2.Stop()
+# $svc2.Refresh()
+# while ($svc2.ServiceState -ne "Stopped") {
+#     $svc2.Refresh()
+#     $svc2.ServiceState
+# }
+# "Service" + $svc2.Name + " is now stopped"
 
-# Change service account credentials
-$svc2.SetServiceAccount($SQLServiceAccount, $SQLServiceAccountPassword)
+# # Change service account credentials
+# $svc2.SetServiceAccount($SQLServiceAccount, $SQLServiceAccountPassword)
 
-"Starting " + $svc2.Name
-$svc2.Start()
-$svc2.Refresh()
-while ($svc.ServiceState -ne "Running") {
-    $svc2.Refresh()
-    $svc2.ServiceState
-}
-$svc2.ServiceState
-"Service" + $svc2.Name + "is now started"
+# "Starting " + $svc2.Name
+# $svc2.Start()
+# $svc2.Refresh()
+# while ($svc.ServiceState -ne "Running") {
+#     $svc2.Refresh()
+#     $svc2.ServiceState
+# }
+# $svc2.ServiceState
+# "Service" + $svc2.Name + "is now started"
 
-Get-Service SQLSERVERAGENT | Start-Service
+# Get-Service SQLSERVERAGENT | Start-Service
 
 $Networkpath = "X:\" 
 $pathExists = Test-Path -Path $Networkpath
