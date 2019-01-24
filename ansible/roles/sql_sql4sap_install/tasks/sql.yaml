@@ -47,14 +47,14 @@
 # Configure MSSQLSERVICE server service
 - name: Change user for SQL server service
   win_service:
-    name: "{{ item.name }}"
+    name: "{{ item }}"
     start_mode: auto
-    username: "{{ item.data }}"
+    username: "NT SERVICE\\{{ item }}"
     force_dependent_services: yes
     state: restarted
   with_items:
-    - { name: MSSQLSERVER, data: NT SERVICE\MSSQLSERVER }
-    - { name: SQLSERVERAGENT, data: NT SERVICE\SQLSERVERAGENT }
+    - MSSQLSERVER
+    - SQLSERVERAGENT
 
 # Create directory structure for SAP database
 - name: Create directory structure for SAP database
