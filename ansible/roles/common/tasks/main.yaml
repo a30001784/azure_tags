@@ -35,17 +35,14 @@
 - name: Disable IE Enhanced Security Configuration
   script: scripts/Disable-InternetExplorerESC.ps1
 
-# # Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
-# - name: Install ODBC driver
-#   win_package: 
-#     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
-#     arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
-#     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
-#     state: present
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
-
-# - name: Reboot
-#   win_reboot:
+# Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
+- name: Install ODBC driver
+  win_package: 
+    path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
+    arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
+    product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
+    state: present
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
 # Create install directory
 - name: Ensure working directory is created
@@ -53,58 +50,58 @@
     path: C:\Install
     state: directory
 
-# # Download SQL Server 2014 CU12 (2016 non-database servers)
-# - name: Download SQL Server 2014 CU12
-#   win_get_url: 
-#     url: https://download.microsoft.com/download/5/E/E/5EEAC4AB-1635-44B9-BFBD-4A1405EB5EC8/SQLServer2014-KB4469137-x64.exe
-#     dest: C:\install\SQLServer2014-KB4469137-x64.exe
-#     timeout: 60
-#     force: no
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+# Download SQL Server 2014 CU12 (2016 non-database servers)
+- name: Download SQL Server 2014 CU12
+  win_get_url: 
+    url: https://download.microsoft.com/download/5/E/E/5EEAC4AB-1635-44B9-BFBD-4A1405EB5EC8/SQLServer2014-KB4469137-x64.exe
+    dest: C:\install\SQLServer2014-KB4469137-x64.exe
+    timeout: 60
+    force: no
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
-# # Run CU12 updater twice to upgrade the ODBC driver version (2016 non-database servers)
-# - name: Update ODBC driver to SQL Server 2014 CU12
-#   win_shell: "{{ item }}"
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ ansible_user }}"
-#   vars:
-#     ansible_become_password: "{{ ansible_password }}"
-#   with_items: 
-#     - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
-#     - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+# Run CU12 updater twice to upgrade the ODBC driver version (2016 non-database servers)
+- name: Update ODBC driver to SQL Server 2014 CU12
+  win_shell: "{{ item }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
+  with_items: 
+    - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+    - C:\install\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
-# # Install SNAC (2008/2012 non-database servers)
-# - name: Install SNAC
-#   win_package:
-#     path: http://download.microsoft.com/download/F/E/D/FEDB200F-DE2A-46D8-B661-D019DFE9D470/ENU/x64/sqlncli.msi
-#     product_id: '{49D665A2-4C2A-476E-9AB8-FCC425F526FC}'
-#     arguments: IACCEPTSQLNCLILICENSETERMS=YES
-#     state: present
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+# Install SNAC (2008/2012 non-database servers)
+- name: Install SNAC
+  win_package:
+    path: http://download.microsoft.com/download/F/E/D/FEDB200F-DE2A-46D8-B661-D019DFE9D470/ENU/x64/sqlncli.msi
+    product_id: '{49D665A2-4C2A-476E-9AB8-FCC425F526FC}'
+    arguments: IACCEPTSQLNCLILICENSETERMS=YES
+    state: present
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
-# # Download SQL Server 2012 SP3 packages (2008/2012 non-database servers)
-# - name: Download SQL Server 2012 SP3 packages
-#   win_get_url:
-#     url: "{{ item.src }}"
-#     dest: "C:\\install\\{{ item.dest }}"
-#     timeout: 60
-#     force: no
-#   with_items:
-#     - { src: "https://download.microsoft.com/download/B/1/7/B17F8608-FA44-462D-A43B-00F94591540A/ENU/x64/SQLServer2012SP3-KB3072779-x64-ENU.exe", dest: "SQLServer2012SP3-KB3072779-x64-ENU.exe" }
-#     - { src: "http://download.windowsupdate.com/c/msdownload/update/software/updt/2017/02/sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe", dest: "sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe" }
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+# Download SQL Server 2012 SP3 packages (2008/2012 non-database servers)
+- name: Download SQL Server 2012 SP3 packages
+  win_get_url:
+    url: "{{ item.src }}"
+    dest: "C:\\install\\{{ item.dest }}"
+    timeout: 60
+    force: no
+  with_items:
+    - { src: "https://download.microsoft.com/download/B/1/7/B17F8608-FA44-462D-A43B-00F94591540A/ENU/x64/SQLServer2012SP3-KB3072779-x64-ENU.exe", dest: "SQLServer2012SP3-KB3072779-x64-ENU.exe" }
+    - { src: "http://download.windowsupdate.com/c/msdownload/update/software/updt/2017/02/sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe", dest: "sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe" }
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
-# # Install SQL Server 2012 SP3 (2008/2012 non-database servers)
-# - name: Install SQL Server 2012 SP3
-#   win_shell: C:\install\SQLServer2012SP3-KB3072779-x64-ENU.exe /q /IACCEPTSQLSERVERLICENSETERMS
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+# Install SQL Server 2012 SP3 (2008/2012 non-database servers)
+- name: Install SQL Server 2012 SP3
+  win_shell: C:\install\SQLServer2012SP3-KB3072779-x64-ENU.exe /q /IACCEPTSQLSERVERLICENSETERMS
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
-# # Install SQL Server 2012 SP3 CU 7 (2008/2012 non-database servers)
-# - name: Update to SQL Server 2012 SP3 CU 7
-#   win_shell: C:\install\sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe /q /IACCEPTSQLSERVERLICENSETERMS
-#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+# Install SQL Server 2012 SP3 CU 7 (2008/2012 non-database servers)
+- name: Update to SQL Server 2012 SP3 CU 7
+  win_shell: C:\install\sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe /q /IACCEPTSQLSERVERLICENSETERMS
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
 # Install .NET Framework - 2008/2012
 - name: Install .NET Framework 
