@@ -38,7 +38,11 @@
     - DATA7
     - DATA8
 
-# Trigger Data Restore
+# Set data restore
+- set_fact:
+    db_restore: false
+
+# Trigger Data Restore for CRM DB
 - name: Trigger Data Restore
   win_shell: | 
     C:\Packages\CommVault\Restore\cv_crm_restore.bat /silent
@@ -48,3 +52,7 @@
   vars:
     ansible_become_password: "{{ ansible_password }}"
   ignore_errors: true
+  when: 
+    - '"data-crm" in hostvars[inventory_hostname].group_names'
+    - db_restore == true
+
