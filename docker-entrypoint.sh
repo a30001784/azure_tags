@@ -215,6 +215,8 @@ for role in "${roles[@]}"; do
     playbooks+=( "configure-${role}" )
 done
 
+playbooks+=( "configure-crm-java" )
+
 ## This section writes the `group_vars` and `sub role children` to the inventory file.
 ## For example:
 
