@@ -1,8 +1,0 @@
----
-# Update CV Restore XML file
-- name: Update CV Restore XML file
-  template:
-    src: templates/wd.profile.j2
-    dest: "C:\\usr\\sap\\{{ wd_sid }}\\SYS\\profile\\{{ wd_sid }}_W66_{{ groups['Web_Dispatcher'][0] }}"
-    newline_sequence: '\r\n'
-    backup: yes
