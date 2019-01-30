@@ -8,7 +8,7 @@ ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
 roles=( "data" "ascs" "app" )
 sub_roles=( "crm" "isu" ) #"nwgw" "swd" "pi" "xi" )
-playbooks=( "configure-all" )
+#playbooks=( "configure-all" )
 inventory_file="/tmp/inventory_master"
 
 echo "[INFO] Beginning Terraform section..."
@@ -114,7 +114,7 @@ fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
-sleep 300
+# sleep 300
 echo "[INFO] Finished sleeping."
 echo "[INFO] Beginning Ansible section..."
 
@@ -212,8 +212,10 @@ for role in "${roles[@]}"; do
 
     echo >> "${inventory_file}"
 
-    playbooks+=( "configure-${role}" )
+    #playbooks+=( "configure-${role}" )
 done
+
+# playbooks+=( "configure-crm-java" )
 
 ## This section writes the `group_vars` and `sub role children` to the inventory file.
 ## For example:
@@ -258,6 +260,9 @@ done
 echo "[INFO] Beginning Ansible playbooks..."
 
 cat "${inventory_file}"
+
+playbooks=( "configure-app" ) 
+# "configure-crm-java"
 
 cd "${ansible_dir}"
 for playbook in "${playbooks[@]}"; do
