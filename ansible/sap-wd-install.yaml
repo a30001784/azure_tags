@@ -1,5 +1,5 @@
 ---
-- hosts: Web_Dispatcher
+- hosts: app-swd
   gather_facts: true
   any_errors_fatal: true
 
@@ -10,4 +10,4 @@
   tasks: 
 
   - include_role:
-      name: sap_wd_install
+      name: web_dispatcher
