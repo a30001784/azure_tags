@@ -1,7 +1,7 @@
 ---
 # Check for data restore
 - set_fact:
-    db_restore: false
+    db_restore: true
 
 - name: End Play before data Restore
   meta: end_play
