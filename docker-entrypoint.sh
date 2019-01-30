@@ -261,7 +261,7 @@ echo "[INFO] Beginning Ansible playbooks..."
 
 cat "${inventory_file}"
 
-playbooks=( "configure-app" ) 
+playbooks=( "configure-all" ) 
 # "configure-crm-java"
 
 cd "${ansible_dir}"
