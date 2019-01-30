@@ -25,14 +25,14 @@
 #     -FileShareUri "{{ file_share_uri }}"
 #     -Folders "DownloadStack","SAPCAR","SWPM10-SP24-6"
 
-# # Stop any running sap processes
-# - name: Stop running processes
-#   win_shell: Get-Process sapinst* | Stop-Process
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ sap_install_user }}"
-#   vars:
-#     ansible_become_password: "{{ sap_install_password }}"
+# Stop any running sap processes
+- name: Stop running processes
+  win_shell: Get-Process sapinst* | Stop-Process
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
 
 # # Extract SWPM
 # - name: Extract SWPM
