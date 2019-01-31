@@ -7,15 +7,15 @@
 #   meta: end_play
 #   when: db_restore == false
 
-# - name: Ensure working directory is created
-#   win_file:
-#     path: "{{ item }}"
-#     state: directory
-#   with_items:
-#     - C:\Install\AutomationParameters
-#     - C:\Install\DownloadStack
-#     - C:\Install\SAPCAR
-#     - C:\Install\SWPM10-SP24-6
+- name: Ensure working directory is created
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - C:\Install\AutomationParameters
+    - C:\Install\DownloadStack
+    - C:\Install\SAPCAR
+    - C:\Install\SWPM10-SP25-0
 
 # Download install files
 - name: Download SAP install files
