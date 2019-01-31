@@ -110,14 +110,14 @@
 #     line: "PHYS_MEMSIZE = 30%"
 #   when: '"ascs" in hostvars[inventory_hostname].group_names'
 
-- name: Run PAS installer
-  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+# - name: Run PAS installer
+#   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
+#   when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
 
 - name: Copy AAS files
   template:
