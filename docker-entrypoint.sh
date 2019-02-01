@@ -254,6 +254,11 @@ for sr in ${sub_roles[@]}; do
     echo "db_host=$(terraform output ip_addresses_data-${sr})" >> "${inventory_file}"
     # Get first character of sub role - e.g. crm = C
     echo "instance_type=$(echo ${sr} | head -c1 | awk '{print toupper($0)}')" >> "${inventory_file}"
+    
+    if [ ${sr} -eq "crm" ]; then
+        echo "java_aas=$(terraform output hostname_crm-java-aas)" >> "${inventory_file}"
+    done
+
     echo >> "${inventory_file}"
 done
 
@@ -261,7 +266,7 @@ echo "[INFO] Beginning Ansible playbooks..."
 
 cat "${inventory_file}"
 
-playbooks=( "configure-app" ) 
+playbooks=( "configure-crm-java" ) 
 # "configure-crm-java"
 
 cd "${ansible_dir}"

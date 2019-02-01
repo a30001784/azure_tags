@@ -2,6 +2,10 @@ output "ip_addresses_app-crm" {
     value = "${slice(azurerm_network_interface.app.*.private_ip_address, 0, var.node_count_app_crm)}"
 }
 
+output "hostname_crm-java-aas" { 
+    value = "${element(azurerm_virtual_machine.app.*.name, 1)}"
+}
+
 output "ip_addresses_app-isu" { 
     value = "${slice(azurerm_network_interface.app.*.private_ip_address, var.node_count_app_crm, length(azurerm_network_interface.app.*.private_ip_address))}"
 }
