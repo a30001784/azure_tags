@@ -257,7 +257,7 @@ for sr in ${sub_roles[@]}; do
     
     if [ ${sr} -eq "crm" ]; then
         echo "java_aas=$(terraform output hostname_crm-java-aas)" >> "${inventory_file}"
-    done
+    fi
 
     echo >> "${inventory_file}"
 done
