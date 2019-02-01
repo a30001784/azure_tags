@@ -255,7 +255,7 @@ for sr in ${sub_roles[@]}; do
     # Get first character of sub role - e.g. crm = C
     echo "instance_type=$(echo ${sr} | head -c1 | awk '{print toupper($0)}')" >> "${inventory_file}"
     
-    if [ ${sr} -eq "crm" ]; then
+    if [ ${sr} = "crm" ]; then
         echo "java_aas=$(terraform output hostname_crm-java-aas)" >> "${inventory_file}"
     fi
 
