@@ -29,6 +29,11 @@
     -storName "{{ storage_account_name }}"
     -storKey "{{ storage_account_key }}"
 
+- name: sap_sql_copy_blob_files
+  script: scripts/sap_sql_copy_blob_files.ps1 >
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
+
 # variable for SQL install
 - name: set var for sql install
   set_fact:
@@ -98,6 +103,53 @@
     start_mode: auto
     force_dependent_services: yes
     state: restarted
+
+
+- name: Grant privileges to install user
+  win_user_right:
+    name: "{{ item }}"
+    users:
+    - "NT Service\\MSSQLSERVER"
+    action: add
+  with_items:
+    - SeLockMemoryPrivilege
+    - SeManageVolumePrivilege
+
+- name: Update registry with Trace Flags
+  win_regedit:
+    path: "HKLM:\\SOFTWARE\\Microsoft\\Microsoft SQL Server\\MSSQL12.MSSQLSERVER\\MSSQLServer\\Parameters"
+    name: "{{ item.name }}"
+    data: "{{ item.data }}"
+    type: string
+  with_items:
+    - { name: SQLArg3, data: -T617 }
+    - { name: SQLArg4, data: -T1117 }
+    - { name: SQLArg5, data: -T1118 }
+    - { name: SQLArg6, data: -T2371 }
+    - { name: SQLArg7, data: -T3051 }
+    - { name: SQLArg8, data: -T8075 }
+    - { name: SQLArg9, data: -T8080 }
+
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: MSSQLSERVER
+    state: restarted
+    force_dependent_services: yes
+
+- name: Start service MSSQLSERVICE, if not started
+  win_service:
+    name: SQLSERVERAGENT
+    state: started
+    force_dependent_services: yes
+
+- name: SQL Server Configuration Options
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\SQLPostConfig\sap_post_config_03.sql" -v database="{{ environment_sid }}"
+
+
+- name: delete any mapped drives under Z
+  win_mapped_drive:
+    letter: X
+    state: absent
 
 # Check for data restore
 - set_fact:
