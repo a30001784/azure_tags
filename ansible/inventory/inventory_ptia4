@@ -1,5 +1,69 @@
-[CRM_Database]
-10.228.16.42
+[data-crm]
+10.228.16.42 num_pooled_disks=6 has_backup_disk=true
+  
+[data-isu]
+10.228.16.40 num_pooled_disks=16 has_backup_disk=true
+  
+[data:children]
+data-crm
+data-isu
+  
+[ascs-crm]
+10.228.16.14 
+  
+[ascs-isu]
+10.228.16.18 
+  
+[ascs:children]
+ascs-crm
+ascs-isu
+  
+[app-crm]
+10.228.16.32 pas=true
+10.228.16.35 pas=false
+10.228.16.30 pas=false
+10.228.16.33 pas=false
+10.228.16.10 pas=false
+10.228.16.16 pas=false
+10.228.16.38 pas=false
+  
+[app-isu]
+10.228.16.27 pas=true
+10.228.16.37 pas=false
+10.228.16.19 pas=false
+10.228.16.23 pas=false
+10.228.16.22 pas=false
+10.228.16.7 pas=false
+10.228.16.29 pas=false
+10.228.16.25 pas=false
+10.228.16.34 pas=false
+10.228.16.39 pas=false
+10.228.16.36 pas=false
 
-[ISU_Database]
-10.228.16.40
+[app-swd]
+10.228.16.20
+
+[app:children]
+app-crm
+app-isu
+  
+[crm:children]
+data-crm
+ascs-crm
+app-crm
+  
+[crm:vars]
+ascs_host=10.228.16.14
+db_host=10.228.16.42
+instance_type=C
+java_aas=azsaw0642
+  
+[isu:children]
+data-isu
+ascs-isu
+app-isu
+ 
+[isu:vars]
+ascs_host=10.228.16.18
+db_host=10.228.16.40
+instance_type=I
