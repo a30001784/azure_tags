@@ -6,8 +6,8 @@ set -e
 terraform_dir="/working/terraform" # Terraform directory.
 ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
-roles=( "data" "ascs" "app" )
-sub_roles=( "crm" "isu" ) #"nwgw" "swd" "pi" "xi" )
+roles=( "data" "ascs" "app" "web_dispatcher")
+sub_roles=( "crm" "isu" "swd") #"nwgw" "pi" "xi" )
 #playbooks=( "configure-all" )
 inventory_file="/tmp/inventory_master"
 
