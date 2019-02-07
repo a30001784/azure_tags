@@ -84,4 +84,6 @@
     dest: "C:\\usr\\sap\\AJ{{ environment_instance_count }}\\SYS\\exe\\jvm\\NTAMD64\\sapjvm_6.1.111\\sapjvm_6\\jre\\lib\\security\\java.security"
     newline_sequence: '\r\n'
     backup: yes
-  when: ansible_hostname == java_aas
+  when: 
+    - ansible_hostname == java_aas
+    - pas == true
