@@ -1,0 +1,128 @@
+---
+# Set timezone
+- name: Set timezone to AUS Eastern Standard Time (AEST)
+  win_timezone:
+    timezone: AUS Eastern Standard Time
+
+# Extend C drive - 2008
+- name: Extend C drive - 2008
+  win_shell: '"select volume c`r extend" | diskpart'
+  args:
+    executable: powershell
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter "
+
+# Extend C drive - 2012/2016
+- name: Extend C drive - 2012/2016
+  script: scripts/Extend-Volume.ps1
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter "
+
+# Disable Windows Firewall - 2008/2012
+- name: Disable Windows firewall
+  win_shell: netsh advfirewall set allprofiles state off
+  when: ansible_distribution != "Microsoft Windows Server 2016 Datacenter"
+
+# Disable Windows Firewall - 2016
+- name: Disable Windows firewall
+  win_firewall:
+    state: disabled
+    profiles:
+    - Domain
+    - Private
+    - Public
+  when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
+
+# Disable Internet Explorer ESC
+- name: Disable IE Enhanced Security Configuration
+  script: scripts/Disable-InternetExplorerESC.ps1
+
+# Create install directory
+- name: Ensure working directory is created
+  win_file:
+    path: C:\install
+    state: directory
+
+# Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
+# - name: Install ODBC driver
+#   win_package: 
+#     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
+#     arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
+#     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
+#     state: present
+#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+
+# # Download SQL Server 2014 CU12 (2016 non-database servers)
+# - name: Download SQL Server 2014 CU12
+#   win_get_url: 
+#     url: https://download.microsoft.com/download/5/E/E/5EEAC4AB-1635-44B9-BFBD-4A1405EB5EC8/SQLServer2014-KB4469137-x64.exe
+#     dest: C:\install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe
+#     timeout: 60
+#     force: no
+#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+
+# # Install SNAC (2008/2012 non-database servers)
+# - name: Install SNAC
+#   win_package:
+#     path: http://download.microsoft.com/download/F/E/D/FEDB200F-DE2A-46D8-B661-D019DFE9D470/ENU/x64/sqlncli.msi
+#     product_id: '{49D665A2-4C2A-476E-9AB8-FCC425F526FC}'
+#     arguments: IACCEPTSQLNCLILICENSETERMS=YES
+#     state: present
+#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+
+# # Download SQL Server 2012 SP3 packages (2008/2012 non-database servers)
+# - name: Download SQL Server 2012 SP3 packages
+#   win_get_url:
+#     url: "{{ item.src }}"
+#     dest: "C:\\install\\{{ item.dest }}"
+#     timeout: 60
+#     force: no
+#   with_items:
+#     - { src: "https://download.microsoft.com/download/B/1/7/B17F8608-FA44-462D-A43B-00F94591540A/ENU/x64/SQLServer2012SP3-KB3072779-x64-ENU.exe", dest: "SQLServer2012SP3-KB3072779-x64-ENU.exe" }
+#     - { src: "http://download.windowsupdate.com/c/msdownload/update/software/updt/2017/02/sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe", dest: "sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe" }
+#   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
+
+# Install .NET Framework - 2008/2012
+- name: Install .NET Framework 
+  script: scripts/Install-DotNetFramework.ps1
+  when: ansible_distribution != "Microsoft Windows Server 2016 Datacenter"
+
+# Install .NET Framework - 2016
+- name: Install .NET Framework
+  win_feature:
+    name: NET-Framework-Features
+    include_sub_features: true
+    state: present
+  register: dotnet_install
+  when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
+
+# Join computer to AGL on-premises Active Directory
+- name: Join to Active Directory domain
+  win_domain_membership:
+    dns_domain_name: "{{ dns_domain_name }}"
+    domain_admin_user: "{{ dns_domain_name }}\\{{ domain_join_username }}"
+    domain_admin_password: "{{ domain_join_password }}"
+    domain_ou_path: "{{ domain_ou_path }}"
+    state: domain
+  register: domain_state
+
+# Add group to local admins
+- name: Add group to local admins
+  win_group_membership:
+    name: Administrators
+    members:
+      - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
+    state: present
+
+# Friendly names of privileges granted in this section:
+#   * Act as part of the operating system
+#   * Adjust memory quotas for a process
+#   * Replace a process level token
+- name: Grant privileges to install user
+  win_user_right:
+    name: "{{ item }}"
+    users:
+      - "{{ dns_domain_name }}\\{{ domain_admin_group }}"
+    action: add
+  with_items:
+    - SeTcbPrivilege
+    - SeIncreaseQuotaPrivilege
+    - SeAssignPrimaryTokenPrivilege
