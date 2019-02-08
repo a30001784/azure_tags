@@ -26,10 +26,6 @@
     - Public
   when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
-# Disable Internet Explorer ESC
-- name: Disable IE Enhanced Security Configuration
-  script: scripts/Disable-InternetExplorerESC.ps1
-
 # Create install directory
 - name: Ensure working directory is created
   win_file:
