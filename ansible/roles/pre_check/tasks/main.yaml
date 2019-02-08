@@ -153,9 +153,9 @@
 #     state: domain
 #   register: domain_state
 
-- name: Reboot if AD join requires
-  win_reboot:
-  when: domain_state.reboot_required
+# - name: Reboot if AD join requires
+#   win_reboot:
+#   when: domain_state.reboot_required
 
 # Add group to local admins
 - name: Add group to local admins
