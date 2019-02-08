@@ -28,7 +28,7 @@ New-PSDrive -Name X -PSProvider FileSystem -Root $FileShareUri -Credential $Cred
 
 foreach ($folder in ($Folders) ) {
 
-   Copy-Item -Path "X:\installfiles\$folder" -Destination "C:\Install\." -Recurse -Force
+   Copy-Item -Path "X:\installFiles\$folder" -Destination "C:\Install\." -Recurse -Force
 
 }
 

@@ -49,22 +49,22 @@
     -FileShareUri "{{ file_share_uri }}"
     -Folders "AppInstallPrerequisites"
 
-# Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
-- name: Install ODBC driver
-  win_package: 
-    path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
-    arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
-    product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
-    state: present
-  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
-
+# # Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
 # - name: Install ODBC driver
 #   win_package: 
-#     path: C:\install\AppInstallPrerequisites\msodbcsql.msi
+#     path: https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi
 #     arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
 #     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
 #     state: present
 #   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+
+- name: Install ODBC driver
+  win_package: 
+    path: C:\install\AppInstallPrerequisites\msodbcsql.msi
+    arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
+    product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
+    state: present
+  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
 # # Download SQL Server 2014 CU12 (2016 non-database servers)
 # - name: Download SQL Server 2014 CU12
