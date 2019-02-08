@@ -20,7 +20,7 @@ Param
 
 $ErrorActionPreference = "Stop"
 
-$FileShareUri = "\\aaasapautomationsa.file.core.windows.net\sapptia"
+#$FileShareUri = "\\aaasapautomationsa.file.core.windows.net\sapptia"
 
 $Key = ConvertTo-SecureString -String $StorageAccountKey -AsPlainText -Force
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList "Azure\$($StorageAccountName)", $Key
