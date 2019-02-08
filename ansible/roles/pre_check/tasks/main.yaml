@@ -84,11 +84,6 @@
 # Run CU12 updater twice to upgrade the ODBC driver version (2016 non-database servers)
 - name: Update ODBC driver to SQL Server 2014 CU12
   win_shell: "{{ item }}"
-  become: yes
-  become_method: runas
-  become_user: "{{ ansible_user }}"
-  vars:
-    ansible_become_password: "{{ ansible_password }}"
   with_items: 
     - C:\Install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
     - C:\Install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
