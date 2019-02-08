@@ -60,7 +60,7 @@
 
 - name: Install ODBC driver
   win_package: 
-    path: C:\install\AppInstallPrerequisites\msodbcsql.msi
+    path: C:\Install\AppInstallPrerequisites\msodbcsql.msi
     arguments: /qb IACCEPTMSODBCSQLLICENSETERMS=YES ALLUSERS=1
     product_id: '{4294D9EB-FECF-4E55-8615-1B9EF152EE95}'
     state: present
@@ -84,8 +84,8 @@
   vars:
     ansible_become_password: "{{ ansible_password }}"
   with_items: 
-    - C:\install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
-    - C:\install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+    - C:\Install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
+    - C:\Install\AppInstallPrerequisites\SQLServer2014-KB4469137-x64.exe /q /IAcceptSQLServerLicenseTerms /Action=Patch /AllInstances
   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
 # # Install SNAC (2008/2012 non-database servers)
@@ -100,7 +100,7 @@
 # Install SNAC (2008/2012 non-database servers)
 - name: Install SNAC
   win_package:
-    path: C:\install\AppInstallPrerequisites\sqlncli.msi
+    path: C:\Install\AppInstallPrerequisites\sqlncli.msi
     product_id: '{49D665A2-4C2A-476E-9AB8-FCC425F526FC}'
     arguments: IACCEPTSQLNCLILICENSETERMS=YES
     state: present
@@ -120,12 +120,12 @@
 
 # Install SQL Server 2012 SP3 (2008/2012 non-database servers)
 - name: Install SQL Server 2012 SP3
-  win_shell: C:\install\AppInstallPrerequisites\SQLServer2012SP3-KB3072779-x64-ENU.exe /q /IACCEPTSQLSERVERLICENSETERMS
+  win_shell: C:\Install\AppInstallPrerequisites\SQLServer2012SP3-KB3072779-x64-ENU.exe /q /IACCEPTSQLSERVERLICENSETERMS
   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
 # Install SQL Server 2012 SP3 CU 7 (2008/2012 non-database servers)
 - name: Update to SQL Server 2012 SP3 CU 7
-  win_shell: C:\install\AppInstallPrerequisites\sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe /q /IACCEPTSQLSERVERLICENSETERMS
+  win_shell: C:\Install\AppInstallPrerequisites\sqlserver2012-kb3205051-x64_4346749c4390b45b6ed234fc9523d3e59146ce6b.exe /q /IACCEPTSQLSERVERLICENSETERMS
   when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution != "Microsoft Windows Server 2016 Datacenter"'
 
 # Install .NET Framework - 2008/2012
