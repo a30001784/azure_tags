@@ -41,13 +41,19 @@
     path: C:\install
     state: directory
 
-# Download install files
-- name: Download SAP prerequisite install files
-  script: scripts/Download-SAPFiles.ps1 >
-    -StorageAccountName "{{ storage_account_name }}"
-    -StorageAccountKey "{{ storage_account_key }}"
-    -FileShareUri "{{ file_share_uri }}"
-    -Folders "AppInstallPrerequisites"
+# # Download install files
+# - name: Download SAP prerequisite install files
+#   script: scripts/Download-SAPFiles.ps1 >
+#     -StorageAccountName "{{ storage_account_name }}"
+#     -StorageAccountKey "{{ storage_account_key }}"
+#     -FileShareUri "{{ file_share_uri }}"
+#     -Folders "AppInstallPrerequisites"
+
+- name: sap_copy_pre_req_files
+  script: scripts/sap_copy_pre_req_files.ps1 >
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
+
 
 # # Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
 # - name: Install ODBC driver
