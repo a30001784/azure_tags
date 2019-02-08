@@ -143,15 +143,15 @@
   register: dotnet_install
   when: ansible_distribution == "Microsoft Windows Server 2016 Datacenter"
 
-# Join computer to AGL on-premises Active Directory
-- name: Join to Active Directory domain
-  win_domain_membership:
-    dns_domain_name: "{{ dns_domain_name }}"
-    domain_admin_user: "{{ dns_domain_name }}\\{{ domain_join_username }}"
-    domain_admin_password: "{{ domain_join_password }}"
-    domain_ou_path: "{{ domain_ou_path }}"
-    state: domain
-  register: domain_state
+# # Join computer to AGL on-premises Active Directory
+# - name: Join to Active Directory domain
+#   win_domain_membership:
+#     dns_domain_name: "{{ dns_domain_name }}"
+#     domain_admin_user: "{{ dns_domain_name }}\\{{ domain_join_username }}"
+#     domain_admin_password: "{{ domain_join_password }}"
+#     domain_ou_path: "{{ domain_ou_path }}"
+#     state: domain
+#   register: domain_state
 
 - name: Reboot if AD join requires
   win_reboot:
