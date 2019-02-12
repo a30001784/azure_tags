@@ -1,6 +1,6 @@
 ---
 - name: Set CRM Source Logical System Name
-  win_shell: (Invoke-Sqlcmd -Query "USE {{ crm_sid }} SELECT LOGSYS FROM [{{ crm_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['CRM_Database'][0] }}").LOGSYS
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ crm_sid }} SELECT LOGSYS FROM [{{ crm_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['data-crm'][0] }}").LOGSYS
   register: crm_ls_name_s
   become: yes
   become_method: runas
