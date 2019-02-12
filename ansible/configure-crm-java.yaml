@@ -5,7 +5,8 @@
 
   vars_files:
     - "vars/windows.yaml"
-
+    - "vars/local_vars.yaml"
+    
   tasks: 
 
   - include_role:
