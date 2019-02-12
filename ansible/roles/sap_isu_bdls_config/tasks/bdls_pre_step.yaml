@@ -1,8 +1,8 @@
 ---
 - name: sap_sql_copy_blob_files
   script: scripts/sap_sql_copy_bdls_files.ps1 >
-    -storName "{{ aaaSapAutomationStorageName }}"
-    -storKey "{{ aaaSapAutomationSaKey }}"
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
 
 - name: SAP Update SQL Index Statistics
   win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\sap_update_sql_index_stats.sql" -v database="{{ isu_sid }}"
