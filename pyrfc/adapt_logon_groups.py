@@ -30,8 +30,8 @@ def update_table(connection, source_table, mapping_table, source_sid, target_sid
 
         # Mark all entries for deletion where a corresponding row cannot be found in the mapping table
         if row == None:
-            print "No entry found in mapping table for source instance name: " + s['APPLSERVER']
-            print "Flagging entry for deletion..."
+            print("No entry found in mapping table for source instance name: {0}".format(s['APPLSERVER']))
+            print("Flagging entry for deletion...")
             s['MODIFICATN'] = 'D'
             setup_dst.append(s)
         else:
@@ -83,9 +83,9 @@ def main():
     result_sg = update_table(conn, rfc_server_groups, mapping_table, args.source_sid, args.target_sid, 'S')
 
     if result_lg != None:
-        print result_lg
+        print(result_lg)
     
     if result_sg != None:
-        print result_sg
+        print(result_sg)
 
 main()
