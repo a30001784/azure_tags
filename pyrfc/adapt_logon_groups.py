@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, json, os
+import argparse, json
 from pyrfc import Connection
 
 def smlg_get_setup(connection, group_type):

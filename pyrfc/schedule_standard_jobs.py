@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, os
+import argparse
 from pyrfc import Connection
 
 def main():

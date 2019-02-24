@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, json, os, re
+import argparse, json, re
 from sets import Set
 from pyrfc import Connection
 

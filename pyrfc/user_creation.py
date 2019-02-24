@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, csv, os
+import argparse, csv
 from itertools import islice
 from pyrfc import Connection
 
