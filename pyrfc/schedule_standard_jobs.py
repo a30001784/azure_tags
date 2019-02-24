@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 
-import os
+import argparse, os
 from pyrfc import Connection
 
 def main():
+    parser = argparse.ArgumentParser(description="SAP users creation")
+    parser.add_argument("-h", "--as-hostname", type=str, required=True, help="Application server hostname")
+    parser.add_argument("-u", "--as-username", type=str, required=True, help="Application server username")
+    parser.add_argument("-p", "--as-password", type=str, required=True, help="Application server password")
+    args = parser.parse_args()
+
     # Set up connection to PAS  
-    conn = Connection(ashost='azsaw0607.agl.int', sysnr='10', client='100', user='AGLSRVUSR', passwd=os.environ["SAP_RFC_PASSWORD"])
+    conn = Connection(ashost=args.as_hostname, sysnr='10', client='100', user=args.as_username, passwd=args.as_password)
 
     print(conn.call("BP_SCHEDULE_STANDARDJOBS", SCHEDULE_MODE="ALL"))
 

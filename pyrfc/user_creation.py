@@ -91,14 +91,17 @@ def assign_groups(conn, users):
 def main():
     # Parse command line args
     parser = argparse.ArgumentParser(description="SAP users creation")
+    parser.add_argument("-h", "--as-hostname", type=str, required=True, help="Application server hostname")
+    parser.add_argument("-u", "--as-username", type=str, required=True, help="Application server username")
+    parser.add_argument("-p", "--as-password", type=str, required=True, help="Application server password")
     parser.add_argument("-f", "--csv-file", type=str, required=True, help="CSV file containing user and profile details")
-    parser.add_argument("-p", "--default-user-password", type=str, required=True, help="Password for default user: AGLSRVUSR")
+    parser.add_argument("-dp", "--default-user-password", type=str, required=True, help="Password for default user: AGLSRVUSR")
     parser.add_argument("-d000", "--ddic-000-password", type=str, required=True, help="Password for DDIC user in client 000")
     parser.add_argument("-d100", "--ddic-100-password", type=str, required=True, help="Password for DDIC user in client 100")
     args = parser.parse_args()
 
     # Set up connection to PAS with client 000
-    conn = Connection(ashost='azsaw0607.agl.int', sysnr='10', client='000', user='DDIC', passwd=args.ddic_000_password)
+    conn = Connection(ashost=args.as_hostname, sysnr='10', client='000', user=args.as_username, passwd=args.ddic_000_password)
 
     # Create default user and assign profiles
     conn.call("BAPI_USER_CREATE1", \
@@ -116,7 +119,7 @@ def main():
     )
 
     # Set up connection to PAS with client 100
-    conn = Connection(ashost='azsaw0607.agl.int', sysnr='10', client='100', user='DDIC', passwd=args.ddic_100_password)
+    conn = Connection(ashost=args.as_hostname, sysnr='10', client='100', user=args.as_username, passwd=args.ddic_100_password)
 
     users = map_users(args.csv_file)
 

@@ -239,12 +239,15 @@ def export_mapping_table(mapping_table, outfile):
 def main():
     # Parse command line args
     parser = argparse.ArgumentParser(description="SAP profiles importer")
+    parser.add_argument("-h", "--as-hostname", type=str, required=True, help="Application server hostname")
+    parser.add_argument("-u", "--as-username", type=str, required=True, help="Application server username")
+    parser.add_argument("-p", "--as-password", type=str, required=True, help="Application server password")
     parser.add_argument("-s", "--source-sid", type=str, required=True, help="SID for source SAP profiles")
     parser.add_argument("-t", "--target-sid", type=str, required=True, help="SID for target SAP profiles")
     args = parser.parse_args()
 
     # Set up connection to PAS
-    conn = Connection(ashost='azsaw0607.agl.int', sysnr='10', client='100', user='AGLSRVUSR', passwd=os.environ['SAP_RFC_PASSWORD'])
+    conn = Connection(ashost=args.as_hostname, sysnr='10', client='100', user=args.as_username, passwd=args.as_hostname)
 
     # Construct list of unique profiles
     profiles = get_profile_info(conn, args.source_sid)
