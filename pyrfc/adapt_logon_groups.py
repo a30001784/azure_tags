@@ -63,7 +63,7 @@ def get_mapping_table_row(mapping_table, key, val):
           
 def main():
     # Parse command line args
-    parser = argparse.ArgumentParser(description="SAP profiles importer")
+    parser = argparse.ArgumentParser(description="Adapt Logon Groups")
     parser.add_argument("-a", "--as-hostname", type=str, required=True, help="Application server hostname")
     parser.add_argument("-u", "--as-username", type=str, required=True, help="Application server username")
     parser.add_argument("-p", "--as-password", type=str, required=True, help="Application server password")
