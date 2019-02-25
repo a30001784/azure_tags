@@ -5,7 +5,7 @@ from pyrfc import Connection
 
 def main():
     # Parse command line args
-    parser = argparse.ArgumentParser(description="SAP users creation")
+    parser = argparse.ArgumentParser(description="Transport Management")
     parser.add_argument("-a", "--as-hostname", type=str, required=True, help="Application server hostname")
     parser.add_argument("-u", "--as-username", type=str, required=True, help="Application server username")
     parser.add_argument("-p", "--as-password", type=str, required=True, help="Application server password")
