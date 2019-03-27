@@ -1,0 +1,5 @@
+USE {{ environment_sid }}
+update {{ environment_sid | lower }}.USR02 set UFLAG='0', PWDSALTEDHASH = '{x-issha, 1024}eW+G/YPpao9fLZBCmIyGlJUf6tjYVpYt6rl9Hx3Eh8Y=' where BNAME='DDIC' and MANDT='000'
+
+USE {{ environment_sid }}
+update {{ environment_sid | lower }}.USR02 set UFLAG='0', PWDSALTEDHASH = '{x-issha, 1024}ZFhVAASir6Wv+mL4wdhNF1ekB6FqNVPwCdA8YOc4wbE=' where BNAME='DDIC' and MANDT='100'
