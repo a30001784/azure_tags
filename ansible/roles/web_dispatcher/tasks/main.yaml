@@ -1,0 +1,64 @@
+---
+# Ensure Working Directories are ceated    
+- name: Ensure working directory is created
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - C:\Install
+    - C:\Install\AutomationParameters
+    - C:\Install\DownloadStack
+    - C:\Install\SAPCAR
+    - C:\Install\SWPM10-SP25-0
+    - C:\Install\WebDispatcherStack
+
+# Download install files
+- name: sap_wd_copy_install_files
+  script: scripts/sap_wd_copy_install_files.ps1 >
+    -storName "{{ storage_account_name }}"
+    -storKey "{{ storage_account_key }}"
+
+# Extract SWPM
+- name: Extract SWPM
+  win_shell: |
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
+  args:
+    executable: cmd
+  register: SWPM
+
+# Copy Web Dispatcher Parameter Files
+- name: Copy web dispatcher parameters files
+  template:
+    src: templates/wd.j2
+    dest: C:\Install\AutomationParameters\wd.params
+    newline_sequence: '\r\n'
+
+# Install Web Dispatcher
+- name: Run SAP installer for Web Dispatcher
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\wd.params SAPINST_EXECUTE_PRODUCT_ID=NW_Webdispatcher:NW750.IND.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+# Update Web Dispatcher Profile
+- name: Update Web Dispatcher Profile
+  template:
+    src: templates/wd.profile.j2
+    dest: "C:\\usr\\sap\\{{ wd_sid }}\\SYS\\profile\\{{ wd_sid }}_W66_{{ hostvars[groups['app-swd'][0]].inventory_hostname }}"
+    newline_sequence: '\r\n'
+    backup: yes
+
+
+- debug: 
+    msg: "{{ hostvars[groups['app-crm'][0]].ascs_host }}"
+
+- debug: 
+    msg: "{{ hostvars[groups['app-crm'][0]].inventory_hostname }}"
+
+- debug: 
+    msg: "{{ hostvars[groups['app-swd'][0]].inventory_hostname }}"
+
+- debug: 
+    msg: "{{ ansible_hostname }}"

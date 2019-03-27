@@ -6,9 +6,9 @@ set -e
 terraform_dir="/working/terraform" # Terraform directory.
 ansible_dir="/working/ansible" # Ansble directory.
 extra_vars="" # Extra variables for Ansible playbook runs.
-roles=( "data" "ascs" "app" )
-sub_roles=( "crm" "isu" ) #"nwgw" "swd" "pi" "xi" )
-playbooks=( "configure-all" )
+roles=( "data" "ascs" "app" "web_dispatcher")
+sub_roles=( "crm" "isu" "swd") #"nwgw" "pi" "xi" )
+#playbooks=( "configure-all" )
 inventory_file="/tmp/inventory_master"
 
 echo "[INFO] Beginning Terraform section..."
@@ -95,14 +95,16 @@ for var in "${!TF_VARS[@]}"; do
     fi
 done
 
-# Update backend file with relevant values. These values cannot be passed via environment variables. 
-sed -i "s#STORAGE_ACCOUNT_NAME#${TF_VARS['ARM_ACCESS_SA']}#g" "${terraform_dir}/backend.tf"
-sed -i "s#RESOURCE_GROUP_NAME#${TF_VARS['TF_VAR_resource_group_name']}#g" "${terraform_dir}/backend.tf"
+cd "${terraform_dir}"
 
-cd "${terraform_dir}" && \
-    terraform init && \
-    terraform plan #&& \
-#     terraform apply --auto-approve
+terraform init \
+    -backend-config="access_key=${TF_VARS['ARM_ACCESS_KEY']}" \
+    -backend-config="storage_account_name=${TF_VARS['ARM_ACCESS_SA']}" \
+    -backend-config="resource_group_name=${TF_VARS['TF_VAR_resource_group_name']}"
+
+terraform plan
+
+terraform apply --auto-approve
 
 if [ $? -ne "0" ]; then
     echo "[ERROR] Fatal error encountered in Terraform run"
@@ -112,7 +114,7 @@ fi
 
 # The Windows 2008 servers may not yet be ready for Ansible. So we wait.
 echo "[INFO] Sleeping for 5 minutes..."
-#sleep 300
+# sleep 300
 echo "[INFO] Finished sleeping."
 echo "[INFO] Beginning Ansible section..."
 
@@ -210,8 +212,10 @@ for role in "${roles[@]}"; do
 
     echo >> "${inventory_file}"
 
-    playbooks+=( "configure-${role}" )
+    #playbooks+=( "configure-${role}" )
 done
+
+# playbooks+=( "configure-crm-java" )
 
 ## This section writes the `group_vars` and `sub role children` to the inventory file.
 ## For example:
@@ -250,12 +254,20 @@ for sr in ${sub_roles[@]}; do
     echo "db_host=$(terraform output ip_addresses_data-${sr})" >> "${inventory_file}"
     # Get first character of sub role - e.g. crm = C
     echo "instance_type=$(echo ${sr} | head -c1 | awk '{print toupper($0)}')" >> "${inventory_file}"
+    
+    if [ ${sr} = "crm" ]; then
+        echo "java_aas=$(terraform output hostname_crm-java-aas)" >> "${inventory_file}"
+    fi
+
     echo >> "${inventory_file}"
 done
 
 echo "[INFO] Beginning Ansible playbooks..."
 
 cat "${inventory_file}"
+
+playbooks=( "configure-app" ) 
+# "configure-crm-java"
 
 cd "${ansible_dir}"
 for playbook in "${playbooks[@]}"; do

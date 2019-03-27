@@ -1,0 +1,28 @@
+---
+- name: ISU Step 3 - Script 01
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\ISU scripts\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+  async: 1000000
+  poll: 0
+  register: Script_01
+
+- name: ISU Step 3 - Script 02
+  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\ISU scripts\Step 3\XI_PI_Conversion_in_ISU_System_02.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+  async: 1000000
+  poll: 0
+  register: Script_02
+
+- name: 'Script 01 - check on async task'
+  async_status:
+    jid: "{{ Script_01.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
+
+- name: 'Script 02 - check on async task'
+  async_status:
+    jid: "{{ Script_02.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000

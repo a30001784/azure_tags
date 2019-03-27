@@ -11,7 +11,11 @@ Param
 
     [Parameter(Mandatory=$true)]
     [string]
-    $FileShareUri
+    $FileShareUri,
+
+    [Parameter(Mandatory=$true)]
+    [string[]]
+    $Folders
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,10 +26,12 @@ $Key = ConvertTo-SecureString -String $StorageAccountKey -AsPlainText -Force
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList "Azure\$($StorageAccountName)", $Key
 New-PSDrive -Name X -PSProvider FileSystem -Root $FileShareUri -Credential $Credentials
 
-foreach ($folder in ("DownloadStack","SAPCAR","SWPM10-SP23") ) {
+foreach ($folder in ($Folders) ) {
 
-   Copy-Item -Path "X:\installfiles\$folder" -Destination "C:\Install\." -Recurse -Force
+   Copy-Item -Path "X:\installFiles\$folder" -Destination "C:\Install\." -Recurse -Force
 
 }
 
-Move-Item -Path "C:\Install\DownloadStack\IGS749-05\*" -Destination "C:\Install\DownloadStack\." -Force
+If (Test-Path -Path "C:\Install\DownloadStack\IGS749-05") {
+    Move-Item -Path "C:\Install\DownloadStack\IGS749-05\*" -Destination "C:\Install\DownloadStack\." -Force
+}

@@ -1,0 +1,80 @@
+---
+# Download install files
+- name: Download SAP install files
+  script: scripts/Download-SAPFiles.ps1 >
+    -StorageAccountName "{{ storage_account_name }}"
+    -StorageAccountKey "{{ storage_account_key }}"
+    -FileShareUri "{{ file_share_uri }}"
+    -Folders "CRMJAVAInstallStack"
+
+- name: Copy commmon Java XML file
+  template:
+    src: "templates/MP_Stack_CRM_JAVA_NEW_INSTALL.j2"
+    dest: "C:\\Install\\CRMJAVAInstallStack\\MP_Stack_AJ{{ environment_instance_count }}_CRM_JAVA_NEW_INSTALL.xml"
+    newline_sequence: '\r\n'
+
+- name: Copy parameter files
+  template:
+    src: "templates/scs.j2"
+    dest: "C:\\Install\\AutomationParameters\\scs.params"
+    newline_sequence: '\r\n'
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Run JAVA installer for ASCS
+  win_shell: C:\SWPM\sapinst.exe SAPINST_STACK_XML=C:\Install\CRMJAVAInstallStack\MP_Stack_AJ{{ environment_instance_count }}_CRM_JAVA_NEW_INSTALL.xml SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\scs.params SAPINST_EXECUTE_PRODUCT_ID=NW_Java_SCS:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Copy parameter files
+  template:
+    src: templates/db.j2
+    dest: "C:\\Install\\AutomationParameters\\db.j2"
+    newline_sequence: '\r\n'
+  when: ansible_hostname == db_host
+
+- name: Run Java installer for database server
+  win_shell: C:\SWPM\sapinst.exe SAPINST_STACK_XML=C:\Install\CRMJAVAInstallStack\MP_Stack_AJ{{ environment_instance_count }}_CRM_JAVA_NEW_INSTALL.xml SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\db.j2 SAPINST_EXECUTE_PRODUCT_ID=NW_Java_DB:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: ansible_hostname == db_host
+
+- name: Copy parameter files
+  template:
+    src: templates/pas-java.j2
+    dest: "C:\\Install\\AutomationParameters\\pas-java.params"
+    newline_sequence: '\r\n'
+  when: pas == true
+
+- name: Run Java installer for PAS
+  win_shell: C:\SWPM\sapinst.exe SAPINST_STACK_XML=C:\Install\CRMJAVAInstallStack\MP_Stack_AJ{{ environment_instance_count }}_CRM_JAVA_NEW_INSTALL.xml SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas-java.params SAPINST_EXECUTE_PRODUCT_ID=NW_Java_CI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: pas == true
+
+- name: Run Java installer for AAS
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\aas-java.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: ansible_hostname == java_aas
+
+# Set Java Cryptography Extension jurisdiction files
+- name: Set Java Cryptography Extension jurisdiction files
+  template:
+    src: templates/java.security.j2
+    dest: "C:\\usr\\sap\\AJ{{ environment_instance_count }}\\SYS\\exe\\jvm\\NTAMD64\\sapjvm_6.1.111\\sapjvm_6\\jre\\lib\\security\\java.security"
+    newline_sequence: '\r\n'
+    backup: yes
+  when: '"ascs" in hostvars[inventory_hostname].group_names'

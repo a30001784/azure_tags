@@ -1,0 +1,18 @@
+
+MSS.DBUSER.AbapPassword = {{ sap_master_password }}
+MSS.DBUSER.JavaPassword = {{ sap_master_password }}
+MSS.DataDrive = I:\AJ{{ environment_instance_count }}
+MSS.Database.Action = CRE
+MSS.DatabaseTShirtSize = MEDIUM
+MSS.LogDrive = I:\AJ{{ environment_instance_count }}
+MSS.ServerConfig.MemoryConfig = NO_CONFIG
+NW_GetMasterPassword.masterPwd = {{ sap_master_password }}
+NW_JAVA_Export.keyPhrase = {{ sap_master_password }}
+NW_MSS_DBINFO.dbhost = {{ db_host }} 
+NW_MSS_DBINFO.dbsid = AJ{{ environment_instance_count }}
+NW_getLoadType.loadType = SAP
+NW_internal.useProductVersionDescriptor = true
+NW_readProfileDir.profileDir = \\{{ ascs_host }}\sapmnt\AJ{{ environment_instance_count }}\SYS\profile
+NW_readProfileDir.sapdrive = C:
+archives.downloadBasket = C:\Install\CRMJAVAInstallStack
+SAPINST.CD.PACKAGE.JAVACOMP = C:\Install\CRMJAVAInstallStack\51050819
