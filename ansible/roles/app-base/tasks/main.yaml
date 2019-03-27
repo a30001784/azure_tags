@@ -1,14 +1,21 @@
 ---
+# Check for data restore
+- set_fact:
+    db_restore: true
+
+- name: End Play before data Restore
+  meta: end_play
+  when: db_restore == false
+
 - name: Ensure working directory is created
   win_file:
     path: "{{ item }}"
     state: directory
   with_items:
-    - C:\Install
     - C:\Install\AutomationParameters
     - C:\Install\DownloadStack
     - C:\Install\SAPCAR
-    - C:\Install\SWPM10-SP23
+    - C:\Install\SWPM10-SP25-0
 
 # Download install files
 - name: Download SAP install files
@@ -16,6 +23,7 @@
     -StorageAccountName "{{ storage_account_name }}"
     -StorageAccountKey "{{ storage_account_key }}"
     -FileShareUri "{{ file_share_uri }}"
+    -Folders "DownloadStack","SAPCAR","SWPM10-SP25-0"
 
 # Stop any running sap processes
 - name: Stop running processes
@@ -29,7 +37,7 @@
 # Extract SWPM
 - name: Extract SWPM
   win_shell: |
-    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP23\SWPM10SP23_6-20009707.SAR -R C:\SWPM
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
   args:
     executable: cmd
   register: SWPM
