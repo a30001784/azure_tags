@@ -19,7 +19,6 @@
     -FileSystemLabel Backup
   when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"
 
-
 - name: Rebbot System
   win_reboot:
     reboot_timeout: 120
