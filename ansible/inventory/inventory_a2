@@ -1,5 +1,0 @@
-[data-crm]
-10.228.16.6 num_pooled_disks=6 has_backup_disk=true
-
-[data:children]
-data-crm

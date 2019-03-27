@@ -61,13 +61,6 @@
     ansible_become_password: "{{ sap_install_password }}"
   when: pas == true
 
-- name: Copy parameter files
-  template:
-    src: templates/aas-java.j2
-    dest: "C:\\Install\\AutomationParameters\\aas-java.params"
-    newline_sequence: '\r\n'
-  when: ansible_hostname == java_aas
-
 - name: Run Java installer for AAS
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\aas-java.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
   become: yes
@@ -76,3 +69,12 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   when: ansible_hostname == java_aas
+
+# Set Java Cryptography Extension jurisdiction files
+- name: Set Java Cryptography Extension jurisdiction files
+  template:
+    src: templates/java.security.j2
+    dest: "C:\\usr\\sap\\AJ{{ environment_instance_count }}\\SYS\\exe\\jvm\\NTAMD64\\sapjvm_6.1.111\\sapjvm_6\\jre\\lib\\security\\java.security"
+    newline_sequence: '\r\n'
+    backup: yes
+  when: '"ascs" in hostvars[inventory_hostname].group_names'

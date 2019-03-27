@@ -1,6 +1,6 @@
 ---
 - name: Set CRM Source Logical System Name
-  win_shell: (Invoke-Sqlcmd -Query "USE {{ crm_sid }} SELECT LOGSYS FROM [{{ crm_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['CRM_Database'][0] }}").LOGSYS
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ crm_sid }} SELECT LOGSYS FROM [{{ crm_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['data-crm'][0] }}").LOGSYS
   register: crm_ls_name_s
   become: yes
   become_method: runas
@@ -13,8 +13,7 @@
 
 - debug: 
     msg: "{{ crm_source_ls }}"
-- debug: 
-    msg: "{{ groups['CRM_Database'][0] }}"
+
 
 - name: ISU First Set - Script 01
   win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\ISU scripts\Step 2\First Set\First set ISU - 01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"

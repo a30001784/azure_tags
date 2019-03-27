@@ -41,7 +41,8 @@ $acctKey = ConvertTo-SecureString -String $storKey -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential -ArgumentList "Azure\$storName", $acctKey 
 New-PSDrive -Name X -PSProvider FileSystem -Root "\\aaasapautomationsa.file.core.windows.net\sapptia" -Credential $credential -Persist
 
-# Copy SAP Install Files 
-Robocopy "X:\installFiles\SAPCAR" "C:\install\SAPCAR" *.* /e
-Robocopy "X:\installFiles\SWPM10-SP25-0" "C:\install\SWPM10-SP25-0" *.* /e
-Robocopy "X:\installFiles\SAPWebDispatcher\WebDispatcherStack" "C:\install\WebDispatcherStack" *.* /e
+# Copy Azure FileStore to Local Packages Dir 
+Robocopy "X:\sqlScripts" "C:\Packages\SAP\sqlScripts\" *.* /e
+
+# Copy NTRights Tool 
+Robocopy "X:\installFiles\" "C:\Packages\SAP" ntrights.exe

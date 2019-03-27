@@ -1,5 +1,5 @@
 ---
-- hosts: ISU_Database
+- hosts: data-isu
   gather_facts: true
   any_errors_fatal: true
 

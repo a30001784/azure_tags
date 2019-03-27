@@ -1,12 +1,9 @@
 ---
-- hosts: crm
+- hosts: CRM_Database
   gather_facts: true
   any_errors_fatal: true
 
-  vars_files:
-    - "vars/windows.yaml"
-    
   tasks: 
 
   - include_role:
-      name: crm-java
+      name: pre_check

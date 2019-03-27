@@ -1,16 +1,16 @@
 SAPSYSTEMNAME = {{ wd_sid }}
-SAPGLOBALHOST = {{ groups['Web_Dispatcher'][0] }}
+SAPGLOBALHOST = {{ ansible_hostname }}
 SAPSYSTEM = 66
 INSTANCE_NAME = W66
 DIR_CT_RUN = $(DIR_EXE_ROOT)\$(OS_UNICODE)\NTAMD64
 DIR_EXECUTABLE = $(DIR_CT_RUN)
 DIR_PROFILE = $(DIR_INSTALL)$(DIR_SEP)profile
-_PF = $(DIR_PROFILE)\{{ wd_sid }}_W66_{{ groups['Web_Dispatcher'][0] }}
+_PF = $(DIR_PROFILE)\{{ wd_sid }}_W66_{{ ansible_hostname }}
 SETENV_00 = PATH=$(DIR_EXECUTABLE);%PATH%
 #-----------------------------------------------------------------------
 # Back-end system configuration
 #-----------------------------------------------------------------------
-wdisp/system_0 = SID={{ crm_sid }}, MSHOST={{ groups['CRM_ASCS'][0] }}, MSPORT=8100, SSL_ENCRYPT=0
+wdisp/system_0 = SID={{ crm_sid }}, MSHOST={{ hostvars[groups['app-crm'][0]].ascs_host}}, MSPORT=8100, SSL_ENCRYPT=0
 #-----------------------------------------------------------------------
 # Configuration of maximum number of concurrent connections
 #-----------------------------------------------------------------------
