@@ -2,3 +2,11 @@ ansible_connection: winrm
 ansible_port: 5986
 ansible_user: azureadmin
 ansible_winrm_server_cert_validation: ignore
+isu_sid: "I{{ datacentre }}{{ environment_instance_count }}"
+wd_sid: "W{{ datacentre }}{{ environment_instance_count }}"
+crm_sid: "C{{ datacentre }}{{ environment_instance_count }}"
+crm_java: "AJ{{ environment_instance_count }}"
+database_schema: "{{ instance_type }}P1"
+environment_sid: "{{ instance_type }}{{ datacentre }}{{ environment_instance_count }}"
+sap_install_user: "{{ domain_name }}\\{{ sap_install_username }}"
+sap_master_password: "{{ sap_master_password_base }}{{ environment_sid | title }}"

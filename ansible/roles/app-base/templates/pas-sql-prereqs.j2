@@ -1,0 +1,37 @@
+use {{ environment_sid }} 
+update {{ environment_sid | lower }}.TSP03D set PADISABLED='X' 
+update {{ environment_sid | lower }}.TBTCO set STATUS='Z' where STATUS='S' 
+update {{ environment_sid | lower }}.TBTCO set STATUS='S' where STATUS='Z' and JOBNAME like 'RDDIMPDP%' 
+go 
+
+use {{ environment_sid }} 
+go 
+truncate table {{ environment_sid | lower }}.ALCONSEG 
+go 
+truncate table {{ environment_sid | lower }}.ALSYSTEMS 
+go 
+truncate table {{ environment_sid | lower }}.DBSNP 
+go 
+truncate table {{ environment_sid | lower }}.MONI 
+go 
+truncate table {{ environment_sid | lower }}.OSMON 
+go 
+truncate table {{ environment_sid | lower }}.PAHI 
+go 
+truncate table {{ environment_sid | lower }}.SDBAD 
+go 
+truncate table {{ environment_sid | lower }}.SDBAP 
+go 
+truncate table {{ environment_sid | lower }}.SDBAR 
+go 
+truncate table {{ environment_sid | lower }}.DDLOG 
+go
+
+use {{ environment_sid }} 
+go 
+truncate table {{ environment_sid | lower }}.TPFET 
+go 
+truncate table {{ environment_sid | lower }}.TPFHT 
+go 
+truncate table {{ environment_sid | lower }}.TLOCK 
+go 

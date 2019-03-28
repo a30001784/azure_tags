@@ -1,0 +1,34 @@
+---
+- hosts: data-isu
+  gather_facts: true
+  any_errors_fatal: true
+
+  vars_files:
+    - "vars/windows.yaml"
+    - "vars/local_vars.yaml"
+  
+  tasks: 
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_pre_step.yaml
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_step_01.yaml
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_step_02_First_set.yaml
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_step_02_Second_set.yaml
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_step_03.yaml
+
+  - include_role:
+      name: sap_isu_bdls_config
+      tasks_from: bdls_step_04.yaml

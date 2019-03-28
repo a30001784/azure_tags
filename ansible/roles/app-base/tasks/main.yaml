@@ -1,0 +1,152 @@
+---
+# Check for data restore
+- set_fact:
+    db_restore: true
+
+- name: End Play before data Restore
+  meta: end_play
+  when: db_restore == false
+
+- name: Ensure working directory is created
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - C:\Install\AutomationParameters
+    - C:\Install\DownloadStack
+    - C:\Install\SAPCAR
+    - C:\Install\SWPM10-SP25-0
+
+# Download install files
+- name: Download SAP install files
+  script: scripts/Download-SAPFiles.ps1 >
+    -StorageAccountName "{{ storage_account_name }}"
+    -StorageAccountKey "{{ storage_account_key }}"
+    -FileShareUri "{{ file_share_uri }}"
+    -Folders "DownloadStack","SAPCAR","SWPM10-SP25-0"
+
+# Stop any running sap processes
+- name: Stop running processes
+  win_shell: Get-Process sapinst* | Stop-Process
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+# Extract SWPM
+- name: Extract SWPM
+  win_shell: |
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
+  args:
+    executable: cmd
+  register: SWPM
+
+- name: Copy ASCS parameters files
+  template:
+    src: templates/ascs.j2
+    dest: C:\Install\AutomationParameters\ascs.params
+    newline_sequence: '\r\n'
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Run SAP installer for ASCS
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\ascs.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_ASCS:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Copy DB parameters files
+  template:
+    src: templates/database.j2
+    dest: C:\Install\AutomationParameters\database.params
+    newline_sequence: '\r\n'
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- name: Run SAP installer for DB instance
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\database.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_DB:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- name: Copy PAS parameters file
+  template: 
+    src: templates/pas.j2
+    dest: C:\Install\AutomationParameters\pas.params
+    newline_sequence: '\r\n'
+  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+
+# Run SQL cmds prereqs
+- name: Copy SQL prereqs script
+  template:
+    src: templates/pas-sql-prereqs.j2
+    dest: C:\install\AutomationParameters\pas-sql-prereqs.sql
+    newline_sequence: '\r\n'
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- name: Copy Unlock DDIC script
+  template:
+    src: templates/UnlockDDIC000.j2
+    dest: C:\install\AutomationParameters\UnlockDDIC000.sql
+    newline_sequence: '\r\n'
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- name: Run SQL cmds
+  win_shell: sqlcmd.exe -i "C:\install\AutomationParameters\{{ item }}"
+  with_items:
+    - pas-sql-prereqs.sql
+    - UnlockDDIC000.sql
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+# Set physical mem size
+- name: Set physical memory parameter on ASCS server
+  win_lineinfile:
+    path: "C:\\usr\\sap\\{{ environment_sid }}\\SYS\\profile\\DEFAULT.PFL"
+    line: "PHYS_MEMSIZE = 30%"
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Run PAS installer
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"app" in hostvars[inventory_hostname].group_names and pas == "true"'
+
+- name: Copy AAS files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    newline_sequence: '\r\n'
+  with_items:
+    - { src: templates/aas10.j2, dest: "C:\\install\\AutomationParameters\\aas10.params" }
+    - { src: templates/aas20.j2, dest: "C:\\install\\AutomationParameters\\aas20.params" }
+    - { src: templates/aas30.j2, dest: "C:\\install\\AutomationParameters\\aas30.params" }
+  when: '"app" in hostvars[inventory_hostname].group_names'
+  
+- name: Run AAS10
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\aas10.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"app" in hostvars[inventory_hostname].group_names and pas == "false"'
+
+- name: Run AAS20/30
+  win_shell: C:\SWPM\sapinst.exe "SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\{{ item }}.params" SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  with_items:
+    - aas20
+    - aas30
+  when: '"app" in hostvars[inventory_hostname].group_names'

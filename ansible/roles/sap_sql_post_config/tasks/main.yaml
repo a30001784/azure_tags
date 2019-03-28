@@ -1,0 +1,8 @@
+---
+- name: Check Variables
+  win_shell: echo "{{ sap_sid }}"
+
+- debug: 
+    msg: "{{ crm_sid }}"
+- debug: 
+    msg: "{{ isu_sid }}"

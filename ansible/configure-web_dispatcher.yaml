@@ -1,0 +1,13 @@
+---
+- hosts: app-swd
+  gather_facts: true
+  any_errors_fatal: true
+
+  vars_files:
+    - "vars/windows.yaml"
+    - "vars/local_vars.yaml"
+  
+  tasks: 
+
+  - include_role:
+      name: web_dispatcher

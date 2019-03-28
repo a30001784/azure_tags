@@ -1,0 +1,11 @@
+---
+- win_reboot:
+    reboot_timeout: 120
+
+- name: sap_sql_install
+  script: scripts/install_sql_sql4sap_ansible.ps1 >
+    -SID "{{ sap_sid }}"
+    -storName "{{ automation_storage_account }}"
+    -storKey "{{ automation_storage_key }}"
+  register: sap_sql_install
+- debug: var=sap_sql_install.stdout_lines
