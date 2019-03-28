@@ -28,7 +28,7 @@ const system_parameters = {
 }
 /* End global variables */
 
-// Uses headless browser to log in to the SAP ONE Support Launchpad and retrieves a cookie allowing session persistence
+// Uses headless browser to log in to the SAP ONE Support Launchpad and retrieves a cookie enabling session persistence
 async function authenticate() {
     const browser = await puppeteer.launch({args: ["--no-sandbox", "--disable-setuid-sandbox"] });
     const page = await browser.newPage();
@@ -99,8 +99,8 @@ async function create_update_system(cookie, csrf_token, action, sysnr, sysid, sy
     const url = "https://launchpad.support.sap.com/services/odata/i7p/odata/bkey/Submit?sap-language=en"
 
     // Set expiry date 3 months from today (YYYYMMDD)
-    var date = new Date()
-    var expiry = moment(date.setMonth(date.getMonth() + 3)).format("YYYYMMDD");
+    const date = new Date()
+    const expiry = moment(date.setMonth(date.getMonth() + 3)).format("YYYYMMDD");
 
     const payload = `{
         "actcode":"${action}",
@@ -219,7 +219,7 @@ async function get_licence_keys(cookie, csrf_token, sysnr) {
     const xml = await response.text();
 
     // Extract licence keys from XML response
-    var licences = [];
+    let licences = [];
     parseString(xml, function (err, result) {
         result["feed"]["entry"].forEach(function (item) {
             licences.push(item["content"][0]["m:properties"][0]["d:Keynr"].toString());
