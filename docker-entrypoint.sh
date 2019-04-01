@@ -252,6 +252,7 @@ for sr in ${sub_roles[@]}; do
     echo "[${sr}:vars]" >> "${inventory_file}"
     echo "ascs_host=$(terraform output ip_addresses_ascs-${sr})" >> "${inventory_file}"
     echo "db_host=$(terraform output ip_addresses_data-${sr})" >> "${inventory_file}"
+    echo "pas_host=$(terraform output hostname_${sr}-pas)" >> "${inventory_file}"
     # Get first character of sub role - e.g. crm = C
     echo "instance_type=$(echo ${sr} | head -c1 | awk '{print toupper($0)}')" >> "${inventory_file}"
     
