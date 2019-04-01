@@ -1,17 +1,10 @@
 ---
-# Check for data restore
-- set_fact:
-    db_restore: true
-
-- name: End Play before data Restore
-  meta: end_play
-  when: db_restore == false
-
 - name: Ensure working directory is created
   win_file:
     path: "{{ item }}"
     state: directory
   with_items:
+    - C:\Install
     - C:\Install\AutomationParameters
     - C:\Install\DownloadStack
     - C:\Install\SAPCAR
@@ -23,16 +16,17 @@
     -StorageAccountName "{{ storage_account_name }}"
     -StorageAccountKey "{{ storage_account_key }}"
     -FileShareUri "{{ file_share_uri }}"
-    -Folders "DownloadStack","SAPCAR","SWPM10-SP25-0"
 
-# Stop any running sap processes
-- name: Stop running processes
+- name: Stop sapinst.exe processes
   win_shell: Get-Process sapinst* | Stop-Process
+  args:
+    executable: powershell
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
+  when: '"app" in hostvars[inventory_hostname].group_names'
 
 # Extract SWPM
 - name: Extract SWPM
@@ -57,6 +51,25 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+# Set physical mem size
+- name: Set physical memory parameter on ASCS server
+  win_lineinfile:
+    path: "C:\\usr\\sap\\{{ environment_sid }}\\SYS\\profile\\DEFAULT.PFL"
+    line: "PHYS_MEMSIZE = 30%"
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+# Restart ASCS server
+- name: Restart SAP system on ASCS server
+  win_shell: | 
+    & "C:\\Program Files\\SAP\\hostctrl\\exe\\sapcontrol" -nr 0 -host "{{ ascs_host }}" -user "{{ sap_install_user }}" "{{ sap_install_password }}" -function RestartSystem
+  args:
+    executable: powershell
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- name: Wait until SAP system restarts
+  pause:
+    seconds: 60
 
 - name: Copy DB parameters files
   template:
@@ -102,13 +115,6 @@
     - pas-sql-prereqs.sql
     - UnlockDDIC000.sql
   when: '"data" in hostvars[inventory_hostname].group_names'
-
-# Set physical mem size
-- name: Set physical memory parameter on ASCS server
-  win_lineinfile:
-    path: "C:\\usr\\sap\\{{ environment_sid }}\\SYS\\profile\\DEFAULT.PFL"
-    line: "PHYS_MEMSIZE = 30%"
-  when: '"ascs" in hostvars[inventory_hostname].group_names'
 
 - name: Run PAS installer
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
