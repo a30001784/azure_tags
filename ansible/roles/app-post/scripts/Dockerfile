@@ -15,7 +15,7 @@ RUN mkdir /usr/sap /work
 
 # Download SAP NW RFC libraries
 RUN wget -O /work/nwrfc750P_2-70002752.zip \
-    "https://sapreleasefilesharing.blob.core.windows.net/sap-ptia-install/RFCLIB/Linux X86-64/nwrfc750P_2-70002752.zip?sp=r&st=2018-11-29T03:44:06Z&se=2018-12-29T11:44:06Z&spr=https&sv=2017-11-09&sig=C%2F19F33M2RT%2FveWoDrKrcEDKD5lUHPj2d4FfE7bIBzU%3D&sr=b"
+    "https://aaasapautomationsa.blob.core.windows.net/sapptia/sapPTIA/nwrfcsdk750P_3-70002752.zip?sp=r&st=2019-05-03T03:55:14Z&se=2019-11-03T10:55:14Z&spr=https&sv=2018-03-28&sig=LGIiwFcYd%2Fe0HSFPFnkKwq753GzA8HJrkaePBVcFXv8%3D&sr=b"
 
 # Extract lib files to SAP directory 
 RUN unzip -d /usr/sap \
@@ -39,10 +39,3 @@ RUN python ./setup.py install
 
 # Test. If this command fails the image won't be created.
 RUN python -c "from pyrfc import Connection"
-
-# Copy python script and set permissions
-ADD examples/clientPrintDescription.py /work/clientPrintDescription.py
-RUN chmod +x /work/clientPrintDescription.py
-
-# Python3
-ENTRYPOINT [ "python", "/work/clientPrintDescription.py", "PFL_READ_PROFILE_FROM_DB" ]
