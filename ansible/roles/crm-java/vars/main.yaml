@@ -1,0 +1,5 @@
+java_sid: "AJ{{ environment_instance_count }}"
+sum_installation_user: "AGL\\{{ java_sid }}adm"
+
+# Override environment sid
+environment_sid: "{{ java_sid }}"
