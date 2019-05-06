@@ -1,6 +1,15 @@
+Param
+(
+    [Parameter(Mandatory=$true)]
+    [string]$Password,
+
+    [Parameter(Mandatory=$true)]
+    [string]$LicencePath
+)
+
 <#
-.SYNOPSIS
-    Simple script to connect to a server using Telnet, issue commands and
+.SYNOPSISe
+    Simple script to connect to a servr using Telnet, issue commands and
     capture all of the output.
 .DESCRIPTION
     I wrote this script to connect to my Extreme Network switches and download
@@ -75,6 +84,7 @@
 .LINK
     http://community.spiceworks.com/scripts/show/1887-get-telnet-telnet-to-a-device-and-issue-commands
 #>
+
 Function Get-Telnet
 {   Param (
         [Parameter(ValueFromPipeline=$true)]
@@ -117,4 +127,9 @@ Function Get-Telnet
     $Result | Out-File $OutputPath
 }
 
-Get-Telnet -remotehost "localhost" -commands "J2EE_ADM_ADS","Rush2b4r33#","add licensing","INSTALL_LICENSE -file C:\Users\azureadmin\Documents\AJ3.txt","LIST_LICENSES" -port 58108 -waittime 1500
+if (-Not (Test-Path -Path $LicencePath) ) {
+    Write-Host "The inputted path '$LicencePath' could not be found. Exiting..."
+    [Environment]::Exit(1)
+}
+
+Get-Telnet -remotehost "localhost" -commands "J2EE_ADM_ADS","$Password","add licensing","INSTALL_LICENSE -file $LicencePath","LIST_LICENSES" -port 58108 -waittime 1500
