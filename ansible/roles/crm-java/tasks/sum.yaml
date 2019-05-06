@@ -1,0 +1,55 @@
+---
+# Extract SUM
+- name: Extract SUM
+  win_shell: |
+    C:\install\SAPCAR\SAPCAR_1211-80000938.EXE -xvf C:\install\SUM10-SP23-4\SUM10SP23_4-20006676.SAR -R "C:\\usr\\sap\\{{ java_sid }}"
+  args:
+    executable: cmd
+  register: SUM
+
+- name: Copy config template files
+  template:
+    src: "templates/{{ item.src }}"
+    dest: "C:\\usr\\sap\\{{ java_sid }}\\SUM\\sdt\\param\\{{ item.dst }}"
+    newline_sequence: '\r\n'
+  with_items:
+    - { src: BatchModeInputFile.xml.j2, dst: BatchModeInputFile.xml }
+    - { src: startup.props.j2, dst: startup.props }
+
+- name: Start Software Update Manager
+  win_shell: |
+    "C:\\usr\\sap\\{{ java_sid }}\\SUM\\STARTUP.BAT" jvm6
+  become: yes
+  become_method: runas
+  become_user: "{{ sum_installation_user }}"
+  vars:
+    ansible_become_password: "{{ sap_master_password }}"
+  args:
+    executable: cmd
+  register: Start
+
+- name: GET
+  win_uri: 
+    url: "http://{{ pas_host }}:1128/lmsl/sumjava/{{ java_sid }}/index.html"
+    method: GET
+    user: "{{ sum_installation_user }}"
+    password: "{{ sap_master_password }}"
+    force_basic_auth: yes
+  register: get
+
+- name: POST
+  win_uri:
+    url: "http://{{ pas_host }}:1128/lmsl/sumjava/{{ java_sid }}/slp/services/SUM4Java/processes"
+    method: POST
+    user: "{{ sum_installation_user }}"
+    password: "{{ sap_master_password }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "text/xml"
+    body: "<Process xmlns=\"http://www.sap.com/lmsl/slp\"><parameters><Parameter><id>UiTopology</id><value>JAVA_ONLY</value></Parameter></parameters></Process>"
+  register: post
+
+- name: Check for update completion
+  script: scripts/Get-UpdateStatus.ps1 >
+    -SID "{{ environment_sid }}"
+    -RetryCount 120

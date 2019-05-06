@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<UpgradeBatchConfig version="1.0">
+<InputCatalog>
+<Property key="AutoInputMode" value="true"/>
+<!--<Property key="DBAPassword" value="" crypt="true"/>-->
+<!--<Property key="DDICPassword" value="" crypt="true"/>-->
+<Property key="DownloadDirectory" value=""/>
+<Property key="EHPKeyWord" value=""/>
+<Property key="EHPStackFile" value="C:/Install/CRMJAVAInstallStack/MP_Stack_{{ java_sid }}_CRM_JAVA_NEW_INSTALL.xml"/>
+<Property key="IgnoreAdjustments" value="yes"/>
+<Property key="InstanceName" value="JC00"/>
+<Property key="InstanceProfile" value=""/>
+<!--<Property key="JavaDDICPassword" value="" crypt="true"/>-->
+<Property key="JeeAdminPassword" value="{{ pas_ddic_password }}#" crypt="true"/>
+<Property key="JeeAdminUser" value="J2EE_ADM_ADS"/>
+<!--<Property key="JeeSdmPassword" value="" crypt="true"/>-->
+<!--<Property key="JeeSuperAdminPassword" value="" crypt="true"/>-->
+<!--<Property key="KeyPhrase" value="" crypt="true"/>-->
+<Property key="NTServiceUserName" value="AGL\SAPService{{ java_sid }}"/>
+<Property key="NTServiceUserPassword" value="{{ sap_master_password }}" crypt="true"/>
+<Property key="NoCredentialsMode" value="true"/>
+<Property key="ProfileDirectory" value=""/>
+<!--<Property key="SAPADMPassword" value="" crypt="true"/>-->
+<Property key="SGENMode" value="none"/>
+<Property key="SPAUUmodTransport" value=""/>
+<Property key="SPDDUmodTransport" value=""/>
+<Property key="SapSystemInstance[]" value="3"/>
+<Property key="SaveVariants" value="no"/>
+<Property key="ShadowUseSavedProfiles" value="0"/>
+<Property key="SidAdmUserName" value="AGL\{{ java_sid | lower }}adm"/>
+<Property key="SingleChangeRequest" value=""/>
+<Property key="SpamUpdate" value=""/>
+<Property key="StartRelSpamUpdate" value="skip"/>
+<Property key="SystemId" value=""/>
+<Property key="SystemIdDirectory" value=""/>
+<Property key="UpgradeConfiguration" value="highwitharch"/>
+<Property key="UpgradeKeyWord" value=""/>
+<Property key="XISuperUser" value=""/>
+<!--<Property key="XISuperUserPass" value="" crypt="true"/>-->
+<Property key="inbox.option" value="false"/>
+<Property key="isSapcontrolSupported" value="true"/>
+<Property key="stack.option" value="true"/>
+<Property key="useHttpsForSapControlConnection" value="true"/>
+<Property key="SapSystemInstance[0].HostName" value="{{ ascs_host }}"/>
+<Property key="SapSystemInstance[0].InstanceNumber" value="80"/>
+<Property key="SapSystemInstance[0].SidAdmUserName" value="AGL\{{ java_sid | lower }}adm"/>
+<Property key="SapSystemInstance[1].HostName" value="{{ pas_host }}"/>
+<Property key="SapSystemInstance[1].InstanceNumber" value="81"/>
+<Property key="SapSystemInstance[1].SidAdmUserName" value="AGL\{{ java_sid | lower }}adm"/>
+<Property key="SapSystemInstance[2].HostName" value="{{ java_aas }}"/>
+<Property key="SapSystemInstance[2].InstanceNumber" value="81"/>
+<Property key="SapSystemInstance[2].SidAdmUserName" value="AGL\{{ java_sid | lower }}adm"/>
+</InputCatalog>
+</UpgradeBatchConfig>
