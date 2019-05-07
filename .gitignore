@@ -3,3 +3,7 @@ run.sh
 .DS_Store
 ansible/vars/local_vars.yaml
 *.retry
+
+.terraform
+*.tfvars
+*.tfstate*
