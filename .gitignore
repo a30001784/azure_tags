@@ -4,6 +4,6 @@ run.sh
 ansible/vars/local_vars.yaml
 *.retry
 
-.terraform
+*/.terraform
 *.tfvars
 *.tfstate*
