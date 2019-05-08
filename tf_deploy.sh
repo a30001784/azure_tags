@@ -9,8 +9,8 @@ terraform init \
 echo "***Running terraform command***"
 if [ "$1" == "plan" ]; then
     terraform plan
-fi
-
-if [ "$1" == "apply" ]; then
+elif [ "$1" == "apply" ]; then
     terraform apply -auto-approve
 fi
+
+exit $?
