@@ -11,7 +11,8 @@ variable "host_password" {}
 variable "hostname_prefix" {}
 variable "hostname_suffix_start_range" {}
 
-variable "subnet_id" {}
+variable "subnet_id_app" {}
+variable "subnet_id_data" {}
 
 variable "node_count_crm_app" {
     default = 0
