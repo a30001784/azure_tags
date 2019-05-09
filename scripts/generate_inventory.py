@@ -51,8 +51,10 @@ def generate_file(roles, sub_roles, out_file):
         # Children
         for child in children:
             f.write("{}\n".format(child))
-                
+
         f.write("\n")
+
+    f.close()
 
 main()
 
