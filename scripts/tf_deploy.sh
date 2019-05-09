@@ -1,4 +1,4 @@
-cd ./terraform 
+cd ../terraform 
 
 echo "***Initialising Terraform***"
 terraform init \
