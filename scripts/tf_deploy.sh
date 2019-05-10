@@ -57,9 +57,9 @@ terraform init \
 
 echo "*** Running terraform command ***"
 if [ "$1" == "plan" ]; then
-    terraform plan
+    terraform plan -input=false
 elif [ "$1" == "apply" ]; then
-    terraform apply -auto-approve
+    terraform apply -input=false -auto-approve
 fi
 
 exit $?
