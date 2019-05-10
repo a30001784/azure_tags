@@ -14,8 +14,8 @@ variable "hostname_suffix_start_range" {}
 variable "subnet_id_app" {}
 variable "subnet_id_data" {}
 
-variable "nsg_name_app" {}
-variable "nsg_name_data" {}
+variable "network_security_group_name_app" {}
+variable "network_security_group_name_data" {}
 
 variable "node_count_crm_app" {
     default = 0

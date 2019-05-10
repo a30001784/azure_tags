@@ -23,14 +23,14 @@ locals {
 
 module "nsg-app" { 
     source                               = "./modules/network-security-group"
-    name                                 = "${var.nsg_name_app}"
+    name                                 = "${var.network_security_group_name_app}"
     resource_group                       = "${var.resource_group_name}"
     location                             = "${var.location}"
 }
 
 module "nsg-data" { 
     source                               = "./modules/network-security-group"
-    name                                 = "${var.nsg_name_data}"
+    name                                 = "${var.network_security_group_name_data}"
     resource_group                       = "${var.resource_group_name}"
     location                             = "${var.location}"
 }
