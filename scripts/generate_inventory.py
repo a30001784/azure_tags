@@ -7,8 +7,8 @@ def main():
     parser = argparse.ArgumentParser(description="Generate Ansible inventory file")
     parser.add_argument("-r", "--roles", nargs="+", type=str, required=True, help="List of roles", default=[])
     parser.add_argument("-s", "--sub-roles", nargs="+", type=str, required=True, help="List of sub roles", default=[])
-    parser.add_argument("-i", "--inv-dir", type=str, required=True, help="Relative file path to location to store inventory file. Must be a directory.")
-    parser.add_argument("-t", "--tf-path", type=str, required=True, help="Relative path from working directory to Terraform directory")
+    parser.add_argument("-i", "--inv-dir", type=str, required=True, help="Relative path to output inventory file. Must be a directory.")
+    parser.add_argument("-t", "--tf-path", type=str, required=True, help="Relative path from working directory to Terraform directory.")
     args = parser.parse_args()
 
     # Check for valid TF directory
