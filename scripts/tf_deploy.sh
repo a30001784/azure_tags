@@ -49,15 +49,13 @@ export TF_VAR_vm_size_isu_ascs="${VM_SIZE_ISU_ASCS}"
 export TF_VAR_vm_size_isu_db="${VM_SIZE_ISU_DB}"
 ### End Terraform variables ###
 
-cd ../terraform 
-
-echo "***Initialising Terraform***"
+echo "*** Initialising Terraform ***"
 terraform init \
     -backend-config="access_key=${TF_STATE_STORAGE_ACCOUNT_KEY}" \
     -backend-config="storage_account_name=${TF_STATE_STORAGE_ACCOUNT_NAME}" \
     -backend-config="resource_group_name=${RESOURCE_GROUP_NAME}"
 
-echo "***Running terraform command***"
+echo "*** Running terraform command ***"
 if [ "$1" == "plan" ]; then
     terraform plan
 elif [ "$1" == "apply" ]; then
