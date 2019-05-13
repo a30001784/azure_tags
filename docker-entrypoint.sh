@@ -2,6 +2,8 @@
 
 playbooks=( "all" "ascs" "app" "data" )
 
+cd /working/ansible 
+
 for playbook in "${playbooks[@]}"; do
     ansible-playbook "configure-${playbook}.yaml" \
         --inventory-file "${inventory_file}" -vvv \
