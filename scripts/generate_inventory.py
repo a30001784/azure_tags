@@ -64,6 +64,14 @@ def generate_file(roles, sub_roles, inv_dir):
 
         f.write("\n")
 
+    for sub_role in sub_roles:
+        f.write("[{}:children]\n".format(sub_role))
+
+        for role in roles:
+            f.write("{}-{}\n".format(role, sub_role))
+
+        f.write("\n")
+
     f.close()
 
 main()
