@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-playbooks=( "all" "ascs" "app" "data" }
+playbooks=( "all" "ascs" "app" "data" )
 
 for playbook in "${playbooks[@]}"; do
     ansible-playbook "configure-${playbook}.yaml" \
