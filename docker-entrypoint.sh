@@ -14,4 +14,5 @@ for playbook in "${playbooks[@]}"; do
         -e "domain_join_username='${DOMAIN_JOIN_USERNAME}'" \
         -e "domain_join_password='${DOMAIN_JOIN_PASSWORD}'" \
         -e "domain_ou_path='${DOMAIN_OU_PATH}'" \
-        -e "domain_admin_group='${DOMAIN_ADMIN_GROUP}'"
+        -e "domain_admin_group='${DOMAIN_ADMIN_GROUP}'" --check
+done
