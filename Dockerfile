@@ -13,5 +13,7 @@ RUN yum clean all && \
 RUN pip2.7 install --upgrade pip && \
     pip2.7 install "pywinrm>=0.3.0" "ansible==2.7.0"
 
+COPY docker-entrypoint.sh /
+
 # Begin!
 ENTRYPOINT [ "bash", "/docker-entrypoint.sh" ]
