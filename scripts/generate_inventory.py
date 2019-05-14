@@ -49,7 +49,9 @@ def generate_file(roles, sub_roles, inv_dir):
                 variables=""
 
                 if sub_role == "data":
-                    print("do stuff here...")
+                    disks="NUM_POOLED_DISKS_DATA_{}".format(role.upper())
+                    backup="HAS_BACKUP_DISK_{}".format(role.upper())
+                    variables="num_pooled_disks={} has_backup_disk={}".format(os.environ.get(disks), os.environ.get(backup))
 
                 f.write("{} {}\n".format(ip, variables))
 
@@ -75,4 +77,3 @@ def generate_file(roles, sub_roles, inv_dir):
     f.close()
 
 main()
-
