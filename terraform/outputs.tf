@@ -29,3 +29,7 @@ output "hostname_crm-pas" {
 output "hostname_crm-aas" { 
     value = "${element(module.crm-app.hostnames, 1)}"
 }
+
+output "hostname_isu-pas" { 
+    value = "${element(module.isu-app.hostnames, 0)}"
+}
