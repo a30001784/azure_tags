@@ -65,11 +65,23 @@ def generate_file(roles, sub_roles, inv_dir):
             f.write("{}\n".format(child))
 
         f.write("\n")
+            
+        # Role vars
+        ascs_host = (subprocess.run(["terraform", "output", "ip_addresses_{}-ascs".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+        db_host = (subprocess.run(["terraform", "output", "ip_addresses_{}-data".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+        pas_host = (subprocess.run(["terraform", "output", "hostname_{}-pas".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+
+        f.write("[{}:vars]\n".format(role))
+        f.write("ascs_host={}".format(ascs_host))
+        f.write("db_host={}".format(db_host))
+        f.write("pas_host={}".format(pas_host))
+        f.write("instance_type={}".format(role[0].upper()))
+        f.write("\n\n")       
 
     for sub_role in sub_roles:
         f.write("[{}:children]\n".format(sub_role))
 
-        for role in roles:
+        for role in roles:            
             f.write("{}-{}\n".format(role, sub_role))
 
         f.write("\n")
