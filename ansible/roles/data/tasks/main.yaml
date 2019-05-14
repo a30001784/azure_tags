@@ -103,7 +103,6 @@
     force_dependent_services: yes
     state: restarted
 
-
 - name: Grant privileges to install user
   win_user_right:
     name: "{{ item }}"
@@ -141,19 +140,14 @@
     state: started
     force_dependent_services: yes
 
+- name: End Play before data Restore
+  meta: end_play
+  when: db_restored == "false"
+
 - name: SQL Server Configuration Options
   win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\SQLPostConfig\sap_post_config_03.sql" -v database="{{ environment_sid }}"
-
 
 - name: delete any mapped drives under Z
   win_mapped_drive:
     letter: X
     state: absent
-
-# Check for data restore
-- set_fact:
-    db_restore: false
-
-- name: End Play before data Restore
-  meta: end_play
-  when: db_restore == false
