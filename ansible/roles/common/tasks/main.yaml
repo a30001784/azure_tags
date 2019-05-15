@@ -148,7 +148,7 @@
     include_sub_features: true
     state: present
   register: dotnet_install
-  when: '"data" not in hostvars[inventory_hostname].group_names and ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
+  when: 'ansible_distribution == "Microsoft Windows Server 2016 Datacenter"'
 
 # Join computer to AGL on-premises Active Directory
 - name: Join to Active Directory domain
