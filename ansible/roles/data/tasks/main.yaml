@@ -77,12 +77,12 @@
 - name: Set install string - CRM
   set_fact:
     install_string: C:\install\51050563\SQL4SAP.bat -a -d -m -u BUILTIN\Administrators -bits C:\install\SQLServer2014-MS-Binaries
-  when: "crm" in hostvars[inventory_hostname].group_names
+  when: '"crm" in hostvars[inventory_hostname].group_names'
 
 - name: Set install string
   set_fact: 
       install_string: C:\install\51050563\SQL4SAP.bat -d -m -u BUILTIN\Administrators -bits C:\install\SQLServer2014-MS-Binaries
-  when: "isu" in hostvars[inventory_hostname].group_names
+  when: '"isu" in hostvars[inventory_hostname].group_names'
 
 - name: Run SQL install
   win_shell: |
