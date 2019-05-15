@@ -49,6 +49,14 @@
     -FileShareUri "{{ file_share_uri }}"
     -Folders "AppInstallPrerequisites"
 
+- name: Install Visual C++ 2005 Redistributable
+  win_shell: C:\install\vcredist_x64.exe /Q
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
+
 # Install Microsoft ODBC Driver 11 for SQL Server on non-database servers
 # - name: Install ODBC driver
 #   win_package: 
