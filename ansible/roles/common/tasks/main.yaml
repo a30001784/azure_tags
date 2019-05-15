@@ -50,7 +50,7 @@
     -Folders "AppInstallPrerequisites"
 
 - name: Install Visual C++ 2005 Redistributable
-  win_shell: C:\install\vcredist_x64.exe /Q
+  win_shell: C:\install\AppInstallPrerequisites\vcredist_x64.exe /Q
   become: yes
   become_method: runas
   become_user: "{{ ansible_user }}"
