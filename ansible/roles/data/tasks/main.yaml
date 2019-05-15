@@ -23,17 +23,23 @@
   win_reboot:
     reboot_timeout: 120
 
-- name: sap_copy_sql4sap_files
-  script: scripts/sap_copy_sql4sap_files.ps1 >
-    -storName "{{ storage_account_name }}"
-    -storKey "{{ storage_account_key }}"
+# - name: sap_copy_sql4sap_files
+#   script: scripts/sap_copy_sql4sap_files.ps1 >
+#     -storName "{{ storage_account_name }}"
+#     -storKey "{{ storage_account_key }}"
 
-- name: sap_sql_copy_blob_files
-  script: scripts/sap_sql_copy_blob_files.ps1 >
-    -storName "{{ storage_account_name }}"
-    -storKey "{{ storage_account_key }}"
+# - name: sap_sql_copy_blob_files
+#   script: scripts/sap_sql_copy_blob_files.ps1 >
+#     -storName "{{ storage_account_name }}"
+#     -storKey "{{ storage_account_key }}"
 
-# variable for SQL install
+- name: Download SAP prerequisite install files
+  script: scripts/Download-SAPFiles.ps1 >
+    -StorageAccountName "{{ storage_account_name }}"
+    -StorageAccountKey "{{ storage_account_key }}"
+    -FileShareUri "{{ file_share_uri }}"
+    -Folders "51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563","SQLServer2014-MS-Binaries"
+
 - name: set var for sql install
   set_fact:
     sql_install: true
@@ -57,15 +63,35 @@
     path: "C:\\Logs"
     state: directory
 
-- name: Run SQL4SQP
-  win_shell: | 
-    C:\Packages\SAP\SQL4SAP\SQL4SAP.bat -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64
+# - name: Run SQL4SQP
+#   win_shell: | 
+#     C:\Packages\SAP\SQL4SAP\SQL4SAP.bat -i MSSQLSERVER -u BUILTIN\Administrators /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /SQLSYSADMINACCOUNTS=BUILTIN\Administrators /FEATURES=BC,BOL,Conn,SSMS,ADV_SSMS,SQLEngine,Fulltext,SDK,ADV_SSMS,SNAC_SDK /UpdateEnabled=TRUE /UpdateSource=C:\Packages\SAP\SQL4SAP\x86-x64\Patches\X64
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     ansible_become_password: "{{ ansible_password }}"
+#   # ignore_errors: true
+#   when: sql_install == false
+
+- name: Set install string - CRM
+  set_fact:
+    install_string: C:\install\51050563\SQL4SAP.bat -a -d -m -u BUILTIN\Administrators -bits C:\install\SQLServer2014-MS-Binaries
+  when: "crm" in hostvars[inventory_hostname].group_names
+
+- name: Set install string
+  set_fact: 
+      install_string: C:\install\51050563\SQL4SAP.bat -d -m -u BUILTIN\Administrators -bits C:\install\SQLServer2014-MS-Binaries
+  when: "isu" in hostvars[inventory_hostname].group_names
+
+- name: Run SQL install
+  win_shell: |
+    {{ install_string }}
   become: yes
   become_method: runas
   become_user: "{{ ansible_user }}"
   vars:
     ansible_become_password: "{{ ansible_password }}"
-  ignore_errors: true
   when: sql_install == false
 
 # Configure MSSQLSERVICE server service
