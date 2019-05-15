@@ -67,8 +67,8 @@ def generate_file(roles, sub_roles, inv_dir):
         f.write("\n")
             
         # Role vars
-        ascs_host = (subprocess.run(["terraform", "output", "ip_addresses_{}-ascs".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
-        db_host = (subprocess.run(["terraform", "output", "ip_addresses_{}-data".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+        ascs_host = (subprocess.run(["terraform", "output", "hostname_{}-ascs".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+        db_host = (subprocess.run(["terraform", "output", "hostname_{}-data".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
         pas_host = (subprocess.run(["terraform", "output", "hostname_{}-pas".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
 
         f.write("[{}:vars]\n".format(role))
@@ -76,6 +76,11 @@ def generate_file(roles, sub_roles, inv_dir):
         f.write("db_host={}".format(db_host))
         f.write("pas_host={}".format(pas_host))
         f.write("instance_type={}".format(role[0].upper()))
+
+        if role == "crm":
+            java_aas = (subprocess.run(["terraform", "output", "hostname_{}-aas".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")
+            f.write("java_aas={}".format(java_aas))
+
         f.write("\n\n")       
 
     for sub_role in sub_roles:

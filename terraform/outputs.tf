@@ -30,6 +30,22 @@ output "hostname_crm-aas" {
     value = "${element(module.crm-app.hostnames, 1)}"
 }
 
+output "hostname_crm-ascs" { 
+    value = "${element(module.crm-ascs-hostnames, 0)}"
+}
+
+output "hostname_crm-data" { 
+    value = "${element(module.crm-db.hostnames, 0)}"
+}
+
 output "hostname_isu-pas" { 
     value = "${element(module.isu-app.hostnames, 0)}"
+}
+
+output "hostname_crm-ascs" { 
+    value = "${element(module.crm-ascs-hostnames, 0)}"
+}
+
+output "hostname_isu-data" { 
+    value = "${element(module.isu-db.hostnames, 0)}"
 }
