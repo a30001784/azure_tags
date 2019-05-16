@@ -39,13 +39,13 @@ output "hostname_crm-data" {
 }
 
 output "hostname_isu-pas" { 
-    value = "${element(module.isu-app.hostnames, 0)}"
+    value = "${element(concat(module.isu-app.hostnames, list("")), 0)}"
 }
 
 output "hostname_isu-ascs" { 
-    value = "${element(module.isu-ascs.hostnames, 0)}"
+    value = "${element(concat(module.isu-ascs.hostnames, list("")), 0)}"
 }
 
 output "hostname_isu-data" { 
-    value = "${element(module.isu-db.hostnames, 0)}"
+    value = "${element(concat(module.isu-db.hostnames, list("")), 0)}"
 }
