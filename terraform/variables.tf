@@ -45,40 +45,40 @@ variable "vm_size_isu_app" {}
 variable "vm_size_isu_ascs" {}
 variable "vm_size_isu_db" {}
 
-variable "data_disk_size_secondary_crm_app" {
+variable "data_disk_size_crm_app" {
     default = 512
 }
-variable "data_disk_count_secondary_crm_app" {
+variable "data_disk_count_crm_app" {
     default = 0
 }
-variable "data_disk_size_secondary_crm_ascs" {
+variable "data_disk_size_crm_ascs" {
     default = 512
 }
-variable "data_disk_count_secondary_crm_ascs" {
+variable "data_disk_count_crm_ascs" {
     default = 0
 }
-variable "data_disk_size_secondary_crm_db" {
+variable "data_disk_size_crm_db" {
     default = 512
 }
-variable "data_disk_count_secondary_crm_db" {
+variable "data_disk_count_crm_db" {
     default = 0
 }
 
-variable "data_disk_size_secondary_isu_app" {
+variable "data_disk_size_isu_app" {
     default = 512
 }
-variable "data_disk_count_secondary_isu_app" {
+variable "data_disk_count_isu_app" {
     default = 0
 }
-variable "data_disk_size_secondary_isu_ascs" {
+variable "data_disk_size_isu_ascs" {
     default = 512
 }
-variable "data_disk_count_secondary_isu_ascs" {
+variable "data_disk_count_isu_ascs" {
     default = 0
 }
-variable "data_disk_size_secondary_isu_db" {
+variable "data_disk_size_isu_db" {
     default = 512
 }
-variable "data_disk_count_secondary_isu_db" {
+variable "data_disk_count_isu_db" {
     default = 0
 }

@@ -35,15 +35,11 @@ variable "os_disk_size" {
 
 variable "network_security_group_id" {}
 
-variable "data_disk_size_primary" {
-    default = 256
-}
-
-variable "data_disk_size_secondary" {
+variable "data_disk_size" {
     default = 512
 }
 
-variable "data_disk_count_secondary" {
+variable "data_disk_count" {
     default = 0
 }
 

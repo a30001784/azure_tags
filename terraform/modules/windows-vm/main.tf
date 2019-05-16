@@ -1,5 +1,5 @@
 locals {
-  total_data_disks                 = "${var.data_disk_count_secondary * var.count}"
+  total_data_disks                 = "${var.data_disk_count * var.count}"
 }
 
 resource "azurerm_network_interface" "main" {
@@ -17,25 +17,14 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
-resource "azurerm_managed_disk" "primary" {
-  count                            = "${var.count}"
-  name                             = "${format("${var.hostname_prefix}%04d", var.hostname_suffix_start_range + count.index)}-datadisk-01"
-  location                         = "${var.location}"
-  resource_group_name              = "${var.resource_group}"
-  storage_account_type             = "Premium_LRS"
-  create_option                    = "Empty"
-  disk_size_gb                     = "${var.data_disk_size_primary}"
-//   tags                          = "${var.tags}"
-}
-
-resource "azurerm_managed_disk" "secondary" {
+resource "azurerm_managed_disk" "main" {
   count                            = "${local.total_data_disks}"
-  name                             = "${format("${var.hostname_prefix}%04d", var.hostname_suffix_start_range + (count.index / var.data_disk_count_secondary))}-datadisk-${format("%02d", (count.index % var.data_disk_count_secondary + 2))}"
+  name                             = "${format("${var.hostname_prefix}%04d", var.hostname_suffix_start_range + (count.index / var.data_disk_count))}-datadisk-${format("%02d", (count.index % var.data_disk_count + 1))}"
   location                         = "${var.location}"
   resource_group_name              = "${var.resource_group}"
   storage_account_type             = "Premium_LRS"
   create_option                    = "Empty"
-  disk_size_gb                     = "${var.data_disk_size_secondary}"
+  disk_size_gb                     = "${var.data_disk_size}"
 //   tags                          = "${var.tags}"
 }
 
@@ -79,22 +68,13 @@ resource "azurerm_virtual_machine" "main" {
 //   tags                          = "${var.tags}"
 }
 
-resource "azurerm_virtual_machine_data_disk_attachment" "primary" {
-  count                            = "${var.count}"
-  virtual_machine_id               = "${azurerm_virtual_machine.main.*.id[count.index]}"
-  managed_disk_id                  = "${azurerm_managed_disk.primary.*.id[count.index]}"
-  lun                              = 0  
-  caching                          = "ReadOnly"
-  depends_on                       = ["azurerm_network_interface.main", "azurerm_managed_disk.primary"]
-}
-
-resource "azurerm_virtual_machine_data_disk_attachment" "secondary" {
+resource "azurerm_virtual_machine_data_disk_attachment" "main" {
   count                            = "${local.total_data_disks}"
-  virtual_machine_id               = "${azurerm_virtual_machine.main.*.id[count.index / var.data_disk_count_secondary]}"
-  managed_disk_id                  = "${azurerm_managed_disk.secondary.*.id[count.index]}"
-  lun                              = "${count.index % var.data_disk_count_secondary + 1}"
+  virtual_machine_id               = "${azurerm_virtual_machine.main.*.id[count.index / var.data_disk_count]}"
+  managed_disk_id                  = "${azurerm_managed_disk.main.*.id[count.index]}"
+  lun                              = "${count.index % var.data_disk_count}"
   caching                          = "ReadOnly"
-  depends_on                       = ["azurerm_network_interface.main", "azurerm_managed_disk.secondary"]
+  depends_on                       = ["azurerm_network_interface.main", "azurerm_managed_disk.main"]
 }
 
 resource "azurerm_virtual_machine_extension" "main" {
@@ -106,7 +86,7 @@ resource "azurerm_virtual_machine_extension" "main" {
   publisher                        = "Microsoft.Compute"
   type                             = "CustomScriptExtension"
   type_handler_version             = "1.8"
-  depends_on                       = ["azurerm_virtual_machine.main", "azurerm_virtual_machine_data_disk_attachment.primary", "azurerm_virtual_machine_data_disk_attachment.secondary" ]
+  depends_on                       = ["azurerm_virtual_machine.main","azurerm_virtual_machine_data_disk_attachment.main" ]
 
   settings                         = <<SETTINGS
     {

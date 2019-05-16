@@ -46,8 +46,8 @@ module "crm-app" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_crm_app}"
     network_security_group_id            = "${module.nsg-app.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_crm_app}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_crm_app}"
+    data_disk_size                       = "${var.data_disk_size_crm_app}"
+    data_disk_count                      = "${var.data_disk_count_crm_app}"
 }
 
 module "crm-ascs" {
@@ -61,8 +61,8 @@ module "crm-ascs" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_crm_ascs}"
     network_security_group_id            = "${module.nsg-app.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_crm_ascs}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_crm_ascs}"
+    data_disk_size                       = "${var.data_disk_size_crm_ascs}"
+    data_disk_count                      = "${var.data_disk_count_crm_ascs}"
 }
 
 module "crm-db" {
@@ -76,8 +76,8 @@ module "crm-db" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_crm_db}"
     network_security_group_id            = "${module.nsg-data.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_crm_db}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_crm_db}"
+    data_disk_size                       = "${var.data_disk_size_crm_db}"
+    data_disk_count                      = "${var.data_disk_count_crm_db}"
 }
 
 module "isu-app" { 
@@ -91,8 +91,8 @@ module "isu-app" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_isu_app}"
     network_security_group_id            = "${module.nsg-app.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_isu_app}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_isu_app}"
+    data_disk_size                       = "${var.data_disk_size_isu_app}"
+    data_disk_count                      = "${var.data_disk_count_isu_app}"
 }
 
 module "isu-ascs" {
@@ -106,8 +106,8 @@ module "isu-ascs" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_isu_ascs}"
     network_security_group_id            = "${module.nsg-app.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_isu_ascs}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_isu_ascs}"
+    data_disk_size                       = "${var.data_disk_size_isu_ascs}"
+    data_disk_count                      = "${var.data_disk_count_isu_ascs}"
 }
 
 module "isu-db" {
@@ -121,6 +121,6 @@ module "isu-db" {
     host_password                        = "${var.host_password}"
     vm_size                              = "${var.vm_size_isu_db}"
     network_security_group_id            = "${module.nsg-data.network_security_group_id}"
-    data_disk_size_secondary             = "${var.data_disk_size_secondary_isu_db}"
-    data_disk_count_secondary            = "${var.data_disk_count_secondary_isu_db}"
+    data_disk_size                       = "${var.data_disk_size_isu_db}"
+    data_disk_count                      = "${var.data_disk_count_isu_db}"
 }
