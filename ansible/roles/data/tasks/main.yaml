@@ -38,7 +38,7 @@
     -StorageAccountName "{{ storage_account_name }}"
     -StorageAccountKey "{{ storage_account_key }}"
     -FileShareUri "{{ file_share_uri }}"
-    -Folders "51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563","SQLServer2014-MS-Binaries"
+    -Folders "51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563","PTIA-2-ConfigFiles\SQLSserver2014\SQLServer2014-MS-Binaries"
 
 - name: set var for sql install
   set_fact:
