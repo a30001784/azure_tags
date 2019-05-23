@@ -1,0 +1,58 @@
+---
+# Create scripts directory
+- name: Ensure scripts directory is created
+  win_file:
+    path: C:\scripts
+    state: directory
+
+# Copy SQL scripts
+- name: Copy create database script
+  win_copy:
+    src: "{{ item }}"
+    dest: C:\scripts\
+  with_items:
+    - scripts/sap_post_config_01.sql
+    - scripts/sap_post_config_02.sql
+    - scripts/sap_post_config_03.sql
+
+- name: SQL Script to change database logical file names in SQL
+  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_01.sql" -v database="{{ environment_sid }}"
+
+- name: Stop service MSSQLSERVICE
+  win_service:
+    name: MSSQLSERVER
+    state: stopped
+    force_dependent_services: yes
+
+- name: sap_rename_db_file
+  script: scripts/sap_rename_db_file.ps1 >
+    -SID "{{ environment_sid }}"
+
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: MSSQLSERVER
+    state: started
+    force_dependent_services: yes
+
+- name:  SQL Script to move temp db files and create additional temp db files
+  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_02.sql" -v database="{{ environment_sid }}"
+  
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: "{{ item }}"
+    state: restarted
+    force_dependent_services: yes
+  with_items:
+    - MSSQLSERVER
+    - SQLSERVERAGENT
+
+- name: Remove TempDB files
+  win_file:
+    path: "C:\\Program Files\\Microsoft SQL Server\\MSSQL12.MSSQLSERVER\\MSSQL\\DATA\\{{ item }}"
+    state: absent
+  with_items:
+    - tempdev.mdf
+    - templog.ldf
+
+- name: SQL Server Configuration Options
+  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_03.sql" -v database="{{ environment_sid }}"
