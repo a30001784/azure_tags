@@ -35,6 +35,12 @@
     C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
   args:
     executable: cmd
+  
+# Copy script for checking if SAP instances exist on the server
+- name: Copy instance existence check script
+  win_copy: 
+    src: scripts/Check-InstanceExistence.ps1
+    dest: C:\Install\Scripts\Check-InstanceExistence.ps1
 
 # Checks for app install on ASCS server
 - name: Check for existing ASCS installation
@@ -132,12 +138,6 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   when: '"data" in hostvars[inventory_hostname].group_names'
-
-- name: Copy instance existence check script
-  win_copy: 
-    src: scripts/Check-InstanceExistence.ps1
-    dest: C:\Install\Scripts\Check-InstanceExistence.ps1
-  when: '"app" in hostvars[inventory_hostname].group_names'
 
 - name: Check for existing PAS10 instance - PAS
   win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
