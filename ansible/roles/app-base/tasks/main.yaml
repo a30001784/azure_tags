@@ -19,7 +19,7 @@
     -FileShareUri "{{ file_share_uri }}"
     -Folders "DownloadStack","SAPCAR","SWPM10-SP25-0"
 
-- name: Stop sapinst.exe processes
+- name: Stop any running SAP installer processes
   win_shell: Get-Process sapinst* | Stop-Process
   args:
     executable: powershell
@@ -37,12 +37,14 @@
     executable: cmd
   register: SWPM
 
+# Checks for existing successful app install on ASCS server
 - name: Check for existing installation - ASCS
   win_stat:
     path: "C:\\Program Files\\sapinst_instdir\\NW740SR2\\MSS\\COPY\\SYSTEM\\DISTRIBUTED\\AS-ABAP\\ASCS\\installationSuccesfullyFinished.dat"
   register: ascs_install
   when: '"ascs" in hostvars[inventory_hostname].group_names'
 
+# Copy ASCS paramaters file
 - name: Copy ASCS parameters files
   template:
     src: templates/ascs.j2
@@ -50,6 +52,7 @@
     newline_sequence: '\r\n'
   when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stat.exists == false'
 
+# Run SAP installer for ASCS server
 - name: Run SAP installer for ASCS
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\ascs.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_ASCS:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
   become: yes
@@ -59,31 +62,34 @@
     ansible_become_password: "{{ sap_install_password }}"
   when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stat.exists == false'
 
-# Set physical mem size
+# Set physical memory limit on ASCS server
 - name: Set physical memory parameter on ASCS server
   win_lineinfile:
     path: "C:\\usr\\sap\\{{ environment_sid }}\\SYS\\profile\\DEFAULT.PFL"
     line: "PHYS_MEMSIZE = 30%"
+  register: phys_memsize
   when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- debug: 
+    msg: "{{ phys_memsize }}"
 
 # Restart ASCS server
 - name: Restart SAP system on ASCS server
   win_shell: | 
     & "C:\\Program Files\\SAP\\hostctrl\\exe\\sapcontrol" -nr 0 -host "{{ ascs_host }}" -user "{{ sap_install_user }}" "{{ sap_install_password }}" -function RestartSystem
+    Start-Sleep 120
   args:
     executable: powershell
-  when: '"ascs" in hostvars[inventory_hostname].group_names'
+  when: '"ascs" in hostvars[inventory_hostname].group_names and phys_memsize.changed == true'
 
-- name: Wait until SAP system restarts
-  pause:
-    seconds: 60
-
+# Checks for existing successful app install on DB server
 - name: Check for existing installation - DB
   win_stat:
     path: "C:\\Program Files\\sapinst_instdir\\NW740SR2\\MSS\\COPY\\SYSTEM\\DISTRIBUTED\\AS-ABAP\\DB\\installationSuccesfullyFinished.dat"
   register: db_install
   when: '"data" in hostvars[inventory_hostname].group_names'
 
+# Copy parameters file for DB install
 - name: Copy DB parameters files
   template:
     src: templates/database.j2
@@ -91,6 +97,7 @@
     newline_sequence: '\r\n'
   when: '"data" in hostvars[inventory_hostname].group_names and db_install.stat.exists == false'
 
+# Run SAP installer on DB server
 - name: Run SAP installer for DB instance
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\database.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_DB:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
   become: yes
@@ -111,13 +118,6 @@
     - UnlockDDIC000
   when: '"data" in hostvars[inventory_hostname].group_names'
 
-- name: Copy Unlock DDIC script
-  template:
-    src: templates/UnlockDDIC000.j2
-    dest: C:\install\AutomationParameters\UnlockDDIC000.sql
-    newline_sequence: '\r\n'
-  when: '"data" in hostvars[inventory_hostname].group_names'
-
 - name: Run SQL cmds
   win_shell: sqlcmd.exe -b -i "C:\install\AutomationParameters\{{ item }}"
   with_items:
@@ -136,7 +136,7 @@
     dest: C:\Install\Scripts\Check-InstanceExistence.ps1
   when: '"app" in hostvars[inventory_hostname].group_names'
 
-- name: Check for existing AAS10 instance - PAS
+- name: Check for existing PAS10 instance - PAS
   win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
     -ASCSHost "{{ ascs_host }}"
     -TargetHost "{{ ansible_hostname }}"
@@ -154,18 +154,18 @@
     src: templates/pas.j2
     dest: C:\Install\AutomationParameters\pas.params
     newline_sequence: '\r\n'
-  when: 'ansible_hostname == pas_host and pas_10.stdout == "false\n"'
+  when: 'ansible_hostname == pas_host and pas_10.stdout_lines[0] == "false"'
 
-- name: Run PAS installer
+- name: Run SAP installer on primary app server
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  when: 'ansible_hostname == pas_host and pas_10.stdout == "false\n"'
+  when: 'ansible_hostname == pas_host and pas_10.stdout_lines[0] == "false"'
 
-- name: Copy AAS files
+- name: Copy parameter files to app servers
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -176,7 +176,29 @@
     - { src: templates/aas30.j2, dest: "C:\\install\\AutomationParameters\\aas30.params" }
   when: '"app" in hostvars[inventory_hostname].group_names'
 
-- name: Check for existing AAS20 instances - AAS
+- name: Check for existing instance 10 on additional app servers
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 10
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: aas_10
+  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host'
+
+- name: Run SAP installer for instance 10 on additional app servers
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\aas10.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host and aas_10.stdout_lines[0] == "false"'
+
+- name: Check for existing AAS20 instances - all app servers
   win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
     -ASCSHost "{{ ascs_host }}"
     -TargetHost "{{ ansible_hostname }}"
@@ -187,7 +209,7 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   register: aas_20
-  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host'
+  when: '"app" in hostvars[inventory_hostname].group_names'
   
 - name: Run AAS20
   win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\aas20.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
@@ -196,7 +218,7 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host and aas_20.stdout == "false\n"'
+  when: '"app" in hostvars[inventory_hostname].group_names and aas_20.stdout_lines[0] == "false"'
 
 - name: Check for existing AAS30 instances - AAS
   win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
@@ -209,13 +231,13 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   register: aas_30
-  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host'
+  when: '"app" in hostvars[inventory_hostname].group_names'
   
 - name: Run AAS30
-  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\aas20.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\install\AutomationParameters\aas30.params SAPINST_EXECUTE_PRODUCT_ID=NW_DI:NW740SR2.MSS.PD SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host and aas_30.stdout == "false\n"'
+  when: '"app" in hostvars[inventory_hostname].group_names and aas_30.stdout_lines[0] == "false"'
