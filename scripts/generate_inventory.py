@@ -74,8 +74,7 @@ def generate_file(roles, sub_roles, inv_dir):
         f.write("[{}:vars]\n".format(role))
         f.write("ascs_host={}".format(ascs_host))
         f.write("db_host={}".format(db_host))
-        f.write("pas_host={}".format(pas_host))
-        f.write("instance_type={}\n".format(role[0].upper()))
+        f.write("pas_host={}\n".format(pas_host))
 
         if role == "crm":
             java_aas = (subprocess.run(["terraform", "output", "hostname_{}-aas".format(role)], stdout=subprocess.PIPE)).stdout.decode("utf-8")

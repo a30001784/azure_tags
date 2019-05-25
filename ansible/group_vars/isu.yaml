@@ -1,0 +1,2 @@
+db_restored: "{{ db_restored_isu }}"
+instance_type: I

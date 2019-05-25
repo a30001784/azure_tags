@@ -1,0 +1,2 @@
+db_restored: "{{ db_restored_crm }}"
+instance_type: C
