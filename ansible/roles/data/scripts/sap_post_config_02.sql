@@ -9,7 +9,7 @@ SELECT @files = count(*)
 FROM sys.master_files
 WHERE database_id = DB_ID('tempdb')
 
-IF @files != 9
+IF @files = 9
 RETURN
 -- end section
 
