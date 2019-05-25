@@ -1,12 +1,12 @@
 ---
-- hosts: data
+- hosts: all
   gather_facts: true
   any_errors_fatal: true
 
   vars_files:
-    - "vars/windows.yaml"
+    - "vars/main.yaml"
 
   tasks: 
 
   - include_role:
-      name: data
+      name: app-base
