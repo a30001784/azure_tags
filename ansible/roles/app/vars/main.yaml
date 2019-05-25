@@ -1,0 +1,7 @@
+database_schema: "{{ instance_type }}P1"
+
+sap_master_password_base: Ptia@gl
+dns_domain_name: agl.int
+domain_admin_group: Func-DG-SAPInstallers
+domain_name: agl
+pas_ddic_password: Rush2b4r33

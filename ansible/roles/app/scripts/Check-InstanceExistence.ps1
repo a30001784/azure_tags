@@ -47,6 +47,5 @@ if ($InstanceList | Select-String -CaseSensitive "OK") {
     }
 }
 
-
 Write-Host "Printing result for debugging information"
 Write-Host $InstanceList
