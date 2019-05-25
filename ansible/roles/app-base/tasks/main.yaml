@@ -35,12 +35,18 @@
     C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
   args:
     executable: cmd
-  register: SWPM
 
-# Checks for existing successful app install on ASCS server
-- name: Check for existing installation - ASCS
-  win_stat:
-    path: "C:\\Program Files\\sapinst_instdir\\NW740SR2\\MSS\\COPY\\SYSTEM\\DISTRIBUTED\\AS-ABAP\\ASCS\\installationSuccesfullyFinished.dat"
+# Checks for app install on ASCS server
+- name: Check for existing ASCS installation
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 0
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
   register: ascs_install
   when: '"ascs" in hostvars[inventory_hostname].group_names'
 
@@ -50,7 +56,7 @@
     src: templates/ascs.j2
     dest: C:\Install\AutomationParameters\ascs.params
     newline_sequence: '\r\n'
-  when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stat.exists == false'
+  when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stdout_lines[0] == "false"'
 
 # Run SAP installer for ASCS server
 - name: Run SAP installer for ASCS
@@ -60,7 +66,7 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stat.exists == false'
+  when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stdout_lines[0] == "false"'
 
 # Set physical memory limit on ASCS server
 - name: Set physical memory parameter on ASCS server
@@ -70,13 +76,10 @@
   register: phys_memsize
   when: '"ascs" in hostvars[inventory_hostname].group_names'
 
-- debug: 
-    msg: "{{ phys_memsize }}"
-
 # Restart ASCS server
 - name: Restart SAP system on ASCS server
   win_shell: | 
-    & "C:\\Program Files\\SAP\\hostctrl\\exe\\sapcontrol" -nr 0 -host "{{ ascs_host }}" -user "{{ sap_install_user }}" "{{ sap_install_password }}" -function RestartSystem
+    & "C:\\Program Files\\SAP\\hostctrl\\exe\\sapcontrol.exe" -nr 0 -host "{{ ascs_host }}" -user "{{ sap_install_user }}" "{{ sap_install_password }}" -function RestartSystem
     Start-Sleep 120
   args:
     executable: powershell
