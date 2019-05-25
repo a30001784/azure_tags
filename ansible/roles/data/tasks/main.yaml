@@ -1,5 +1,4 @@
 ---
-
 - include_tasks: restore-pre.yaml
   when: db_restored == "false"
 

@@ -1,14 +1,14 @@
-exec sp_configure 'show advanced options', 1
-reconfigure with override
-exec sp_configure 'min server memory (MB)', 426000
-exec sp_configure 'max server memory (MB)', 426000
-reconfigure with override
-exec sp_configure 'max degree of parallelism', 1
-reconfigure with override
-exec sp_configure 'xp_cmdshell', 1
-reconfigure with override
-exec sp_configure 'SMO and DMO XPs', 1
-reconfigure with override
+-- exec sp_configure 'show advanced options', 1
+-- reconfigure with override
+-- exec sp_configure 'min server memory (MB)', 426000
+-- exec sp_configure 'max server memory (MB)', 426000
+-- reconfigure with override
+-- exec sp_configure 'max degree of parallelism', 1
+-- reconfigure with override
+-- exec sp_configure 'xp_cmdshell', 1
+-- reconfigure with override
+-- exec sp_configure 'SMO and DMO XPs', 1
+-- reconfigure with override
 
 alter database $(database) set recovery full
 alter database $(database) set auto_create_statistics on

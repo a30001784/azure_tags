@@ -1,6 +1,18 @@
 USE tempdb
 GO
 
+-- This section allows the script to be run multiple times without affect.
+-- If the TempDB files have already been modified, exit immediately without error.
+DECLARE @files INT;
+
+SELECT @files = count(*)
+FROM sys.master_files
+WHERE database_id = DB_ID('tempdb')
+
+IF @files != 9
+RETURN
+-- end section
+
 Declare @Path nvarchar(max)
 Declare @Sql nvarchar(max)
 Declare @oldfile nvarchar(max)

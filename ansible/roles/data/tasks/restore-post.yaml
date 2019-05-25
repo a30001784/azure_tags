@@ -16,7 +16,12 @@
     - scripts/sap_post_config_03.sql
 
 - name: SQL Script to change database logical file names in SQL
-  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_01.sql" -v database="{{ environment_sid }}"
+  win_shell: sqlcmd.exe -b -i "C:\scripts\sap_post_config_01.sql" -v database="{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
 
 - name: Stop service MSSQLSERVICE
   win_service:
@@ -35,7 +40,12 @@
     force_dependent_services: yes
 
 - name:  SQL Script to move temp db files and create additional temp db files
-  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_02.sql" -v database="{{ environment_sid }}"
+  win_shell: sqlcmd.exe -b -i "C:\scripts\sap_post_config_02.sql" -v database="{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
   
 - name: Start service MSSQLSERVICE
   win_service:
@@ -55,4 +65,9 @@
     - templog.ldf
 
 - name: SQL Server Configuration Options
-  win_shell: sqlcmd.exe -i "C:\scripts\sap_post_config_03.sql" -v database="{{ environment_sid }}"
+  win_shell: sqlcmd.exe -b -i "C:\scripts\sap_post_config_03.sql" -v database="{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
