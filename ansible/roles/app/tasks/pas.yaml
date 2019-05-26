@@ -1,0 +1,14 @@
+---
+- name: Copy PAS parameters file
+  template: 
+    src: templates/pas.j2
+    dest: C:\Install\AutomationParameters\pas.params
+    newline_sequence: '\r\n'
+
+- name: Run SAP installer on primary app server
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\pas.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_CI:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"

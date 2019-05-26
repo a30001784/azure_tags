@@ -1,0 +1,16 @@
+---
+# Copy parameters file for DB install
+- name: Copy DB parameters files
+  template:
+    src: templates/database.j2
+    dest: C:\Install\AutomationParameters\database.params
+    newline_sequence: '\r\n'
+
+# Run SAP installer on DB server
+- name: Run SAP installer for DB instance
+  win_shell: C:\SWPM\sapinst.exe SAPINST_INPUT_PARAMETERS_URL=C:\Install\AutomationParameters\database.params SAPINST_EXECUTE_PRODUCT_ID=NW_ABAP_DB:NW740SR2.MSS.CP SAPINST_SKIP_DIALOGS=true SAPINST_START_GUISERVER=false
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
