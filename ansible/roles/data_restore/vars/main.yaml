@@ -1,1 +1,0 @@
-environment_sid: "{{ instance_type }}{{ datacentre }}{{ environment_instance_count }}"
