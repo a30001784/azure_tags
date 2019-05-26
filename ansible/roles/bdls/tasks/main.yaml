@@ -2,8 +2,7 @@
 # Update SQL index statistics
 - name: Update SQL index statistics
   win_shell: sqlcmd.exe >
-    -d "{{ environment_sid }}" 
-    -q "EXEC sp_updatestats"
+    -q "USE {{ environment_sid }}; EXEC sp_updatestats"
     -b
   become: yes
   become_method: runas
@@ -39,8 +38,8 @@
 # Run database cleanup scripts
 - name: Run database cleanup scripts
   win_shell: sqlcmd.exe >
-    -d "{{ environment_sid }}"
     -i "C:\\Install\\Scripts\\{{ cleanup_script }}"
+    -v "database={{ environment_sid }}"
     -v "schema={{ environment_sid | lower }}"
     -b
   become: yes

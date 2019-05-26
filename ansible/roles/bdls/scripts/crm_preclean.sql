@@ -1,3 +1,6 @@
+USE $(database)
+GO
+
 /****** Delete triggers CRMD_ORDERADM_H******/
 DROP TRIGGER $(schema).[/1LT/00000610UPD1]
 GO

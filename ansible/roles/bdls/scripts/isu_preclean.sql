@@ -1,3 +1,7 @@
+
+USE $(database)
+GO
+
 /****** Delete triggers of EDIDC ******/
 DROP TRIGGER $(schema).[/1LT/00000506DEL]
 GO
