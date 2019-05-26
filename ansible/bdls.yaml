@@ -1,6 +1,5 @@
 ---
-- hosts: data-isu
-  gather_facts: true
+- hosts: isu-data
   any_errors_fatal: true
 
   vars_files:
