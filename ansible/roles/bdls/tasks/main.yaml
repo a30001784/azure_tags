@@ -9,9 +9,6 @@
     ansible_become_password: "{{ sap_install_password }}"
 
 - set_fact:
-    module: "{{ hostvars[inventory_hostname].group_names[0] }}"
-
-- set_fact:
     cleanup_script: "{{ module }}_preclean.sql"
 
 # Copy SQL/PS scripts

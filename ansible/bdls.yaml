@@ -1,5 +1,5 @@
 ---
-- hosts: isu-data
+- hosts: data
   any_errors_fatal: true
 
   vars_files:
