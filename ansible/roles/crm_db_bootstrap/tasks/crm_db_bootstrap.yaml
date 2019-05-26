@@ -1,8 +1,0 @@
----
-- name: sap_crm_db_bootstrap
-  script: scripts/sap_crm_db_ansible_bootstrap.ps1 >
-    -SID "{{ sap_sid }}"
-    -storName "{{ automation_storage_account }}"
-    -storKey "{{ automation_storage_key }}"
-  register: crm_db_config
-- debug: var=crm_db_config.stdout_lines
