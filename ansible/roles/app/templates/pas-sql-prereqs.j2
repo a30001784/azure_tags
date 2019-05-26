@@ -36,7 +36,7 @@ truncate table {{ environment_sid | lower }}.TLOCK
 go
 
 -- PAS installer workaround
-IF NOT EXISTS (select APPSRVNAME from ca5.TSRVLST where APPSRVNAME = '{{ pas_host }}_{{ environment_sid }}_10')
+IF NOT EXISTS (select APPSRVNAME from {{ environment_sid | lower }}.TSRVLST where APPSRVNAME = '{{ pas_host }}_{{ environment_sid }}_10')
 BEGIN
     insert into {{ environment_sid | lower }}.TSRVLST values ((select GUID from {{ environment_sid | lower }}.TSRVGRP where GRPNAME='SAP_DEFAULT_BTC'),'{{ pas_host }}_{{ environment_sid }}_10','{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}');
 END
