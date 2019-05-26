@@ -1,0 +1,45 @@
+---
+- hosts: crm-data
+  gather_facts: true
+  any_errors_fatal: true
+
+  vars_files:
+    - "vars/main.yaml"
+    # - "vars/local_vars.yaml"
+  
+  tasks: 
+
+  - include_role:
+      name: bdls
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_pre_step.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_01.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_02_First_set.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_02_Second_set.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_02_Third_set.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_02_Fourth_set.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_03.yaml
+
+  # - include_role:
+  #     name: sap_crm_bdls_config
+  #     tasks_from: bdls_step_04.yaml
