@@ -19,15 +19,15 @@
     - { src: "{{ module }}/{{ cleanup_script }}", dst: "{{ cleanup_script }}"  }
     - { src: "Get-LogicalSystemNames.ps1", dst: "Get-LogicalSystemNames.ps1" }
 
-# # Update SQL index statistics
-# - name: Update SQL index statistics
-#   win_shell: C:\Install\Scripts\Invoke-SPUpdateStats.ps1 >
-#     -Database "{{ environment_sid }}"
-#   become: yes
-#   become_method: runas
-#   become_user: "{{ sap_install_user }}"
-#   vars:
-#     ansible_become_password: "{{ sap_install_password }}"
+# Update SQL index statistics
+- name: Update SQL index statistics
+  win_shell: C:\Install\Scripts\Invoke-SPUpdateStats.ps1 >
+    -Database "{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
 
 # Set MAXDOP
 - name: Set max degree of parallelism
@@ -39,14 +39,14 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
 
-# Run database cleanup scripts
-- name: Run database cleanup scripts
-  win_shell: sqlcmd.exe -b -i "C:\\Install\\Scripts\\{{ cleanup_script }}" -v "database={{ environment_sid }}" -v "schema={{ environment_sid | lower }}"
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# # Run database cleanup scripts
+# - name: Run database cleanup scripts
+#   win_shell: sqlcmd.exe -b -i "C:\\Install\\Scripts\\{{ cleanup_script }}" -v "database={{ environment_sid }}" -v "schema={{ environment_sid | lower }}"
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
 # Get logical system names
 - name: Get logical system names
