@@ -9,6 +9,7 @@ try {
     Invoke-Sqlcmd `
         -Database $Database `
         -Query "EXEC sp_updatestats" `
+        -QueryTimeout 0 `
         -AbortOnError
 
 } catch { 
