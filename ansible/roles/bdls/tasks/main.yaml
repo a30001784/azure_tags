@@ -39,6 +39,17 @@
 #   vars:
 #     ansible_become_password: "{{ sap_install_password }}"
 
+# Get logical system names
+- name: Get logical system names
+  script: scripts/Output-LogicalSystemNameVariables.ps1 >
+    -Database "{{ environment_sid }}"
+    -Schema "{{ environment_sid | lower }}
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
 # Copy BDLS scripts
 - name: Copy BDLS SQL scripts
   win_copy: 
