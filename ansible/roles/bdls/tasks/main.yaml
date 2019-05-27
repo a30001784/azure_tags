@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    cleanup_script: "{{ module }}/{{ module }}_preclean.sql"
+    cleanup_script: "{{ module }}_preclean.sql"
 
 # Copy BDLS scripts
 - name: Copy BDLS SQL scripts
@@ -11,12 +11,12 @@
 # Copy SQL/PS scripts
 - name: Transfer SQL/PS scripts 
   win_copy:
-    src: "scripts/{{ item }}"
-    dest: "C:\\Install\\Scripts\\{{ item }}"
+    src: "scripts/{{ item.src }}"
+    dest: "C:\\Install\\Scripts\\{{ item.dst }}"
   with_items:
-    - "Invoke-SPUpdateStats.ps1"
-    - "Set-MAXDOP.ps1"
-    - "{{ cleanup_script }}"
+    - { src: "Invoke-SPUpdateStats.ps1", dst: "Invoke-SPUpdateStats.ps1" }
+    - { src: "Set-MAXDOP.ps1", dst: "Set-MAXDOP.ps1" }
+    - { src: "{{ module }}/{{ cleanup_script }}", dst: "{{ cleanup_script }}"  }
 
 # Update SQL index statistics
 - name: Update SQL index statistics
