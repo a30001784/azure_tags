@@ -21,146 +21,199 @@
 - debug: 
     msg: "{{ groups['isu-data'][0] }}"
 
-- name: First Set - Script 01
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+- name: Run SQL scripts
+  win_shell: |
+    {{ item }} 
   async: 1000000
   poll: 0
-  register: Script_01
+  register: sql_scripts
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
+  with_items:
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
 
-- name: First Set - Script 02
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-  async: 1000000
-  poll: 0
-  register: Script_02
+- name: Check SQL scripts
+  async_status:
+    jid: "{{ item }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
-    ansible_become_password: "{{ sap_install_password }}"
+    ansible_become_password: "{{ sap_install_password }}" 
+  with_items:
+    - "{{ sql_scripts.results[0].ansible_job_id }}"
+    - "{{ sql_scripts.results[1].ansible_job_id }}"
+    - "{{ sql_scripts.results[2].ansible_job_id }}"
+    - "{{ sql_scripts.results[3].ansible_job_id }}"
+    - "{{ sql_scripts.results[4].ansible_job_id }}"
+    - "{{ sql_scripts.results[5].ansible_job_id }}"
+    - "{{ sql_scripts.results[6].ansible_job_id }}"
+    - "{{ sql_scripts.results[7].ansible_job_id }}"
 
-- name: First Set - Script 03
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-  async: 1000000
-  poll: 0
-  register: Script_03
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+- meta: end_play
 
-- name: First Set - Script 04
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-  async: 1000000
-  poll: 0
-  register: Script_04
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: First Set - Script 01
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_01
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
+
+# - name: First Set - Script 02
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_02
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
+
+# - name: First Set - Script 03
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_03
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
+
+# - name: First Set - Script 04
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_04
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
   
-- name: First Set - Script 05
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
-  async: 1000000
-  poll: 0
-  register: Script_05
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: First Set - Script 05
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_05
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
-- name: First Set - Script 06
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
-  async: 1000000
-  poll: 0
-  register: Script_06
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: First Set - Script 06
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_06
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
-- name: First Set - Script 07
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
-  async: 1000000
-  poll: 0
-  register: Script_07
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: First Set - Script 07
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_07
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
-- name: First Set - Script 08
-  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-  async: 1000000
-  poll: 0
-  register: Script_08
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# - name: First Set - Script 08
+#   win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+#   async: 1000000
+#   poll: 0
+#   register: Script_08
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}" 
+
+# - name: 'Script 01 - check on async task'
+#   async_status:
+#     jid: "{{ Script_02.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
   
-- name: 'Script 02 - check on async task'
-  async_status:
-    jid: "{{ Script_02.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 02 - check on async task'
+#   async_status:
+#     jid: "{{ Script_02.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 03 - check on async task'
-  async_status:
-    jid: "{{ Script_03.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 03 - check on async task'
+#   async_status:
+#     jid: "{{ Script_03.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 04 - check on async task'
-  async_status:
-    jid: "{{ Script_04.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 04 - check on async task'
+#   async_status:
+#     jid: "{{ Script_04.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 05 - check on async task'
-  async_status:
-    jid: "{{ Script_05.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 05 - check on async task'
+#   async_status:
+#     jid: "{{ Script_05.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 07 - check on async task'
-  async_status:
-    jid: "{{ Script_06.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 07 - check on async task'
+#   async_status:
+#     jid: "{{ Script_06.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 07 - check on async task'
-  async_status:
-    jid: "{{ Script_07.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 07 - check on async task'
+#   async_status:
+#     jid: "{{ Script_07.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
 
-- name: 'Script 08 - check on async task'
-  async_status:
-    jid: "{{ Script_08.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
+# - name: 'Script 08 - check on async task'
+#   async_status:
+#     jid: "{{ Script_08.ansible_job_id }}"
+#   register: job_result
+#   until: job_result.finished
+#   delay: 30
+#   retries: 50000
