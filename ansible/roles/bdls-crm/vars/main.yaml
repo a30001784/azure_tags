@@ -1,0 +1,4 @@
+#database_schema: "{{ instance_type }}P1"
+#environment_sid: "{{ instance_type }}{{ datacentre }}{{ environment_instance_count }}"
+sap_install_user: "AGL\\{{ sap_install_username }}"
+# sap_master_password: "{{ sap_master_password_base }}{{ wd_sid | title }}"

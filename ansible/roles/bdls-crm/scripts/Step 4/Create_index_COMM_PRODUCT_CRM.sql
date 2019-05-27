@@ -1,0 +1,33 @@
+USE $(database)
+GO
+
+/****** CTakes 6 miniutes ******/
+
+/****** Create indexes for COMM_PRODUCT ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ CREATE TRIGGER $(schema).[/1LT/00000775DEL]   ON $(schema).[COMM_PRODUCT]   FOR DELETE   AS     set nocount on if exists (select * from deleted where CLIENT = '100' ) BEGIN INSERT INTO [/1CADMC/00000775]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [PRODUCT_GUID],         'D'     FROM deleted END 
+GO
+ CREATE TRIGGER $(schema).[/1LT/00000775INS] ON $(schema).[COMM_PRODUCT] FOR INSERT AS set nocount on if exists (select * from inserted where CLIENT = '100' ) BEGIN INSERT INTO [/1CADMC/00000775]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,     [CLIENT],          [PRODUCT_GUID],          'I'     FROM inserted END 
+GO
+ CREATE TRIGGER $(schema).[/1LT/00000775UPD1]   ON $(schema).[COMM_PRODUCT]   FOR UPDATE   AS   BEGIN    set nocount on if exists (select * from inserted where CLIENT = '100' ) BEGIN     IF UPDATE([CLIENT]) OR     UPDATE([PRODUCT_GUID])     BEGIN   INSERT INTO [/1CADMC/00000775]   SELECT CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [PRODUCT_GUID],           'D'     FROM deleted   INSERT INTO [/1CADMC/00000775]   SELECT CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [PRODUCT_GUID],           'I'     FROM inserted     END   ELSE BEGIN   INSERT INTO [/1CADMC/00000775]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [PRODUCT_GUID],           'U'     FROM inserted    END   END END 
+GO
+
+
+
+/****** Create index for COMM_PRODUCT ******/
+CREATE UNIQUE NONCLUSTERED INDEX [COMM_PRODUCT~ID] ON $(schema).[COMM_PRODUCT]
+(
+	[CLIENT] ASC,
+	[PRODUCT_ID] ASC,
+	[PRODUCT_TYPE] ASC,
+	[OBJECT_FAMILY] ASC,
+	[LOGSYS] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+
