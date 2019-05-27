@@ -9,7 +9,7 @@
     ansible_become_password: "{{ sap_install_password }}"
 
 - set_fact:
-    cleanup_script: "{{ module }}_preclean.sql"
+    cleanup_script: "{{ module }}/{{ module }}_preclean.sql"
 
 # Copy SQL/PS scripts
 - name: Transfer SQL/PS scripts 
@@ -30,14 +30,43 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
 
-# Run database cleanup scripts
-- name: Run database cleanup scripts
-  win_shell: sqlcmd.exe -b -i "C:\\Install\\Scripts\\{{ cleanup_script }}" -v "database={{ environment_sid }}" -v "schema={{ environment_sid | lower }}"
+# # Run database cleanup scripts
+# - name: Run database cleanup scripts
+#   win_shell: sqlcmd.exe -b -i "C:\\Install\\Scripts\\{{ cleanup_script }}" -v "database={{ environment_sid }}" -v "schema={{ environment_sid | lower }}"
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
+
+# Copy BDLS scripts
+- name: Copy BDLS SQL scripts
+  win_copy: 
+    src: "scripts/{{ module }}"
+    dest: "C:\\BDLS"
+
+# Get ISU LS name
+- name: Set ISU Source Logical System Name
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ isu_sid }} SELECT LOGSYS FROM [{{ isu_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['isu-data'][0] }}").LOGSYS
+  register: isu_ls_name_s
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
- 
-# - name: Pre_run_activities_for_BDLS_in_CRM
-  # win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 1\Pre_run_activities_for_BDLS_in_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+
+# Get CRM LS name
+- name: Set CRM Source Logical System Name
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ crm_sid }} SELECT LOGSYS FROM [{{ crm_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['crm-data'][0] }}").LOGSYS
+  register: crm_ls_name_s
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+- set_fact:
+    isu_source_ls: "{{ isu_ls_name_s.stdout_lines[0] }}"
+
+- set_fact:
+    crm_source_ls: "{{ crm_ls_name_s.stdout_lines[0] }}"

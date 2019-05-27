@@ -1,0 +1,52 @@
+---
+# Run SQL scripts - CRM
+- name: Third Set - CRM
+  win_shell: |
+    {{ item }}
+  async: 1000000
+  poll: 0
+  register: scripts_crm
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  with_items:
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 09.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 10.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 11.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+
+
+# Check SQL scripts - CRM
+- name: Check SQL scripts - CRM
+  async_status:
+    jid: "{{ item }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}" 
+  with_items:
+    - "{{ scripts_crm.results[0].ansible_job_id }}"
+    - "{{ scripts_crm.results[1].ansible_job_id }}"
+    - "{{ scripts_crm.results[2].ansible_job_id }}"
+    - "{{ scripts_crm.results[3].ansible_job_id }}"
+    - "{{ scripts_crm.results[4].ansible_job_id }}"
+    - "{{ scripts_crm.results[5].ansible_job_id }}"
+    - "{{ scripts_crm.results[6].ansible_job_id }}"
+    - "{{ scripts_crm.results[7].ansible_job_id }}"
+    - "{{ scripts_crm.results[8].ansible_job_id }}"
+    - "{{ scripts_crm.results[9].ansible_job_id }}"
+    - "{{ scripts_crm.results[10].ansible_job_id }}"

@@ -1,0 +1,21 @@
+---
+# Run fourth set - CRM
+- name: Fourth Set - Script 01
+  win_shell: sqlcmd.exe -i "C:\BDLS\Step 2\Fourth Set\Fourth set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+  async: 1000000
+  poll: 0
+  register: script_crm
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+# Check on SQL script
+- name: check on async task
+  async_status:
+    jid: "{{ script_crm.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
