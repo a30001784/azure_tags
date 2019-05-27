@@ -1,9 +1,0 @@
----
-- hosts: CRM_Database
-  gather_facts: true
-  any_errors_fatal: true
-
-  tasks: 
-
-  - include_role:
-      name: pre_check
