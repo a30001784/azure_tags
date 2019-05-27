@@ -12,14 +12,14 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   when: '"crm" in hostvars[inventory_hostname].group_names'
 
 # Run SQL scripts - ISU
@@ -35,12 +35,12 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 02.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 03.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 04.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 05.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\First Set\First set ISU - 06.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 02.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 03.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 04.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 05.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 06.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
   when: '"isu" in hostvars[inventory_hostname].group_names'
 
 # Check SQL scripts - CRM

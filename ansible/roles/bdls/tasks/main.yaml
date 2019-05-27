@@ -19,15 +19,15 @@
     - { src: "{{ module }}/{{ cleanup_script }}", dst: "{{ cleanup_script }}"  }
     - { src: "Get-LogicalSystemNames.ps1", dst: "Get-LogicalSystemNames.ps1" }
 
-# Update SQL index statistics
-- name: Update SQL index statistics
-  win_shell: C:\Install\Scripts\Invoke-SPUpdateStats.ps1 >
-    -Database "{{ environment_sid }}"
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
+# # Update SQL index statistics
+# - name: Update SQL index statistics
+#   win_shell: C:\Install\Scripts\Invoke-SPUpdateStats.ps1 >
+#     -Database "{{ environment_sid }}"
+#   become: yes
+#   become_method: runas
+#   become_user: "{{ sap_install_user }}"
+#   vars:
+#     ansible_become_password: "{{ sap_install_password }}"
 
 # Set MAXDOP
 - name: Set max degree of parallelism
@@ -53,11 +53,18 @@
   win_shell: C:\Install\Scripts\Get-LogicalSystemNames.ps1 >
     -Database "{{ environment_sid }}"
     -Schema "{{ environment_sid | lower }}"
+    -OutFile "C:\Windows\Temp\{{ environment_sid }}.txt"
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
+
+- name: Fetch logical system names file
+  fetch:
+    src: "C:\\Windows\\Temp\\{{ environment_sid }}.txt"
+    dest: /tmp/logsys_files/
+    flat: true
 
 # Get ISU LS name
 - name: Set ISU Source Logical System Name

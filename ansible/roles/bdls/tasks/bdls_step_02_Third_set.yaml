@@ -12,17 +12,17 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 09.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 10.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\Step 2\Third Set\Third set CRM - 11.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 09.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 10.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 2\Third Set\Third set CRM - 11.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
 
 
 # Check SQL scripts - CRM
