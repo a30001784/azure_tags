@@ -17,6 +17,7 @@
     - { src: "Invoke-SPUpdateStats.ps1", dst: "Invoke-SPUpdateStats.ps1" }
     - { src: "Set-MAXDOP.ps1", dst: "Set-MAXDOP.ps1" }
     - { src: "{{ module }}/{{ cleanup_script }}", dst: "{{ cleanup_script }}"  }
+    - { src: "Get-LogicalSystemNames.ps1", dst: "Get-LogicalSystemNames.ps1" }
 
 # Update SQL index statistics
 - name: Update SQL index statistics
@@ -49,7 +50,7 @@
 
 # Get logical system names
 - name: Get logical system names
-  script: scripts/Get-LogicalSystemNames.ps1 >
+  win_shell: C:\Install\Scripts\Get-LogicalSystemNames.ps1 >
     -Database "{{ environment_sid }}"
     -Schema "{{ environment_sid | lower }}"
   become: yes
