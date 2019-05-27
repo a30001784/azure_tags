@@ -9,10 +9,10 @@ try {
     Invoke-Sqlcmd `
         -Database $Database `
         -Query "EXEC sp_updatestats" `
-        -IncludeSqlUserErrors `
         -AbortOnError
+
 } catch { 
-    Write-Error "Error occured:"
-    Write-Error $_
+    Write-Error "Error occurred:"
+    Write-Error $sqlerr
     [Environment]::Exit(1)
 }
