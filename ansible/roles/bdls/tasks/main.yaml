@@ -2,6 +2,12 @@
 - set_fact:
     cleanup_script: "{{ module }}/{{ module }}_preclean.sql"
 
+# Copy BDLS scripts
+- name: Copy BDLS SQL scripts
+  win_copy: 
+    src: "scripts/{{ module }}"
+    dest: "C:\\BDLS"
+
 # Copy SQL/PS scripts
 - name: Transfer SQL/PS scripts 
   win_copy:
@@ -51,12 +57,6 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-
-# Copy BDLS scripts
-- name: Copy BDLS SQL scripts
-  win_copy: 
-    src: "scripts/{{ module }}"
-    dest: "C:\\BDLS"
 
 # Get ISU LS name
 - name: Set ISU Source Logical System Name
