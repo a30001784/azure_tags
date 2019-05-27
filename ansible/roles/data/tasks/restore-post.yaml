@@ -14,6 +14,7 @@
     - scripts/sap_post_config_01.sql
     - scripts/sap_post_config_02.sql
     - scripts/sap_post_config_03.sql
+    - scripts/Update-SqlServerMemory.ps1
 
 - name: SQL Script to change database logical file names in SQL
   win_shell: sqlcmd.exe -b -i "C:\scripts\sap_post_config_01.sql" -v database="{{ environment_sid }}"
@@ -66,6 +67,14 @@
 
 - name: SQL Server Configuration Options
   win_shell: sqlcmd.exe -b -i "C:\scripts\sap_post_config_03.sql" -v database="{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+- name: Set SQL server min/max memory
+  script: scripts/Update-SqlServerMemory.ps1
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
