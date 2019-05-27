@@ -41,7 +41,7 @@
 
 # Get logical system names
 - name: Get logical system names
-  script: scripts/Output-LogicalSystemNameVariables.ps1 >
+  script: scripts/Get-LogicalSystemNames.ps1 >
     -Database "{{ environment_sid }}"
     -Schema "{{ environment_sid | lower }}
   become: yes
