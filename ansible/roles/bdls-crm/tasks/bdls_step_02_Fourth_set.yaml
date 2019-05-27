@@ -1,6 +1,6 @@
 ---
 - name: Set ISU Source Logical System Name
-  win_shell: (Invoke-Sqlcmd -Query "USE {{ isu_sid }} SELECT LOGSYS FROM [{{ isu_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['ISU_Database'][0] }}").LOGSYS
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ isu_sid }} SELECT LOGSYS FROM [{{ isu_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['isu-data'][0] }}").LOGSYS
   register: isu_ls_name_s
   become: yes
   become_method: runas
@@ -12,7 +12,7 @@
     isu_source_ls: "{{ isu_ls_name_s.stdout | regex_replace('(\\r\\n)','') }}"
 
 - name: Fourth Set - Script 01
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Fourth Set\Fourth set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Fourth Set\Fourth set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
   async: 1000000
   poll: 0
   register: Script_01

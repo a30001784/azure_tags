@@ -1,12 +1,12 @@
 ---
 - name: CRM Step 3 - Script 01
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_01
 
 - name: CRM Step 3 - Script 02
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_02

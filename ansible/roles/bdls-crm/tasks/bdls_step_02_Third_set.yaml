@@ -1,6 +1,6 @@
 ---
 - name: Set ISU Source Logical System Name
-  win_shell: (Invoke-Sqlcmd -Query "USE {{ isu_sid }} SELECT LOGSYS FROM [{{ isu_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['ISU_Database'][0] }}").LOGSYS
+  win_shell: (Invoke-Sqlcmd -Query "USE {{ isu_sid }} SELECT LOGSYS FROM [{{ isu_sid | lower }}].T000 WHERE MANDT = 100;" -ServerInstance "{{ groups['isu-data'][0] }}").LOGSYS
   register: isu_ls_name_s
   become: yes
   become_method: runas
@@ -12,67 +12,67 @@
     isu_source_ls: "{{ isu_ls_name_s.stdout | regex_replace('(\\r\\n)','') }}"
 
 - name: Third Set - Script 01
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_01
 
 - name: Third Set - Script 02
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_02
 
 - name: Third Set - Script 03
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_03
 
 - name: Third Set - Script 04
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_04
 
 - name: Third Set - Script 05
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_05
 
 - name: Third Set - Script 06
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_06
 
 - name: Third Set - Script 07
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_07
 
 - name: Third Set - Script 08
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_08
 
 - name: Third Set - Script 09
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 09.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 09.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_09
 
 - name: Third Set - Script 10
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 10.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 10.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
   async: 1000000
   poll: 0
   register: Script_10
 
 - name: Third Set - Script 11
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 2\Third Set\Third set CRM - 11.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 2\Third Set\Third set CRM - 11.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
   async: 1000000
   poll: 0
   register: Script_11

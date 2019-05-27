@@ -1,36 +1,36 @@
 ---
 - name: CRM Step 4 - Script 01
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_COMM_PRODUCT_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_COMM_PRODUCT_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_01
 
 - name: CRM Step 4 - Script 02
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_CRMD_ORDERADM_H_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_CRMD_ORDERADM_H_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_02
 
 - name: CRM Step 4 - Script 03
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_CRMD_ORDERADM_I_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_CRMD_ORDERADM_I_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_03
 
 - name: CRM Step 4 - Script 04
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_GEOLOC_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_GEOLOC_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_04
 
 - name: CRM Step 4 - Script 05
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_GEOOBJR_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_GEOOBJR_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_05
 
 - name: CRM Step 4 - Script 06
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\CRM scripts\Step 4\Create_index_SRRELROLES_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  win_shell: sqlcmd.exe -i "C:\BDLS\scripts\Step 4\Create_index_SRRELROLES_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   async: 1000000
   poll: 0
   register: Script_06
