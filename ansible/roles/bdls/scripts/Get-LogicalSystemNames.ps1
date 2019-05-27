@@ -20,18 +20,22 @@ try {
         Remove-Item $OutFile -Force
     }
 
-    $LogicalSystemNames+=$(Invoke-Sqlcmd `
+    $LogicalSystemNames += $(Invoke-Sqlcmd `
         -Database $Database `
         -Query "SELECT LOGSYS FROM $($schema).T000 WHERE MANDT = 100" `
         -IncludeSqlUserErrors `
-        -AbortOnError).LOGSYS
+        -AbortOnError).LOGSYS + "`r`n"
 
     foreach ($pattern in $Patterns) {
-        $LogicalSystemNames+=$(Invoke-Sqlcmd `
+        $Result = Invoke-Sqlcmd `
             -Database $Database `
             -Query "SELECT PARNUM from $($schema).EDPP1 where PARNUM LIKE '$($pattern)%'" `
             -IncludeSqlUserErrors `
-            -AbortOnError).PARNUM            
+            -AbortOnError
+        
+        foreach ($r in $Result) {
+            $LogicalSystemNames += "$($r.PARNUM)`r`n"
+        }
     }
 
     Add-Content $OutFile $LogicalSystemNames
