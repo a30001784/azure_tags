@@ -1,14 +1,4 @@
 ---
-# Update SQL index statistics
-- name: Update SQL index statistics
-  script: scripts/Invoke-SPUpdateStats.ps1 >
-    -Database "{{ environment_sid }}"
-  become: yes
-  become_method: runas
-  become_user: "{{ sap_install_user }}"
-  vars:
-    ansible_become_password: "{{ sap_install_password }}"
-
 - set_fact:
     cleanup_script: "{{ module }}/{{ module }}_preclean.sql"
 
@@ -18,8 +8,19 @@
     src: "scripts/{{ item }}"
     dest: "C:\\Install\\Scripts\\{{ item }}"
   with_items:
+    - "Invoke-SPUpdateStats.ps1"
     - "Set-MAXDOP.ps1"
     - "{{ cleanup_script }}"
+
+# Update SQL index statistics
+- name: Update SQL index statistics
+  win_shell: C:\Install\Scripts\Invoke-SPUpdateStats.ps1 >
+    -Database "{{ environment_sid }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
 
 # Set MAXDOP
 - name: Set max degree of parallelism

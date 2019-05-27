@@ -12,7 +12,7 @@ try {
         -AbortOnError
 
 } catch { 
-    Write-Error "Error occurred:"
-    Write-Error $sqlerr
+    Write-Host "Error occurred:"
+    Write-Host $_
     [Environment]::Exit(1)
 }
