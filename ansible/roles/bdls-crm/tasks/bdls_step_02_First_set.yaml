@@ -108,14 +108,6 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-
-- name: 'Script 01 - check on async task'
-  async_status:
-    jid: "{{ Script_01.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  delay: 30
-  retries: 50000
   
 - name: 'Script 02 - check on async task'
   async_status:
