@@ -16,6 +16,11 @@
   async: 1000000
   poll: 0
   register: Script_01
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
 
 - name: 'Script 01 - check on async task'
   async_status:
