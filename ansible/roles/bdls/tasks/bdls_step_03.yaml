@@ -12,8 +12,8 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   when: '"crm" in hostvars[inventory_hostname].group_names'
 
 # Run SQL scripts - ISU
@@ -29,8 +29,8 @@
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
   when: '"isu" in hostvars[inventory_hostname].group_names'
 
 # Check SQL scripts - CRM
