@@ -379,7 +379,7 @@ An example of how to run this `Dockerfile`, for Java in AJ3, is as follows:
 cd scripts/Dockerfile
 docker build -t sap-licence-generator . && \
     docker run --rm -it \
-        -e SAP_USER=S0019332459 \
+        -e SAP_USER=S0020347599 \
         -e SAP_PASS=<redacted> \
         -e HARDWARE_KEY="I1758814741" \
         -e SYSTEM_TYPE="JAVA" \
