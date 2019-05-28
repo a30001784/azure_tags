@@ -8,26 +8,26 @@ The most recent and up-to-date environment, is named `Refactor`. This is the con
 
 The components are as follows:
 ### Infrastructure prep (Azure PowerShell)
-        1. Create RG
-        2. Create TF state storage account
-        3. Create TF state storage account container
+    1. Create RG
+    2. Create TF state storage account
+    3. Create TF state storage account container
 ### Infrastructure deployment (Terraform, bash, python)
-        1. Terraform plan
-        2. Manual intervention step (approve/reject Terraform Plan)
-        3. Terraform apply
-        4. Generate Ansible Inventory file
-        5. Print Ansible inventory file
+    1. Terraform plan
+    2. Manual intervention step (approve/reject Terraform Plan)
+    3. Terraform apply
+    4. Generate Ansible Inventory file
+    5. Print Ansible inventory file
 ### Operating System and Application configuration (Ansible, PowerShell)
-        1. Run playbook - Common
-        2. Run playbook - ASCS
-        3. Run playbook - Data
-        4. Run playbook - Application install
-        5. Run playbook - BDLS
-        6. Output Logical System Names - CRM
-        7. Output Logical System Names - ISU
-        8. Run playbook - CRM Java**
+    1. Run playbook - Common
+    2. Run playbook - ASCS
+    3. Run playbook - Data
+    4. Run playbook - Application install
+    5. Run playbook - BDLS
+    6. Output Logical System Names - CRM
+    7. Output Logical System Names - ISU
+    8. Run playbook - CRM Java**
 ### Post-Configuration (Docker, python)**
-        There shoud be a number of tasks here which map to the post-configuration steps as defined in the Confluence document. 
+There shoud be a number of tasks here which map to the post-configuration steps as defined in the Confluence document. 
 
 ** Not yet orechestrated in the release pipeline
 
@@ -81,7 +81,7 @@ The script organises the hosts into roles (crm, isu, etc.) and sub-roles (app, a
 It also specifies a number of group and host specific variables, so that Ansible playbooks can be written in a modular fashion, removing the need for writing
 boilerplate code. 
 
-To get the required hostnames, IPs and variables, tt calls `terraform output` against a number of the TF resources to determine what to put where. There are also 
+To get the required hostnames, IPs and variables, it calls `terraform output` against a number of the TF resources to determine what to put where. There are also 
 some environment variables it depends on:
 
 `NUM_POOLED_DISKS_DATA_CRM` Number of data disks that will be used to create a storage pool on the CRM DB server
@@ -102,17 +102,166 @@ The script also has a number of arguments that can be passed in, such as:
 
 `--tf-path` Relative path to the Terraform folder from which to runn `terraform output` (terraform)
 
-5. Print inventory file
-    
+### Print inventory file
+Runs a bash script to output the result of the Ansible inventory file so it can be viewed from the Azure Devops logs. 
 
-***Requires refactoring/better solution
-        
-Oustanding orchestration tasks.
+## Operating System and Application configuration
 
-gaps:
+### Run playbook - Common
+This playbook targets all the hosts in the deployment, and performs operating system configuration tasks required by the SAP installer, such as, but not limited to:
 
-* Database restore
-There is a VSTS variable which specified whether or not the database has been restored (db_restored_crm/db_restored_isu). This is a boolen value. 
-The data role will complete the following task sets, `main.yaml` and `restore-pre.yaml` when this is set to false.
-Because the database restore process is manual, after this is done, the above mentioned variables must be set to `true`.
-After this is set to true, tasks from `main.yaml` and `restore-pre.yaml` will be skipped, and the SQL post configuration steps will be processed `restore-post.yaml`.
+* Set timezone
+* Disable firewall
+* Create working directories
+* Disable IE Security Enhanced Condfiguration
+* Download and install preqrequisite software
+* Install roles and features
+* Join to the Active Direvtory domain
+* Add groups to local admin
+* Grants privileges to install user
+
+This is all documented and commented in the Ansible code. 
+
+#### Required variables
+| Argument  | Description |
+| ------------- | ------------- |
+| `ansible_user` | Username of user running Ansible playbook |
+| `ansible_password` | Password of user running Ansible playbook |
+| `storage_account_name` | Storage account name for where the SAP software files are stored | 
+| `storage_account_key` | Storage account key for the storage account where the SAP software files are stored |
+| `file_share_uri` | File share location for SAP software files |
+| `dns_domain_name` | FQDN of AGL internal domain e.g. `agl.int` |
+| `domain_join_username` | Username of user to join domain with |
+| `domain_join_password` | Password of user to join domain with |
+| `domain_ou_path` | Full DN to Active Directory OU where computer objects will be created |
+| `domain_admin_group` | Group which is added to local admin on every server e.g. `Func-DG-SAPInstallers` |
+
+Example of how to run this playbook, taken from the task in Azure Devops.
+
+```bash
+ansible-playbook ansible/common.yaml -i ansible/inventory.txt \
+    -e  'ansible_user="$(host_username)"' \
+    -e  'ansible_password="$(hostPassword)"' \
+    -e  'storage_account_name="$(install_files_storage_account_name)"' \
+    -e  'storage_account_key="$(installFilesStorageAccountKey)"' \
+    -e  'file_share_uri="$(install_files_file_share_uri)"' \
+    -e  'dns_domain_name="$(dns_domain_name)"' \
+    -e  'domain_join_username="$(domain_join_username)"' \
+    -e  'domain_join_password="$(domainJoinPassword)"' \
+    -e  'domain_ou_path="$(domain_ou_path)"' \
+    -e  'domain_admin_group="$(domain_admin_group)"' -vvv
+```
+
+### Run playbook - ASCS
+This playbook targets only the ASCS servers in the deployment, and formats the disks on these server.s This task should probably be refactored into the common role, 
+with a filter on the ASCS servers.
+
+#### Required variables
+| Argument  | Description |
+| ------------- | ------------- |
+| `ansible_user` | Username of user running Ansible playbook |
+| `ansible_password` | Password of user running Ansible playbook |
+
+Example of how to run this playbook, taken from the task in Azure Devops.
+
+```bash
+ansible-playbook ansible/ascs.yaml -i ansible/inventory.txt \
+    -e  'ansible_user="$(host_username)"' \
+    -e  'ansible_password="$(hostPassword)"' -vvv
+```
+
+### Run playbook - Data
+This playbook targets the database servers. This is where things get interesting/complex.
+
+Because the database restore process is manual, this role is split into two sections:
+* `restore-pre`
+* `restore-post`
+
+It should be self-explanatory why these tasks are named as they are.
+
+In `restore-pre.yaml`, the following actions are performed:
+* Create Storage Pools for the main data and backup disks
+* Download SAP software files
+* Install SQL server
+* Configure directories for database `.mdf` and `.ldf` files
+* Configure SQL server services (users, schedules)
+* Grant privileges to SQL server service account
+
+After the `restore-pre` task completed, the SQL server should be successfully installed. 
+
+Now an engineer must restore the database from a production copy, manually, or create a process which does this automatically. 
+
+Ruschal can provide the details and scripts to complete this. 
+
+After the database has been successfully installed on all the database servers in the deployment, it is time for the SQL server post configuration to be run. 
+
+There are Azure Devops variables which must be updated now:
+* `db_restored_crm` false -> true
+* `db_restored_isu` false -> true
+
+This provides a way for the pipeline to be re-run, without invoking the SQL server *pre* installation steps again.
+
+In `restore-post.yaml`, the following actions are performed:
+* Transfer SQL script files to the DB servers
+* Change logical file names in SQL server to represent new SID
+* Change OS file names
+* Move and create additional files for TempDB
+* Set recovery model and other SQL server configuration settings
+* Update SQL server memory utilisation settings
+
+#### Required variables
+| Argument  | Description |
+| ------------- | ------------- |
+| `ansible_user` | Username of user running Ansible playbook |
+| `ansible_password` | Password of user running Ansible playbook |
+| `storage_account_name` | Storage account name for where the SAP software files are stored | 
+| `storage_account_key` | Storage account key for the storage account where the SAP software files are stored |
+| `file_share_uri` | File share location for SAP software files |
+| `dns_domain_name` | FQDN of AGL internal domain e.g. `agl.int` |
+| `domain_join_username` | Username of user to join domain with |
+| `domain_join_password` | Password of user to join domain with |
+| `domain_ou_path` | Full DN to Active Directory OU where computer objects will be created |
+| `domain_admin_group` | Group which is added to local admin on every server e.g. `Func-DG-SAPInstallers` |
+| `datacentre` | Datacentre ID used to construct SID e.g. A = Azure |
+| `environment_instance_count` | Number used to construct SID. Should be incremented every time a new environment is created |
+| `sap_install_username` | Username of user to run SQL server installer. Must be a domain user and be a part of the `domain_admin_group` |
+| `sap_install_password` | Password of user to run SQL server installer |
+| `db_restored_crm` | True/false whether CRM database has been restored |
+| `db_restored_isu` | True/false whether ISU database has been restored |
+
+```bash
+ansible-playbook ansible/data.yaml -i ansible/inventory.txt \
+    -e  'ansible_user="$(host_username)"' \
+    -e  'ansible_password="$(hostPassword)"' \
+    -e  'storage_account_name="$(install_files_storage_account_name)"' \
+    -e  'storage_account_key="$(installFilesStorageAccountKey)"' \
+    -e  'file_share_uri="$(install_files_file_share_uri)"' \
+    -e  'dns_domain_name="$(dns_domain_name)"' \`
+    -e  'domain_name="$(domain_name)"' \
+    -e  'domain_join_username="$(domain_join_username)"' \
+    -e  'domain_join_password="$(domainJoinPassword)"' \
+    -e  'domain_ou_path="$(domain_ou_path)"' \
+    -e  'domain_admin_group="$(domain_admin_group)"' \
+    -e  'datacentre="$(datacentre_id)"' \
+    -e  'environment_instance_count="$(environment_instance_count)"' \
+    -e  'sap_install_username="$(sapInstallUsername)"' \
+    -e  'sap_install_password="$(sap_install_password)"'  \
+    -e  'db_restored_crm="$(db_restored_crm)"' \
+    -e  'db_restored_isu="$(db_restored_isu)"' -vvv
+```
+
+### Run playbook - Application install
+This playbooks targets all the servers in the deployment, and installs the SAP installation on each. 
+
+The order in which it completes this is as follows:
+1. ASCS server
+2. DB server
+3. Primary app server (Instance 10)
+4. Additional app servers (Instance 10)
+5. All app servers (Instance 20)
+6. All app servers (Instance 30)
+
+This playbook can be run multiple times with no effect on existing instances, it will always just ensure the right number of installs and instances exist.
+
+The installer binaries exists on the storage account specified in the playbook extra variables, and are downloaded prior to installation. 
+
