@@ -380,7 +380,7 @@ cd scripts/Dockerfile
 docker build -t sap-licence-generator . && \
     docker run --rm -it \
         -e SAP_USER=S0020347599 \
-        -e SAP_PASS=<redacted> \
+        -e SAP_PASS="<redacted>" \
         -e HARDWARE_KEY="I1758814741" \
         -e SYSTEM_TYPE="JAVA" \
         -e SYSTEM_ID="AJ3" \
@@ -397,3 +397,5 @@ To input the licence file, it needs to be sent over Telnet to the target system.
 * Complete CRM Java installation orchestration. All the parts are there just not orchestrated. 
 * Complete post-configuration orchestration tasks. Calling the Python modules from with the PyRFC SAP SDK Docker container, passing the arguments outputted 
 from the steps `Output Logical System Name variables - ISU` and `Output Logical System Name variables - CRM`
+* Investigate automated process for database restore
+* Update credentials `$(sap_install_username)` and `$(sap_install_password)` in Azure Devops secrets, as my (Lukas) ADM credentials  are still there
