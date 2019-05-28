@@ -2,41 +2,36 @@
 # Run SQL scripts - CRM
 - name: Run SQL scripts - CRM
   win_shell: |
-    {{ item }} 
+    sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" 
   async: 1000000
   poll: 0
-  register: scripts_crm
+  register: script_crm
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
   with_items:
-    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
-    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\Queries_for_XI_PI_Conversion_CRM_02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
   when: '"crm" in hostvars[inventory_hostname].group_names'
 
 # Run SQL scripts - ISU
 - name: Run SQL scripts - ISU
   win_shell: |
-    {{ item }}
+    sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
   async: 1000000
   poll: 0
-  register: scripts_isu
+  register: script_isu
   become: yes
   become_method: runas
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  with_items:
-    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
-    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 3\XI_PI_Conversion_in_ISU_System_01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
   when: '"isu" in hostvars[inventory_hostname].group_names'
 
 # Check SQL scripts - CRM
 - name: Check SQL scripts - CRM
   async_status:
-    jid: "{{ item }}"
+    jid: "{{ script_crm.ansible_job_id }}"
   register: job_result
   until: job_result.finished
   delay: 30
@@ -46,15 +41,12 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}" 
-  with_items:
-    - "{{ scripts_crm.results[0].ansible_job_id }}"
-    - "{{ scripts_crm.results[1].ansible_job_id }}"
   when: '"crm" in hostvars[inventory_hostname].group_names'
 
 # Check SQL scripts - ISU
 - name: Check SQL scripts - ISU
   async_status:
-    jid: "{{ item }}"
+    jid: "{{ script_isu.ansible_job_id }}"
   register: job_result
   until: job_result.finished
   delay: 30
@@ -64,7 +56,4 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}" 
-  with_items:
-    - "{{ scripts_isu.results[0].ansible_job_id }}"
-    - "{{ scripts_isu.results[1].ansible_job_id }}"
   when: '"isu" in hostvars[inventory_hostname].group_names'
