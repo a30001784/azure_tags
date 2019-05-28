@@ -1,0 +1,14 @@
+USE [CCU]
+GO
+
+/****** Object:  Trigger [/1LT/00000499UPD1]    Script Date: 9/14/2017 9:31:51 PM ******/
+DROP TRIGGER [ccu].[/1LT/00000499UPD1]
+GO
+
+/****** Object:  Trigger [/1LT/00000499INS]    Script Date: 9/14/2017 9:31:42 PM ******/
+DROP TRIGGER [ccu].[/1LT/00000499INS]
+GO
+
+/****** Object:  Trigger [/1LT/00000499DEL]    Script Date: 9/14/2017 9:31:31 PM ******/
+DROP TRIGGER [ccu].[/1LT/00000499DEL]
+GO

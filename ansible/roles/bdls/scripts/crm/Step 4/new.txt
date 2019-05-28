@@ -1,0 +1,30 @@
+/****** Object:  Trigger [ccu].[/1LT/00000499DEL]    Script Date: 9/14/2017 9:31:33 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ CREATE TRIGGER [ccu].[/1LT/00000499DEL]   ON [ccu].[CRMD_BRELVONAI]   FOR DELETE   AS     set nocount on if exists (select * from deleted where CLIENT = '100' ) BEGIN INSERT INTO [/1CADMC/00000499]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [RELATIONID],          [POSNO],         'D'     FROM deleted END 
+GO
+
+/****** Object:  Trigger [ccu].[/1LT/00000499INS]    Script Date: 9/14/2017 9:31:42 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ CREATE TRIGGER [ccu].[/1LT/00000499INS] ON [ccu].[CRMD_BRELVONAI] FOR INSERT AS set nocount on if exists (select * from inserted where CLIENT = '100' ) BEGIN INSERT INTO [/1CADMC/00000499]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,     [CLIENT],          [RELATIONID],          [POSNO],          'I'     FROM inserted END 
+GO
+
+
+/****** Object:  Trigger [ccu].[/1LT/00000499UPD1]    Script Date: 9/14/2017 9:31:51 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ CREATE TRIGGER [ccu].[/1LT/00000499UPD1]   ON [ccu].[CRMD_BRELVONAI]   FOR UPDATE   AS   BEGIN    set nocount on if exists (select * from inserted where CLIENT = '100' ) BEGIN     IF UPDATE([CLIENT]) OR     UPDATE([RELATIONID]) OR     UPDATE([POSNO])     BEGIN   INSERT INTO [/1CADMC/00000499]   SELECT CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [RELATIONID],          [POSNO],           'D'     FROM deleted   INSERT INTO [/1CADMC/00000499]   SELECT CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [RELATIONID],          [POSNO],           'I'     FROM inserted     END   ELSE BEGIN   INSERT INTO [/1CADMC/00000499]   SELECT  CONVERT(VARCHAR, GETUTCDATE(), 121), 0,      [CLIENT],          [RELATIONID],          [POSNO],           'U'     FROM inserted    END   END END 
+GO

@@ -1,0 +1,60 @@
+
+USE $(database)
+GO
+
+/****** Delete triggers of EDIDC ******/
+DROP TRIGGER $(schema).[/1LT/00000506DEL]
+GO
+DROP TRIGGER $(schema).[/1LT/00000506UPD1]
+GO
+DROP TRIGGER $(schema).[/1LT/00000506INS]
+GO
+
+
+/****** Delete triggers for EMMA_CASE ******/
+DROP TRIGGER $(schema).[/1LT/00000941DEL]
+GO
+DROP TRIGGER $(schema).[/1LT/00000941INS]
+GO
+DROP TRIGGER $(schema).[/1LT/00000941UPD1]
+GO
+
+
+/****** Delet indexes of EDIDC ******/
+DROP INDEX [EDIDC~1] ON $(schema).[EDIDC]
+GO
+DROP INDEX [EDIDC~2] ON $(schema).[EDIDC]
+GO
+DROP INDEX [EDIDC~3] ON $(schema).[EDIDC]
+GO
+DROP INDEX [EDIDC~4] ON $(schema).[EDIDC]
+GO
+
+
+/****** Delete indexes of SRRELROLES ******/
+DROP INDEX [SRRELROLES~001] ON $(schema).[SRRELROLES]
+GO
+DROP INDEX [SRRELROLES~002] ON $(schema).[SRRELROLES]
+GO
+DROP INDEX [SRRELROLES~003] ON $(schema).[SRRELROLES]
+GO
+
+/****** Delete indexes for EMMA_CASE ******/
+DROP INDEX [EMMA_CASE~1] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~2] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~3] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~4] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~5] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~Z01] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~ZAP] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~ZBP] ON $(schema).[EMMA_CASE]
+GO
+DROP INDEX [EMMA_CASE~ZEX] ON $(schema).[EMMA_CASE]
+GO

@@ -1,0 +1,164 @@
+---
+- name: Ensure working directories are created
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - C:\Install
+    - C:\Install\AutomationParameters
+    - C:\Install\DownloadStack
+    - C:\Install\Scripts
+    - C:\Install\SAPCAR
+    - C:\Install\SWPM10-SP25-0
+
+# Download install files
+- name: Download SAP install files
+  script: scripts/Download-SAPFiles.ps1 >
+    -StorageAccountName "{{ storage_account_name }}"
+    -StorageAccountKey "{{ storage_account_key }}"
+    -FileShareUri "{{ file_share_uri }}"
+    -Folders "DownloadStack","SAPCAR","SWPM10-SP25-0"
+
+- name: Stop any running SAP installer processes
+  win_shell: Get-Process sapinst* | Stop-Process
+  args:
+    executable: powershell
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+
+# Extract SWPM
+- name: Extract SWPM
+  win_shell: |
+    C:\Install\SAPCAR\SAPCAR_1014-80000938.exe -xvf C:\Install\SWPM10-SP25-0\SWPM10SP25_0-20009707.SAR -R C:\SWPM
+  args:
+    executable: cmd
+  
+# Copy script for checking if SAP instances exist on the server
+- name: Copy instance existence check script
+  win_copy: 
+    src: scripts/Check-InstanceExistence.ps1
+    dest: C:\Install\Scripts\Check-InstanceExistence.ps1
+
+# Checks for app install on ASCS server
+- name: Check for existing ASCS installation
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 0
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: ascs_install
+  when: '"ascs" in hostvars[inventory_hostname].group_names'
+
+- include_tasks: ascs.yaml
+  when: '"ascs" in hostvars[inventory_hostname].group_names and ascs_install.stdout_lines[0] == "false"'
+
+# Checks for existing successful app install on DB server
+- name: Check for existing installation - DB
+  win_stat:
+    path: "C:\\Program Files\\sapinst_instdir\\NW740SR2\\MSS\\COPY\\SYSTEM\\DISTRIBUTED\\AS-ABAP\\DB\\installationSuccesfullyFinished.dat"
+  register: db_install
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- include_tasks: db.yaml
+  when: '"data" in hostvars[inventory_hostname].group_names and db_install.stat.exists == false'
+
+# Run SQL cmds prereqs
+- name: Copy SQL prereqs script
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: C:\install\AutomationParameters\{{ item }}.sql
+    newline_sequence: '\r\n'
+  with_items:
+    - pas-sql-prereqs
+    - UnlockDDIC000
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+- name: Run SQL cmds
+  win_shell: sqlcmd.exe -b -i "C:\install\AutomationParameters\{{ item }}"
+  with_items:
+    - pas-sql-prereqs.sql
+    - UnlockDDIC000.sql
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  when: '"data" in hostvars[inventory_hostname].group_names'
+
+# Check for existing SAP installation on the primary app server
+- name: Check for existing PAS10 instance - PAS
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 10
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: pas_10
+  when: 'ansible_hostname == pas_host'
+
+# Run SAP installer on PAS
+- include_tasks: pas10.yaml
+  when: 'ansible_hostname == pas_host and pas_10.stdout_lines[0] == "false"'
+
+- name: Check for existing instance 10 on additional app servers
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 10
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: aas_10
+  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host'
+
+# Run SAP installer on instance 10 on AAS
+- include_tasks: aas10.yaml
+  when: '"app" in hostvars[inventory_hostname].group_names and ansible_hostname != pas_host and aas_10.stdout_lines[0] == "false"'
+
+# Check for existing instance 20 installations
+- name: Check for existing AAS20 instances - all app servers
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 20
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: aas_20
+  when: '"app" in hostvars[inventory_hostname].group_names'
+
+# Run SAP installer on instance 20 on AAS
+- include_tasks: aas20.yaml
+  when: '"app" in hostvars[inventory_hostname].group_names and aas_20.stdout_lines[0] == "false"'
+
+# Check for existing instance 30 installations
+- name: Check for existing AAS30 instances - AAS
+  win_shell: C:\Install\Scripts\Check-InstanceExistence.ps1 >
+    -ASCSHost "{{ ascs_host }}"
+    -TargetHost "{{ ansible_hostname }}"
+    -TargetInstanceNumber 30
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  register: aas_30
+  when: '"app" in hostvars[inventory_hostname].group_names'
+
+# Run SAP installer on instance 30 on AAS
+- include_tasks: aas30.yaml
+  when: '"app" in hostvars[inventory_hostname].group_names and aas_30.stdout_lines[0] == "false"'

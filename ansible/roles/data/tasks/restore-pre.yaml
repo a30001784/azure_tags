@@ -1,0 +1,116 @@
+---
+- name: Stripe Data disks
+  script: scripts/Storage-Spaces.ps1 >
+    -DriveLetter I
+    -Interleave 65536
+    -FileSystemLabel Data
+    -NumDisks {{ num_pooled_disks }}
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks > 0
+
+- name: Format I:\ drive - Windows Server 2008
+  script: scripts/Format-Volume_WS2008R2.ps1 -DriveLetter I
+  when: ansible_distribution == "Microsoft Windows Server 2008 R2 Datacenter " and num_pooled_disks == 0
+
+- name: Stripe Backup disks
+  script: scripts/Storage-Spaces.ps1 >
+    -DriveLetter G
+    -Interleave 65536
+    -FileSystemLabel Backup
+  when: ansible_distribution != "Microsoft Windows Server 2008 R2 Datacenter " and has_backup_disk == "true"
+
+- name: Download SAP prerequisite install files
+  script: scripts/Download-SAPFiles.ps1 >
+    -StorageAccountName "{{ storage_account_name }}"
+    -StorageAccountKey "{{ storage_account_key }}"
+    -FileShareUri "{{ file_share_uri }}"
+    -Folders "51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563-RDBMS-MSSQLSRV-2014 SP1 CU1-SQL4SAP-only\51050563","PTIA-2-ConfigFiles\SQLSserver2014\SQLServer2014-MS-Binaries"
+
+- name: set var for sql install
+  set_fact:
+    sql_install: true
+
+- name: Test for existing SQL Server Instance
+  win_shell: |
+    Test-Path "HKLM:\Software\Microsoft\Microsoft SQL Server\Instance Names\SQL"
+  register: checksql
+
+- name: set var for sql instal  
+  set_fact:
+    sql_install: "{{ checksql.stdout | regex_replace('(\\r\\n)','') }}"
+
+- name: check var value for sql install
+  debug:
+    var: sql_install
+
+# Create directory structure for SQL4SAP Logs
+- name: Create directory structure for SQL4SAP Logs
+  win_file:
+    path: "C:\\Logs"
+    state: directory
+
+- name: Set install string - CRM
+  set_fact:
+    install_string: C:\install\51050563\SQL4SAP.bat -a -d -m -u "{{ dns_domain_name }}\{{ domain_admin_group }}" -bits C:\install\SQLServer2014-MS-Binaries
+  when: '"crm" in hostvars[inventory_hostname].group_names'
+
+- name: Set install string - ISU
+  set_fact: 
+      install_string: C:\install\51050563\SQL4SAP.bat -d -m -u "{{ dns_domain_name }}\{{ domain_admin_group }}" -bits C:\install\SQLServer2014-MS-Binaries
+  when: '"isu" in hostvars[inventory_hostname].group_names'
+
+- name: Run SQL install
+  win_shell: |
+    {{ install_string }}
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
+  when: sql_install == false
+
+# Create directory structure for SAP database
+- name: Create directory structure for SAP database
+  win_file:
+    path: "I:\\{{ environment_sid }}\\{{ environment_sid }}{{ item }}"
+    state: directory
+  with_items:
+    - LOG
+    - DATA1
+    - DATA2
+    - DATA3
+    - DATA4
+    - DATA5
+    - DATA6
+    - DATA7
+    - DATA8
+
+- name: Start service MSSQL Browser
+  win_service:
+    name: SQLBrowser
+    start_mode: auto
+    force_dependent_services: yes
+    state: restarted
+
+- name: Grant privileges to SQL service user
+  win_user_right:
+    name: "{{ item }}"
+    users:
+    - "NT Service\\MSSQLSERVER"
+    action: add
+  with_items:
+    - SeLockMemoryPrivilege
+    - SeManageVolumePrivilege
+
+- name: Start service MSSQLSERVICE
+  win_service:
+    name: "{{ item }}"
+    state: restarted
+    force_dependent_services: yes
+  with_items:
+    - MSSQLSERVER
+    - SQLSERVERAGENT
+
+- name: delete any mapped drives under Z
+  win_mapped_drive:
+    letter: X
+    state: absent

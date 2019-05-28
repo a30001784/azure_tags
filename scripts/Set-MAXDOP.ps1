@@ -6,7 +6,13 @@ Param
 )
 
 $Query = @"
-EXEC sp_configure 'max_degree of parallelism', $($MaxDegreeOfParallelism)
+EXEC sp_configure 'show advanced options', 1
+RECONFIGURE WITH OVERRIDE
+
+EXEC sp_configure 'max degree of parallelism', $($MaxDegreeOfParallelism)
+RECONFIGURE WITH OVERRIDE
+
+EXEC sp_configure 'show advanced options', 0
 RECONFIGURE WITH OVERRIDE
 "@
 

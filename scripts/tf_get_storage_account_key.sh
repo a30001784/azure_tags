@@ -21,4 +21,4 @@ storage_account_key=$(az storage account keys list \
     --output tsv)
 
 # Store key in variable for VSTS to use in future tasks.
-echo "##vso[task.setvariable variable=tfStateStorageAccountKey;issecret=true]${storage_account_key}"
+echo "##vso[task.setvariable variable=tf_state_storage_account_key;issecret=true]${storage_account_key}"

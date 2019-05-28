@@ -1,0 +1,42 @@
+use {{ environment_sid }}
+
+-- Reset DDIC client 000/100
+update {{ environment_sid | lower }}.USR02 set CODVN='H', USTYP='S', UFLAG='0', PWDSALTEDHASH = '{x-issha, 1024}eW+G/YPpao9fLZBCmIyGlJUf6tjYVpYt6rl9Hx3Eh8Y=' where BNAME='DDIC' and MANDT='000'
+update {{ environment_sid | lower }}.USR02 set CODVN='H', USTYP='S', UFLAG='0', PWDSALTEDHASH = '{x-issha, 1024}ZFhVAASir6Wv+mL4wdhNF1ekB6FqNVPwCdA8YOc4wbE=' where BNAME='DDIC' and MANDT='100'
+go
+
+-- Suspend all background jobs
+update {{ environment_sid | lower }}.TSP03D set PADISABLED='X' 
+update {{ environment_sid | lower }}.TBTCO set STATUS='Z' where STATUS='S' 
+update {{ environment_sid | lower }}.TBTCO set STATUS='S' where STATUS='Z' and JOBNAME like 'RDDIMPDP%' 
+go
+
+-- Execute clean up script
+truncate table {{ environment_sid | lower }}.ALCONSEG 
+go 
+truncate table {{ environment_sid | lower }}.ALSYSTEMS 
+go 
+truncate table {{ environment_sid | lower }}.DBSNP 
+go 
+truncate table {{ environment_sid | lower }}.MONI 
+go 
+truncate table {{ environment_sid | lower }}.OSMON 
+go 
+truncate table {{ environment_sid | lower }}.PAHI 
+go 
+truncate table {{ environment_sid | lower }}.SDBAD 
+go 
+truncate table {{ environment_sid | lower }}.SDBAP 
+go 
+truncate table {{ environment_sid | lower }}.SDBAR 
+go 
+truncate table {{ environment_sid | lower }}.DDLOG 
+go
+truncate table {{ environment_sid | lower }}.TLOCK 
+go
+
+-- PAS installer workaround
+IF NOT EXISTS (select APPSRVNAME from {{ environment_sid | lower }}.TSRVLST where APPSRVNAME = '{{ pas_host }}_{{ environment_sid }}_10')
+BEGIN
+    insert into {{ environment_sid | lower }}.TSRVLST values ((select GUID from {{ environment_sid | lower }}.TSRVGRP where GRPNAME='SAP_DEFAULT_BTC'),'{{ pas_host }}_{{ environment_sid }}_10','{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}');
+END

@@ -1,0 +1,90 @@
+---
+# Run SQL scripts - CRM
+- name: Run SQL scripts - CRM
+  win_shell: |
+    {{ item }} 
+  async: 1000000
+  poll: 0
+  register: scripts_crm
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  with_items:
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 02.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 03.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 04.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 05.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 06.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 07.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set CRM - 08.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}"
+  when: '"crm" in hostvars[inventory_hostname].group_names'
+
+# Run SQL scripts - ISU
+- name: Run SQL scripts - ISU
+  win_shell: |
+    {{ item }}
+  async: 1000000
+  poll: 0
+  register: scripts_isu
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}"
+  with_items:
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 01.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 02.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}" crm_source_ls="{{ crm_source_ls }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 03.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 04.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 05.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+    - sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\First Set\First set ISU - 06.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
+  when: '"isu" in hostvars[inventory_hostname].group_names'
+
+# Check SQL scripts - CRM
+- name: Check SQL scripts - CRM
+  async_status:
+    jid: "{{ item }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}" 
+  with_items:
+    - "{{ scripts_crm.results[0].ansible_job_id }}"
+    - "{{ scripts_crm.results[1].ansible_job_id }}"
+    - "{{ scripts_crm.results[2].ansible_job_id }}"
+    - "{{ scripts_crm.results[3].ansible_job_id }}"
+    - "{{ scripts_crm.results[4].ansible_job_id }}"
+    - "{{ scripts_crm.results[5].ansible_job_id }}"
+    - "{{ scripts_crm.results[6].ansible_job_id }}"
+    - "{{ scripts_crm.results[7].ansible_job_id }}"
+  when: '"crm" in hostvars[inventory_hostname].group_names'
+
+# Check SQL scripts - ISU
+- name: Check SQL scripts - ISU
+  async_status:
+    jid: "{{ item }}"
+  register: job_result
+  until: job_result.finished
+  delay: 30
+  retries: 50000
+  become: yes
+  become_method: runas
+  become_user: "{{ sap_install_user }}"
+  vars:
+    ansible_become_password: "{{ sap_install_password }}" 
+  with_items:
+    - "{{ scripts_isu.results[0].ansible_job_id }}"
+    - "{{ scripts_isu.results[1].ansible_job_id }}"
+    - "{{ scripts_isu.results[2].ansible_job_id }}"
+    - "{{ scripts_isu.results[3].ansible_job_id }}"
+    - "{{ scripts_isu.results[4].ansible_job_id }}"
+    - "{{ scripts_isu.results[5].ansible_job_id }}"
+  when: '"isu" in hostvars[inventory_hostname].group_names'

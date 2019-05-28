@@ -1,0 +1,43 @@
+---
+- hosts: all
+  any_errors_fatal: true
+
+  vars_files:
+    - "vars/main.yaml"
+  
+  tasks:
+
+  - include_role:
+      name: bdls
+      tasks_from: main.yaml
+    when: '"data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_02_First_set.yaml
+    when: '"data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_02_Second_set.yaml
+    when: '"data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_02_Third_set.yaml
+    when: '"crm-data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_02_Fourth_set.yaml
+    when: '"crm-data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_03.yaml
+    when: '"data" in hostvars[inventory_hostname].group_names'
+
+  - include_role:
+      name: bdls
+      tasks_from: bdls_step_04.yaml
+    when: '"data" in hostvars[inventory_hostname].group_names'

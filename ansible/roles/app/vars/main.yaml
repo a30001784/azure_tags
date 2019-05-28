@@ -1,0 +1,1 @@
+database_schema: "{{ instance_type }}P1"

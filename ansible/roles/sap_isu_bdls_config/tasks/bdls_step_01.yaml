@@ -1,3 +1,0 @@
----
-- name: Pre_run_activities_for_BDLS_in_CRM
-  win_shell: sqlcmd.exe -i "C:\Packages\SAP\sqlScripts\BDLS\ISU scripts\Step 1\BDLS_Pre_run activities_ISU.sql" -v database="{{ isu_sid }}" schema="{{ isu_sid | lower }}"
