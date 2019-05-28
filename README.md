@@ -385,7 +385,8 @@ docker build -t sap-licence-generator . && \
         -e SYSTEM_TYPE="JAVA" \
         -e SYSTEM_ID="AJ3" \
         -e SYSTEM_NAME="PTIA#3" \
-        -v $(pwd):/app
+        -v $(pwd):/app \
+        sap-licence-generator
 ```
 
 To input the licence file, it needs to be sent over Telnet to the target system. The script that can do this is `scripts/Install-SAPLicence.ps1`. 
