@@ -11,7 +11,6 @@
   become_user: "{{ sap_install_user }}"
   vars:
     ansible_become_password: "{{ sap_install_password }}"
-  with_items:
   when: '"crm" in hostvars[inventory_hostname].group_names'
 
 # Run SQL scripts - ISU
