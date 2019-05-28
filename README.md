@@ -1,5 +1,3 @@
-Flow: 
-
 # High-level overview
 
 The SAP automation release pipeline consists of a number of distinct components, which are represented by Agent Phases in Azure Devops.
@@ -84,23 +82,21 @@ boilerplate code.
 To get the required hostnames, IPs and variables, it calls `terraform output` against a number of the TF resources to determine what to put where. There are also 
 some environment variables it depends on:
 
-`NUM_POOLED_DISKS_DATA_CRM` Number of data disks that will be used to create a storage pool on the CRM DB server
-
-`NUM_POOLED_DISKS_DATA_ISU` Number of data disks that will be used to create a storage pool on the ISU DB server
-
-`HAS_BACKUP_DISK_CRM` True/false whether the CRM DB server has a disk dedicated to backups
-
-`HAS_BACKUP_DISK_ISU` True/false whether the ISU DB server has a disk dedicated to backups
+| Variable | Description |
+| ------------- | ------------- |
+| `NUM_POOLED_DISKS_DATA_CRM` | Number of data disks that will be used to create a storage pool on the CRM DB server |
+| `NUM_POOLED_DISKS_DATA_ISU` | Number of data disks that will be used to create a storage pool on the ISU DB server |
+| `HAS_BACKUP_DISK_CRM` | True/false whether the CRM DB server has a disk dedicated to backups |
+| `HAS_BACKUP_DISK_ISU` | True/false whether the ISU DB server has a disk dedicated to backups |
 
 The script also has a number of arguments that can be passed in, such as:
 
-`--roles` Modules that are being built as part of this deployment (crm isu)
-
-`--sub-roles` Server classes (app ascs data)
-
-`--inv-dir` Directory to save the outputted Ansible inventory file (ansible)
-
-`--tf-path` Relative path to the Terraform folder from which to runn `terraform output` (terraform)
+| Variable | Description |
+| ------------- | ------------- |
+| `--roles` | Modules that are being built as part of this deployment (crm isu) |
+| `--sub-roles` | Server classes (app ascs data) |
+| `--inv-dir` | Directory to save the outputted Ansible inventory file (ansible) |
+| `--tf-path` | Relative path to the Terraform folder from which to runn `terraform output` (terraform) |
 
 ### Print inventory file
 Runs a bash script to output the result of the Ansible inventory file so it can be viewed from the Azure Devops logs. 
@@ -229,6 +225,8 @@ In `restore-post.yaml`, the following actions are performed:
 | `db_restored_crm` | True/false whether CRM database has been restored |
 | `db_restored_isu` | True/false whether ISU database has been restored |
 
+Example of how to run this playbook, taken from the task in Azure Devops.
+
 ```bash
 ansible-playbook ansible/data.yaml -i ansible/inventory.txt \
     -e  'ansible_user="$(host_username)"' \
@@ -263,5 +261,138 @@ The order in which it completes this is as follows:
 
 This playbook can be run multiple times with no effect on existing instances, it will always just ensure the right number of installs and instances exist.
 
-The installer binaries exists on the storage account specified in the playbook extra variables, and are downloaded prior to installation. 
+The installer binaries exist on the storage account specified in the playbook extra variables, and are downloaded prior to installation. 
 
+#### Required variables
+| Argument  | Description |
+| ------------- | ------------- |
+| `ansible_user` | Username of user running Ansible playbook |
+| `ansible_password` | Password of user running Ansible playbook |
+| `storage_account_name` | Storage account name for where the SAP software files are stored | 
+| `storage_account_key` | Storage account key for the storage account where the SAP software files are stored |
+| `file_share_uri` | File share location for SAP software files |
+| `dns_domain_name` | FQDN of AGL internal domain e.g. `agl.int` |
+| `domain_join_username` | Username of user to join domain with |
+| `domain_join_password` | Password of user to join domain with |
+| `domain_ou_path` | Full DN to Active Directory OU where computer objects will be created |
+| `domain_admin_group` | Group which is added to local admin on every server e.g. `Func-DG-SAPInstallers` |
+| `datacentre` | Datacentre ID used to construct SID e.g. A = Azure |
+| `environment_instance_count` | Number used to construct SID. Should be incremented every time a new environment is created |
+| `sap_install_username` | Username of user to run SQL server installer. Must be a domain user and be a part of the `domain_admin_group` |
+| `sap_install_password` | Password of user to run SQL server installer |
+| `sap_master_password_base` | Base of SAP master password (the part that doesn't change) |
+
+Example of how to run this playbook, taken from the task in Azure Devops.
+
+```bash
+ansible-playbook ansible/app.yaml -i ansible/inventory.txt \
+    -e  'ansible_user="$(host_username)"' \
+    -e  'ansible_password="$(hostPassword)"' \
+    -e  'storage_account_name="$(install_files_storage_account_name)"' \
+    -e  'storage_account_key="$(installFilesStorageAccountKey)"' \
+    -e  'file_share_uri="$(install_files_file_share_uri)"' \
+    -e  'dns_domain_name="$(dns_domain_name)"' \`
+    -e  'domain_name="$(domain_name)"' \
+    -e  'domain_join_username="$(domain_join_username)"' \
+    -e  'domain_join_password="$(domainJoinPassword)"' \
+    -e  'domain_ou_path="$(domain_ou_path)"' \
+    -e  'domain_admin_group="$(domain_admin_group)"' \
+    -e  'datacentre="$(datacentre_id)"' \
+    -e  'environment_instance_count="$(environment_instance_count)"' \
+    -e  'sap_install_username="$(sapInstallUsername)"' \
+    -e  'sap_install_password="$(sap_install_password)"'  \
+    -e  'sap_master_password_base="$(sapMasterPasswordBase)"' -vvv
+```
+
+### Run playbook - BDLS
+This playbook targets the database servers and runs the BDLS offline steps. 
+
+BDLS offline is effectively a bunch of SQL scripts which take a long time to run (~14 hours).
+
+Before it begins, it runs the PowerShell script `Get-LogicalSystemNames.ps1` which retrieves some IDs from the database which are required for later use in the pipeline. It saves this Logical System Names to a file which is read by a task in a later step.
+
+It also does some pre-configuration of SQL server to increase the speed of the BDLS scripts e.g. updating indexes, setting MaxDOP etc. 
+
+The BDLS SQL scripts are organised into sets for each environment (CRM and ISU), and each set runs in parellel to optimise the speed as much as possible. 
+
+For example, Set 1 runs on both CRM/ISU at the same time, waits for completion, then runs Set 2, Set 3 and so on.
+
+If it was up to me, the role would not be structured like this. But I ran out of time before leaving and it was too much effort to compeletely understand and refactor another engineer's code. So I apologise that you need to deal with this.
+
+#### Required variables
+| Argument  | Description |
+| ------------- | ------------- |
+| `ansible_user` | Username of user running Ansible playbook |
+| `ansible_password` | Password of user running Ansible playbook |
+| `storage_account_name` | Storage account name for where the SAP software files are stored | 
+| `storage_account_key` | Storage account key for the storage account where the SAP software files are stored |
+| `file_share_uri` | File share location for SAP software files |
+| `dns_domain_name` | FQDN of AGL internal domain e.g. `agl.int` |
+| `domain_join_username` | Username of user to join domain with |
+| `domain_join_password` | Password of user to join domain with |
+| `domain_ou_path` | Full DN to Active Directory OU where computer objects will be created |
+| `domain_admin_group` | Group which is added to local admin on every server e.g. `Func-DG-SAPInstallers` |
+| `datacentre` | Datacentre ID used to construct SID e.g. A = Azure |
+| `environment_instance_count` | Number used to construct SID. Should be incremented every time a new environment is created |
+| `sap_install_username` | Username of user to run SQL server installer. Must be a domain user and be a part of the `domain_admin_group` |
+| `sap_install_password` | Password of user to run SQL server installer |
+| `sap_master_password_base` | Base of SAP master password (the part that doesn't change) |
+
+Example of how to run this playbook, taken from the task in Azure Devops.
+
+```bash
+ansible-playbook ansible/bdls.yaml -i ansible/inventory.txt \
+    -e  'ansible_user="$(host_username)"' \
+    -e  'ansible_password="$(hostPassword)"' \
+    -e  'storage_account_name="$(install_files_storage_account_name)"' \
+    -e  'storage_account_key="$(installFilesStorageAccountKey)"' \
+    -e  'file_share_uri="$(install_files_file_share_uri)"' \
+    -e  'dns_domain_name="$(dns_domain_name)"' \`
+    -e  'domain_name="$(domain_name)"' \
+    -e  'domain_join_username="$(domain_join_username)"' \
+    -e  'domain_join_password="$(domainJoinPassword)"' \
+    -e  'domain_ou_path="$(domain_ou_path)"' \
+    -e  'domain_admin_group="$(domain_admin_group)"' \
+    -e  'datacentre="$(datacentre_id)"' \
+    -e  'environment_instance_count="$(environment_instance_count)"' \
+    -e  'sap_install_username="$(sapInstallUsername)"' \
+    -e  'sap_install_password="$(sap_install_password)"'  \
+    -e  'sap_master_password_base="$(sapMasterPasswordBase)"' -vvv
+```
+
+### Output Logical System Name variables - CRM
+Task runs a script `Output-LogicalSystemNameVariables.ps1` which reads a file of Logical System Names and outputs them as Azure Devops variables, so they can be used by the post-configuration steps. This file was generated by `Get-LogicalSystemNames.ps1` in the previous task: `BDLS`
+
+### Output Logical System Name variables - ISU
+Same as above, but for ISU. 
+
+### Run Playbook - CRM Java
+This task targets the Primary App Server and the first Additional App Server in the CRM environment, and performs a Java installation on each.
+
+All the code is there, but I'm not certain that the orchestration part will work. I guess you'll find out.
+
+After the app has been installed successfully, a licence must be generated from the SAP ONE Support Portal. The script that does this is `generator.js` and should be run from within a Docker container that can be built with the file at `scripts/Dockerfile`. You need to provide the script with the hardware key of the target system, and a few other parameters.
+
+An example of how to run this `Dockerfile`, for Java in AJ3, is as follows:
+
+```bash
+cd scripts/Dockerfile
+docker build -t sap-licence-generator . && \
+    docker run --rm -it \
+        -e SAP_USER=S0019332459 \
+        -e SAP_PASS=<redacted> \
+        -e HARDWARE_KEY="I1758814741" \
+        -e SYSTEM_TYPE="JAVA" \
+        -e SYSTEM_ID="AJ3" \
+        -e SYSTEM_NAME="PTIA#3" \
+        -v $(pwd):/app
+```
+
+To input the licence file, it needs to be sent over Telnet to the target system. The script that can do this is `scripts/Install-SAPLicence.ps1`. 
+
+## TODO
+
+* Insert SAP instance STOP/START tasks before and after BDLS run. Must be run on the ASCS server, and shutdown all instances
+* Complete CRM Java installation orchestration. All the parts are there just not orchestrated. 
+* Complete post-configuration orchestration tasks. Calling the Python modules from with the PyRFC SAP SDK Docker container, passing the arguments outputted 
+from the steps `Output Logical System Name variables - ISU` and `Output Logical System Name variables - CRM`
