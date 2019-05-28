@@ -12,8 +12,7 @@ PRINT @xi_target_ls
 Declare @pi_source_ls nvarchar(max)
 Declare @pi_target_ls nvarchar(max)
 SELECT @pi_source_ls = PARNUM
-from $(schema)
-.EDPP1 where PARNUM LIKE 'M%';
+from $(schema).EDPP1 where PARNUM LIKE 'M%';
 PRINT @pi_source_ls
 Set @pi_target_ls = 'M'+RIGHT('$(database)',2)+'001'
 PRINT @pi_target_ls
