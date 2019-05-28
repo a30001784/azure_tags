@@ -1,7 +1,7 @@
 ---
 # Run fourth set - CRM
 - name: Fourth Set - Script 01
-  win_shell: sqlcmd.exe -b i "C:\BDLS\{{ module }}\Step 2\Fourth Set\Fourth set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
+  win_shell: sqlcmd.exe -b -i "C:\BDLS\{{ module }}\Step 2\Fourth Set\Fourth set CRM - 01.sql" -v database="{{ crm_sid }}" schema="{{ crm_sid | lower }}" isu_source_ls="{{ isu_source_ls }}"
   async: 1000000
   poll: 0
   register: script_crm
