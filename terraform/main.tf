@@ -4,7 +4,8 @@ terraform {
     key                                  = "terraform.tfstate"
   }
 }
-
+    var_what_ever_i_called_it = "string like this"
+    someother_var_name = ${var.var_what_ever_i_called_it}
 provider "azurerm" {
     subscription_id                      = "${var.subscription_id}"
     client_id                            = "${var.client_id}"
@@ -19,6 +20,13 @@ locals {
     hostname_suffix_start_range_isu_app  = "${local.hostname_suffix_start_range_crm_db + var.node_count_crm_db}"
     hostname_suffix_start_range_isu_ascs = "${local.hostname_suffix_start_range_isu_app + var.node_count_isu_app}"
     hostname_suffix_start_range_isu_db   = "${local.hostname_suffix_start_range_isu_ascs + var.node_count_isu_ascs}"
+    asdasdsadasdasdasdasd = ${var.var_what_ever_i_called_it}
+    aasdasdasdsad = ${local.response.name}
+}
+
+response : {
+    { name= thing },
+    { test = secondthing}
 }
 
 module "nsg-app" { 
