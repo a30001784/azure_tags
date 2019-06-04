@@ -43,6 +43,54 @@ variable "data_disk_count" {
     default = 0
 }
 
+variable "tag_crm_app" {
+    default = {
+        Component = "CRM"
+        Service = "APP"
+        Sid = ""
+    }
+}
+
+variable "tag_crm_ascs" {
+    default = {
+        Component = "CRM"
+        Service = "ascs"
+        Sid = ""
+    }
+}
+
+variable "tag_crm_db" {
+    default = {
+        Component = "CRM"
+        Service = "db"
+        Sid = ""
+    }
+}
+
+variable "tag_isu_app" {
+    default = {
+        Component = "ISU"
+        Service = "app"
+        Sid = ""
+    }
+}
+
+variable "tag_isu_ascs" {
+    default = {
+        Component = "ISU"
+        Service = "ascs"
+        Sid = ""
+    }
+}
+
+variable "tag_isu_db" {
+    default = {
+        Component = "ISU"
+        Service = "db"
+        Sid = ""
+    }
+}
+
 // variable "tags" {
 //   type        = "map"
 //   description = "A map of the tags to use on the resources that are deployed with this module."

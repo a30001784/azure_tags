@@ -39,30 +39,6 @@ variable "node_count_crm_db" {
     default = 0
 }
 
-variable "tag_crm_app" {
-    default = {
-        Component = "CRM"
-        Service = "APP"
-        Sid = ""
-    }
-}
-
-variable "tag_crm_ascs" {
-    default = {
-        Component = "CRM"
-        Service = "ascs"
-        Sid = ""
-    }
-}
-
-variable "tag_crm_db" {
-    default = {
-        Component = "CRM"
-        Service = "db"
-        Sid = ""
-    }
-}
-
 variable "node_count_isu_app" {
     default = 0
 }
@@ -71,30 +47,6 @@ variable "node_count_isu_ascs" {
 }
 variable "node_count_isu_db" { 
     default = 0
-}
-
-variable "tag_isu_app" {
-    default = {
-        Component = "ISU"
-        Service = "app"
-        Sid = ""
-    }
-}
-
-variable "tag_isu_ascs" {
-    default = {
-        Component = "ISU"
-        Service = "ascs"
-        Sid = ""
-    }
-}
-
-variable "tag_isu_db" {
-    default = {
-        Component = "ISU"
-        Service = "db"
-        Sid = ""
-    }
 }
 
 variable "vm_size_crm_app" {}
