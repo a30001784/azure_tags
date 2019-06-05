@@ -93,4 +93,4 @@ variable "data_disk_count_isu_db" {
     default = 0
 }
 
- variable "common_tags" {}
+# variable "common_tags" {}
