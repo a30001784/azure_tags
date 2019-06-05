@@ -11,17 +11,7 @@ variable "host_password" {}
 variable "hostname_prefix" {}
 variable "hostname_suffix_start_range" {}
 
-variable "tags" {
-    type = "map"
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"
-    }
-}
+variable "tags" {}
 
 variable "subnet_id_app" {}
 variable "subnet_id_data" {}
@@ -103,3 +93,4 @@ variable "data_disk_count_isu_db" {
     default = 0
 }
 
+ variable "common_tags" {}

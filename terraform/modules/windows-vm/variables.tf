@@ -54,89 +54,89 @@ variable "data_disk_count" {
 #     }
 # }
 
-variable "tag_crm_app" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "CRM"
-        Service = "APP"
-        Sid = ""
-    }
-}
+# variable "tag_crm_app" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "CRM"
+#         Service = "APP"
+#         Sid = ""
+#     }
+# }
 
-variable "tag_crm_ascs" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "CRM"
-        Service = "ascs"
-        Sid = ""
-    }
-}
+# variable "tag_crm_ascs" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "CRM"
+#         Service = "ascs"
+#         Sid = ""
+#     }
+# }
 
-variable "tag_crm_db" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "CRM"
-        Service = "db"
-        Sid = ""
-    }
-}
+# variable "tag_crm_db" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "CRM"
+#         Service = "db"
+#         Sid = ""
+#     }
+# }
 
-variable "tag_isu_app" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "ISU"
-        Service = "app"
-        Sid = ""
-    }
-}
+# variable "tag_isu_app" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "ISU"
+#         Service = "app"
+#         Sid = ""
+#     }
+# }
 
-variable "tag_isu_ascs" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "ISU"
-        Service = "ascs"
-        Sid = ""
-    }
-}
+# variable "tag_isu_ascs" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "ISU"
+#         Service = "ascs"
+#         Sid = ""
+#     }
+# }
 
-variable "tag_isu_db" {
-    default = {
-        BusinessOwner = "James Vincent"
-        TechnicalOwner = "Ruschal Alphonso"
-        CostCode = "C-INF-000027-01"
-        Application = "SAP"
-        scheduleType = "AlwaysOn_24_7"
-        scheduleExemption = "False"  
-        Component = "ISU"
-        Service = "db"
-        Sid = ""
-    }
-}
+# variable "tag_isu_db" {
+#     default = {
+#         BusinessOwner = "James Vincent"
+#         TechnicalOwner = "Ruschal Alphonso"
+#         CostCode = "C-INF-000027-01"
+#         Application = "SAP"
+#         scheduleType = "AlwaysOn_24_7"
+#         scheduleExemption = "False"  
+#         Component = "ISU"
+#         Service = "db"
+#         Sid = ""
+#     }
+# }
 
 // variable "tags" {
 //   type        = "map"

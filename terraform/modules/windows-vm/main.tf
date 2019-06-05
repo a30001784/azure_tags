@@ -1,5 +1,6 @@
 locals {
   total_data_disks = "${var.data_disk_count * var.count}"
+  common_tags = "${var.common_tags}"
 }
 
 resource "azurerm_network_interface" "main" {
@@ -25,8 +26,6 @@ resource "azurerm_managed_disk" "main" {
   storage_account_type = "Premium_LRS"
   create_option        = "Empty"
   disk_size_gb         = "${var.data_disk_size}"
-
-  tags                 = "${var.tags}"
 }
 
 resource "azurerm_virtual_machine" "main" {
@@ -36,6 +35,7 @@ resource "azurerm_virtual_machine" "main" {
   resource_group_name   = "${var.resource_group}"
   network_interface_ids = ["${azurerm_network_interface.main.*.id[count.index]}"]
   vm_size               = "${var.vm_size}"
+  tags                  = "${local.common_tags}"
   depends_on            = ["azurerm_network_interface.main"]
 
   delete_os_disk_on_termination    = true
@@ -66,7 +66,7 @@ resource "azurerm_virtual_machine" "main" {
     provision_vm_agent = true
   }
 
-  tags             = "${var.tags}"
+  tags                 = "${local.common_tags}"
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "main" {
