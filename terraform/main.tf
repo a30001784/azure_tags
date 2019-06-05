@@ -49,7 +49,7 @@ module "crm-app" {
   network_security_group_id   = "${module.nsg-app.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_crm_app}"
   data_disk_count             = "${var.data_disk_count_crm_app}"
-  tags                        = "${var.tag_crm_app}"
+  tags                        = "${var.tags}"
 }
 
 module "crm-ascs" {
@@ -65,7 +65,7 @@ module "crm-ascs" {
   network_security_group_id   = "${module.nsg-app.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_crm_ascs}"
   data_disk_count             = "${var.data_disk_count_crm_ascs}"
-  tags                        = "${var.tag_crm_ascs}"
+  tags                        = "${var.tags}"
 }
 
 module "crm-db" {
@@ -81,7 +81,7 @@ module "crm-db" {
   network_security_group_id   = "${module.nsg-data.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_crm_db}"
   data_disk_count             = "${var.data_disk_count_crm_db}"
-  tags                        = "${var.tag_crm_db}"
+  tags                        = "${var.tags}"
 }
 
 module "isu-app" {
@@ -97,7 +97,7 @@ module "isu-app" {
   network_security_group_id   = "${module.nsg-app.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_isu_app}"
   data_disk_count             = "${var.data_disk_count_isu_app}"
-  tags                        = "${var.tag_isu_app}"
+  tags                        = "${var.tags}"
 }
 
 module "isu-ascs" {
@@ -113,7 +113,7 @@ module "isu-ascs" {
   network_security_group_id   = "${module.nsg-app.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_isu_ascs}"
   data_disk_count             = "${var.data_disk_count_isu_ascs}"
-  tags                        = "${var.tag_isu_ascs}"
+  tags                        = "${var.tags}"
 }
 
 module "isu-db" {
@@ -129,5 +129,5 @@ module "isu-db" {
   network_security_group_id   = "${module.nsg-data.network_security_group_id}"
   data_disk_size              = "${var.data_disk_size_isu_db}"
   data_disk_count             = "${var.data_disk_count_isu_db}"
-  tags                        = "${var.tag_isu_db}"
+  tags                        = "${var.tags}"
 }

@@ -26,7 +26,7 @@ resource "azurerm_managed_disk" "main" {
   create_option        = "Empty"
   disk_size_gb         = "${var.data_disk_size}"
 
-  //   tags                          = "${var.tags}"
+  tags                 = "${var.tags}"
 }
 
 resource "azurerm_virtual_machine" "main" {
@@ -66,7 +66,7 @@ resource "azurerm_virtual_machine" "main" {
     provision_vm_agent = true
   }
 
-  //   tags                          = "${var.tags}"
+  tags             = "${var.tags}"
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "main" {
