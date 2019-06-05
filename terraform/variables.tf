@@ -57,6 +57,14 @@ variable "vm_size_isu_app" {}
 variable "vm_size_isu_ascs" {}
 variable "vm_size_isu_db" {}
 
+variable "tag_crm_app" {}
+variable "tag_crm_ascs" {}
+variable "tag_crm_db" {}
+
+variable "tag_isu_app" {}
+variable "tag_isu_ascs" {}
+variable "tag_isu_db" {}
+
 variable "data_disk_size_crm_app" {
     default = 512
 }
@@ -94,3 +102,4 @@ variable "data_disk_size_isu_db" {
 variable "data_disk_count_isu_db" {
     default = 0
 }
+
