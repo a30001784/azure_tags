@@ -11,7 +11,7 @@ variable "host_password" {}
 variable "hostname_prefix" {}
 variable "hostname_suffix_start_range" {}
 
-variable "tags" {}
+#variable "tags" {}
 
 variable "subnet_id_app" {}
 variable "subnet_id_data" {}
@@ -47,13 +47,13 @@ variable "vm_size_isu_app" {}
 variable "vm_size_isu_ascs" {}
 variable "vm_size_isu_db" {}
 
-variable "tag_crm_app" {}
-variable "tag_crm_ascs" {}
-variable "tag_crm_db" {}
+# variable "tag_crm_app" {}
+# variable "tag_crm_ascs" {}
+# variable "tag_crm_db" {}
 
-variable "tag_isu_app" {}
-variable "tag_isu_ascs" {}
-variable "tag_isu_db" {}
+# variable "tag_isu_app" {}
+# variable "tag_isu_ascs" {}
+# variable "tag_isu_db" {}
 
 variable "data_disk_size_crm_app" {
     default = 512
