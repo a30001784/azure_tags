@@ -1,6 +1,13 @@
 locals {
   total_data_disks = "${var.data_disk_count * var.count}"
-  common_tags = "${var.common_tags}"
+  common_tags      = {
+      BusinessOwner = "${var.businessowner}"
+      TechnicalOwner = "${var.technicalowner}"
+      CostCode = "${var.costcode}"
+      Application = "${var.application}"
+      scheduleType = "${var.scheduleType}"
+      scheduleExemption = "${var.scheduleExemption}"
+  }
 }
 
 resource "azurerm_network_interface" "main" {
@@ -10,7 +17,8 @@ resource "azurerm_network_interface" "main" {
   resource_group_name           = "${var.resource_group}"
   network_security_group_id     = "${var.network_security_group_id}"
   enable_accelerated_networking = true
-
+  tags                          = "${local.common_tags}"
+  
   ip_configuration {
     name                          = "${format("${var.hostname_prefix}%04d", var.hostname_suffix_start_range + count.index)}-ipconfig"
     subnet_id                     = "${var.subnet_id}"
