@@ -399,3 +399,4 @@ To input the licence file, it needs to be sent over Telnet to the target system.
 from the steps `Output Logical System Name variables - ISU` and `Output Logical System Name variables - CRM`
 * Investigate automated process for database restore
 * Update credentials `$(sap_install_username)` and `$(sap_install_password)` in Azure Devops secrets, as my (Lukas) ADM credentials  are still there# new-tag
+# azure_tags
